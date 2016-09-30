@@ -821,7 +821,7 @@ void calcEstimatedPosition(bool hasFix){
 void updateHeading(void){
 	// we update the heading every 14ms to get as many samples into the smooth array as possible
 	if (millis() > time) {
-		time = millis() + 10;
+		time = millis() + 14;
 		trackerPosition.heading = getHeading();
 		gotNewHeading = true;
 	}
