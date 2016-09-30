@@ -58,7 +58,7 @@ typedef enum {
     SMALL_ANGLE    = (1 << 3),
     FIXED_WING     = (1 << 4),                   // set when in flying_wing or airplane mode. currently used by althold selection code
 	BOOT_MODE	   = (1 << 5),
-	CALIBREATE_PAN = (1 << 6),
+	CALIBRATE_PAN = (1 << 6),
 } stateFlags_t;
 
 extern uint8_t stateFlags;
