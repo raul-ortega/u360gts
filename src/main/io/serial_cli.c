@@ -128,7 +128,8 @@ static void cliGet(char *cmdline);
 static void cliStatus(char *cmdline);
 static void cliVersion(char *cmdline);
 /*static void cliRxRange(char *cmdline);*/
-static void cliCalibrateCompass();
+static void cliCalibrateCompass(void);
+static void cliCalibratePan(void);
 static void cliMovePanServo(char *cmdline);
 static void cliMoveTiltServo(char *cmdline);
 static void cliSetPanServoSpeed();
@@ -316,7 +317,8 @@ const clicmd_t cmdTable[] = {
 #endif*/
     CLI_COMMAND_DEF("status", "show status", NULL, cliStatus),
     CLI_COMMAND_DEF("version", "show version", NULL, cliVersion),
-	CLI_COMMAND_DEF("calibrate", "calibrate compass", NULL, cliCalibrateCompass),
+	CLI_COMMAND_DEF("calibrate mag", "calibrate compass", NULL, cliCalibrateCompass),
+	CLI_COMMAND_DEF("calibrate pan", "calibrate servo pan", NULL, cliCalibratePan),
 	CLI_COMMAND_DEF("heading", "move pan servo to degrees (0 - 360)", "<degrees>", cliMovePanServo),
 	CLI_COMMAND_DEF("tilt", "move tilt servo to degrees (0 - 90)", "<degrees>", cliMoveTiltServo),
 	CLI_COMMAND_DEF("boot mode", "restart the board to boot mode for load a new version of the firmware", NULL, cliBootMode),
@@ -2439,10 +2441,16 @@ static void cliVersion(char *cmdline)
         shortGitRevision
     );
 }
-static void cliCalibrateCompass()
+static void cliCalibrateCompass(void)
 {
 	ENABLE_STATE(CALIBRATE_MAG);
 }
+
+static void cliCalibratePan(void)
+{
+	ENABLE_STATE(CALIBRATE_PAN);
+}
+
 static void cliMovePanServo(char *cmdline)
 {
 	int16_t degrees;

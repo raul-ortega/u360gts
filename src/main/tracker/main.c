@@ -108,7 +108,7 @@ void getError(void);
 void calculatePID();
 void blinkLeds(uint8_t numblinks);
 int getHeading(void);
-void calibrate_compass(void);
+//void calibrate_compass(void);
 void servo_tilt_update();
 void saveLastTilt(bool writteEeprom);
 void tracker_setup();
@@ -141,6 +141,7 @@ float map(long x, long in_min, long in_max, long out_min, long out_max);
 void calcEstimatedPosition(bool hasFix);
 bool couldLolcalGpsSetHome(bool setByUser);
 bool couldTelemetrySetHome();
+void updateCalibratePan(void);
 
 //EASING
 int16_t _lastTilt;
@@ -201,7 +202,8 @@ bool gotNewHeading;
 bool homeSet_BY_GPS = false;
 
 //TIMERS
-unsigned long servoTimer = 0;
+unsigned long servoPanTimer = 0;
+unsigned long servoPanTimerStart = 0;
 unsigned long debugTimer = 0;
 unsigned long easingTimer = 0;
 unsigned long lostTelemetry_timer = 0;
@@ -391,6 +393,8 @@ void tracker_loop(void)
 		dT = (float)cycleTime * 0.000001f;
 
 		updateCompass(&masterConfig.magZero);
+
+		updateCalibratePan();
 
 		handleSerial();
 
@@ -969,7 +973,7 @@ void updateSetHomeButton(void){
 }
 
 void updateSetHomeByGPS(void){
-	if(PROTOCOL(TP_SERVOTEST) || PROTOCOL(TP_MFD) || PROTOCOL(TP_CALIBRATING_MAG))
+	if(PROTOCOL(TP_SERVOTEST) || PROTOCOL(TP_MFD) || PROTOCOL(TP_CALIBRATING_MAG) || PROTOCOL(TP_CALIBRATING_PAN))
 		return;
 	if(homeReset && lostTelemetry){
 			telemetry_lat = 0;
@@ -1020,7 +1024,7 @@ void updateMFD(void){
 }
 
 void updateTracking(void){
-	if(!PROTOCOL(TP_MFD) && !PROTOCOL(TP_CALIBRATING_MAG) && masterConfig.pan0_calibrated==1) {
+	if(!PROTOCOL(TP_MFD) && !PROTOCOL(TP_CALIBRATING_MAG) && !PROTOCOL(TP_CALIBRATING_PAN) && masterConfig.pan0_calibrated==1) {
 		if(PROTOCOL(TP_SERVOTEST)) {
 			homeSet = true;
 			trackingStarted = true;
@@ -1198,4 +1202,57 @@ void saveLastTilt(bool writteEeprom){
 		masterConfig.easing_last_tilt = _lastTilt;
 		if(writteEeprom) writeEEPROM();
 	}
+}
+
+void updateCalibratePan(void)
+{
+	// ENABLE CALIBRATING PAN0 PROCCESS
+    if (STATE(CALIBRATE_PAN)) {
+    	servoPanTimer = millis();
+    	targetPosition.heading = 0;
+        DISABLE_STATE(CALIBRATE_PAN);
+        ENABLE_PROTOCOL(TP_CALIBRATING_PAN);
+        pwmPan = 1400;
+        pwmWriteServo(panServo, pwmPan);
+        ENABLE_STATE(CALIBRATE_MAG);
+        masterConfig.pan0_calibrated=0;
+        return;
+     }
+
+    // CALIBRATE PAN0
+    if(PROTOCOL(TP_CALIBRATING_PAN) && !PROTOCOL(TP_CALIBRATING_MAG) && masterConfig.pan0_calibrated == 0) {
+    	if(millis() - servoPanTimer > 50) {
+    		servoPanTimer = millis();
+    		if (abs(trackerPosition.heading - targetPosition.heading) > 0){
+    			// SERVO IS STILL MOVING
+    			targetPosition.heading = trackerPosition.heading;
+    			pwmPan++;
+    			if(pwmPan > 1600) pwmPan = 1400;
+    			pwmWriteServo(panServo, pwmPan);
+    		} else {
+    			// SERVO SEEMS TO BE STOPPED
+    			masterConfig.pan0 = pwmPan;
+    			masterConfig.pan0_calibrated = 1;
+    			targetPosition.heading = getHeading();
+    		}
+    	}
+    }
+
+    // CHECK IF PAN0 HAS BEEN WELL CALIBRATED 3 SECONDS LATER
+    if(PROTOCOL(TP_CALIBRATING_PAN) && !PROTOCOL(TP_CALIBRATING_MAG) && masterConfig.pan0_calibrated == 1) {
+    	if(millis() - servoPanTimer > 3000){
+    		servoPanTimer = millis();
+    		if (abs(trackerPosition.heading - getHeading()) > 0)
+    			// SERVO IS STILL MOVING
+    			masterConfig.pan0_calibrated = 0;
+    		else {
+    			// CALIBRATION FIHISHED WITH SUCCESS
+    			DISABLE_PROTOCOL(TP_CALIBRATING_PAN);
+    			saveConfigAndNotify();
+    		}
+
+    	}
+
+    }
+
 }

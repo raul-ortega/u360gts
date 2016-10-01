@@ -23,7 +23,6 @@ typedef enum {
     PAGE_BATTERY,
     PAGE_TELEMETRY,
 	PAGE_CALIBRATING_MAG,
-	PAGE_CALIBRATING_PAN,
 #ifdef GPS
     PAGE_GPS,
 #endif

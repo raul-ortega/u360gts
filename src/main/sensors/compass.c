@@ -96,8 +96,7 @@ void updateCompass(flightDynamicsTrims_t *magZero)
         displayShowFixedPage(PAGE_CALIBRATING_MAG);
         displayResetPageCycling();
     	displayDisablePageCycling();
-        pwmWriteServo(panServo, 2050);
-
+        pwmWriteServo(panServo, 1400);
     }
 
     if (magInit) {              // we apply offset only once mag calibration is done
