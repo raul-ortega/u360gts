@@ -1233,18 +1233,19 @@ void updateCalibratePan(void)
     			// SERVO SEEMS TO BE STOPPED
     			masterConfig.pan0 = pwmPan;
     			masterConfig.pan0_calibrated = 1;
-    			targetPosition.heading = getHeading();
     		}
     	}
     }
 
     // CHECK IF PAN0 HAS BEEN WELL CALIBRATED 3 SECONDS LATER
     if(PROTOCOL(TP_CALIBRATING_PAN) && !PROTOCOL(TP_CALIBRATING_MAG) && masterConfig.pan0_calibrated == 1) {
-    	if(millis() - servoPanTimer > 3000){
-    		servoPanTimer = millis();
-    		if (abs(trackerPosition.heading - getHeading()) > 0)
+    	if(millis() - servoPanTimer > 1000){
+
+    		if (abs(trackerPosition.heading - targetPosition.heading) > 0){
     			// SERVO IS STILL MOVING
     			masterConfig.pan0_calibrated = 0;
+    		    servoPanTimer = millis();
+    		}
     		else {
     			// CALIBRATION FIHISHED WITH SUCCESS
     			DISABLE_PROTOCOL(TP_CALIBRATING_PAN);
