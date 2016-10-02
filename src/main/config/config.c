@@ -763,8 +763,6 @@ static void resetConf(void)
    	//TELEMETRY OUT
    	featureSet(FEATURE_TELEMETRY);
 
-   	//PINOUT
-   	masterConfig.pinout=1;
 /////////////////////////////
 
     // copy first profile into remaining profile

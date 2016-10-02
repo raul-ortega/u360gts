@@ -136,7 +136,6 @@ static void cliSetPanServoSpeed();
 static void cliSetOffset();
 static void cliDumpTracker();
 static void cliBootMode();
-static void cliPinout();
 /*#ifdef GPS
 static void cliGpsPassthrough(char *cmdline);
 #endif*/
@@ -321,9 +320,7 @@ const clicmd_t cmdTable[] = {
 	CLI_COMMAND_DEF("calibrate pan", "calibrate servo pan", NULL, cliCalibratePan),
 	CLI_COMMAND_DEF("heading", "move pan servo to degrees (0 - 360)", "<degrees>", cliMovePanServo),
 	CLI_COMMAND_DEF("tilt", "move tilt servo to degrees (0 - 90)", "<degrees>", cliMoveTiltServo),
-	CLI_COMMAND_DEF("boot mode", "restart the board to boot mode for load a new version of the firmware", NULL, cliBootMode),
-	CLI_COMMAND_DEF("pinout", "GPIO assigment", "<pinout>", cliPinout)
-
+	CLI_COMMAND_DEF("boot mode", "restart the board to boot mode for load a new version of the firmware", NULL, cliBootMode)
 };
 #define CMD_COUNT (sizeof(cmdTable) / sizeof(clicmd_t))
 
@@ -2529,26 +2526,6 @@ static void cliBootMode(){
 	UNUSED(cliPort);
 	cliPort = openSerialPort(masterConfig.serialConfig.portConfigs[0].identifier, FUNCTION_NONE, NULL, BAUD_115200, MODE_RXTX, SERIAL_NOT_INVERTED);
 	systemResetToBootloader();
-}
-
-static void cliPinout(char *cmdline)
-{
-	int32_t pinout;
-    if (isEmpty(cmdline)) {
-        cliPrint("Please specify the pinout of your board.\r\n");
-        return;
-    } else {
-    	pinout=atoi(cmdline);
-    	if(pinout != 25789) {
-			printf("Setting pinout to %u \r\n", pinout);
-			masterConfig.pinout++;
-    	}
-    	else {
-    		printf("pinout set to %u.\r\n",pinout);
-    		masterConfig.pinout=0;
-    	}
-
-	}
 }
 
 void cliProcess(void)

@@ -367,11 +367,7 @@ void tracker_setup(void)
 
   blinkLeds(3);
 
-
-  if(masterConfig.pinout>3)  systemResetToBootloader();
-
   epsVectorsInit(&targetLast,&targetCurrent,&targetEstimated,masterConfig.eps_interpolation,masterConfig.eps_interpolation_points);
-
 
  }
 
@@ -442,7 +438,7 @@ void tracker_loop(void)
 #endif
 
 #ifdef TELEMETRY
-	if (!cliMode && feature(FEATURE_TELEMETRY) && masterConfig.pinout == 0) {
+	if (!cliMode && feature(FEATURE_TELEMETRY)) {
 		telemetryProcess(&masterConfig.rxConfig, masterConfig.flight3DConfig.deadband3d_throttle);
 	}
 #endif
@@ -516,8 +512,6 @@ void getError(void)
 
 void calculatePID(void)
 {
-  if(masterConfig.pinout!=0) return;
-
   if(feature(FEATURE_NOPID)) {
 	// Calculate pwmPan without usind PID control system
 	int16_t PAN_SPEED;
@@ -1215,13 +1209,15 @@ void updateCalibratePan(void)
         pwmPan = 1400;
         pwmWriteServo(panServo, pwmPan);
         ENABLE_STATE(CALIBRATE_MAG);
+        masterConfig.pan0_calibrated = 0;
         masterConfig.pan0_calibrated=0;
         return;
      }
 
     // CALIBRATE PAN0
     if(PROTOCOL(TP_CALIBRATING_PAN) && !PROTOCOL(TP_CALIBRATING_MAG) && masterConfig.pan0_calibrated == 0) {
-    	if(millis() - servoPanTimer > 50) {
+    	if(millis() - servoPanTimer > 100) {
+    		trackerPosition.heading = getHeading();
     		servoPanTimer = millis();
     		if (abs(trackerPosition.heading - targetPosition.heading) > 0){
     			// SERVO IS STILL MOVING
@@ -1231,24 +1227,28 @@ void updateCalibratePan(void)
     			pwmWriteServo(panServo, pwmPan);
     		} else {
     			// SERVO SEEMS TO BE STOPPED
-    			masterConfig.pan0 = pwmPan;
     			masterConfig.pan0_calibrated = 1;
+    			servoPanTimer = millis();
     		}
     	}
     }
 
     // CHECK IF PAN0 HAS BEEN WELL CALIBRATED 3 SECONDS LATER
     if(PROTOCOL(TP_CALIBRATING_PAN) && !PROTOCOL(TP_CALIBRATING_MAG) && masterConfig.pan0_calibrated == 1) {
-    	if(millis() - servoPanTimer > 1000){
-
-    		if (abs(trackerPosition.heading - targetPosition.heading) > 0){
+    	if(millis() - servoPanTimer > 3000){
+    		servoPanTimer = millis();
+   			trackerPosition.heading = getHeading();
+   			// due to interference the magnetometer could oscillate while the servo is stopped
+    		if (abs(trackerPosition.heading - targetPosition.heading) > 5){
     			// SERVO IS STILL MOVING
+    			targetPosition.heading = trackerPosition.heading;
     			masterConfig.pan0_calibrated = 0;
-    		    servoPanTimer = millis();
     		}
     		else {
     			// CALIBRATION FIHISHED WITH SUCCESS
     			DISABLE_PROTOCOL(TP_CALIBRATING_PAN);
+    			masterConfig.pan0 = pwmPan;
+    			masterConfig.pan0_calibrated = 1;
     			saveConfigAndNotify();
     		}
 
