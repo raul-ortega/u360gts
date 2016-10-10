@@ -113,23 +113,6 @@ void addPOSEST_int32(int32_t data){
 	addPOSEST_serialize(temp);
 }
 
-/*void addPOSEST_vector(epsVector_t *epsVector){
-
-	char temp[50];
-
-	tfp_sprintf(temp,"%d,",epsVector->index);
-	addPOSEST_serialize(temp);
-
-	tfp_sprintf(temp,"%d.%07d,",epsVector->lat_sgn*epsVector->lat_a,epsVector->lat_b);
-	addPOSEST_serialize(temp);
-
-	tfp_sprintf(temp,"%d.%07d,",epsVector->lon_sgn*epsVector->lon_a,epsVector->lon_b);
-	addPOSEST_serialize(temp);
-
-	tfp_sprintf(temp,"%d,%f,%f,%f",epsVector->time,epsVector->distance,epsVector->heading,epsVector->speed);
-	addPOSEST_serialize(temp);
-
-}*/
 void addPOSEST_vector(pvQElement_t *epsVector){
 
 	char temp[50];
@@ -143,7 +126,7 @@ void addPOSEST_vector(pvQElement_t *epsVector){
 	tfp_sprintf(temp,"%d.%06d,",epsVector->lon_sgn*epsVector->lon_a,epsVector->lon_b);
 	addPOSEST_serialize(temp);
 
-	tfp_sprintf(temp,"%d,%d,%d,%d,%d",epsVector->time,(uint16_t)epsVector->distance,(uint16_t)epsVector->heading,(uint16_t)epsVector->speed,epsVector->frequency);
+	tfp_sprintf(temp,"%d,%d,%d,%d",epsVector->time,(uint16_t)epsVector->distance,(uint16_t)epsVector->heading,(uint16_t)epsVector->speed);
 	addPOSEST_serialize(temp);
 
 }

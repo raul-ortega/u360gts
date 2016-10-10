@@ -35,7 +35,7 @@ uint32_t estimatedTime;
 float estimatedDistance;
 float estimatedAccDistance;
 float estimatedHeading;
-float stimatedSpeed;
+float estimatedSpeed;
 uint16_t estimatedFrequency;
 uint16_t positionIndex=0;
 
@@ -78,7 +78,6 @@ bool pvPut(epsVector_t *pvector, uint8_t vectorType){
     epsVectors[pvQIn].time = pvector->time;
     epsVectors[pvQIn].index = pvector->index;
     epsVectors[pvQIn].type = vectorType;
-    epsVectors[pvQIn].frequency = pvector->frequency;
 
     pvQIn = (pvQIn + 1) % PVQ_SIZE;
 
@@ -111,7 +110,22 @@ float epsVectorSpeed(uint32_t last_time,uint32_t currentTime, float distance){
 	return speed;
 }
 
-uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t *estimated,epsVectorGain_t gain, bool hasFix){
+void epsVectorAddPoint(epsVector_t *last, epsVector_t *current){
+
+		iPoint_t delta;
+
+		delta.heading = current->heading - last->heading;
+		delta.speed = current->speed - last->speed;
+
+		if (delta.heading > 180)
+			delta.heading -= 360.0f;
+		else if (delta.heading <= -180)
+			delta.heading += 360.0f;
+
+		iPutPoint(current->time,delta.heading,delta.speed);
+}
+
+uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t *estimated,epsVectorGain_t gain, uint32_t eps_frequency){
 	float angularDistance;
 	float headingRadians;
 	iPoint_t delta;
@@ -119,68 +133,25 @@ uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t 
 	float lon2;
 	float x;
 	float y;
-	uint16_t subvartime;
 
-	if(hasFix) {
+	estimatedHeading = current->heading;
+	estimatedSpeed = current->speed;
+	estimatedTime = millis();
 
-		//current->speed = epsVectorSpeed(last->time,current->time,current->distance);
+	if(interpolationOn) {
 
-
-		if(!pvFull())
-				pvPut(current,1);
-
-		vartime = current->time - last->time;
-
-		residualTime = current->time - estimated->time;
-		residualGain = (float)residualTime / (float)vartime;
-
-		if(residualTime > 0)
-			estimatedFrequency = (uint16_t) (current->frequency * (1.0f + residualGain));
-		else
-			estimatedFrequency = (uint16_t) (current->frequency * (1.0f - residualGain));
-
-		estimatedHeading = current->heading;
-		stimatedSpeed = current->speed;
-
-		estimatedDistance = (current->distance * estimatedFrequency) / vartime;//estimatedDistance = current->distance * (gain.distance / 100);
-
-		estimatedAccDistance = estimatedDistance;
-
-		if(interpolationOn) {
-			delta.heading = current->heading - last->heading;
-			delta.speed = current->speed - last->speed;
-
-			if (delta.heading > 180)
-				delta.heading -= 360.0f;
-			else if (delta.heading <= -180)
-				delta.heading += 360.0f;
-
-			iPutPoint(current->time,delta.heading,delta.speed);
-
-			if(iFull()) {
-				estimatedTime = current->time + vartime;
-				delta = iEval(estimatedTime);
-			}
-			estimatedHeading = estimatedHeading + delta.heading * (gain.heading / 100.0f);
-			//stimatedSpeed = stimatedSpeed * (gain.distance / 100.0f) + delta.speed * (gain.speed / 100.0f);
-			//estimatedDistance = (vartime / 1000.0f) * stimatedSpeed * (gain.distance/100.0f);
+		if(iFull()) {
+			delta = iEval(estimatedTime);
 		}
-
+		estimatedHeading = current->heading + delta.heading * (gain.heading / 100.0f);
+		estimatedSpeed = current->speed + delta.speed * (gain.speed / 100.0f);
+		vartime = estimatedTime - current->time;
+		estimatedDistance = estimatedSpeed * vartime;
 	} else {
-		subvartime = millis() - last->time;
-		//estimatedDistance = (last->distance * subvartime) / vartime + (last->distance * current->frequency) / vartime;
-		estimatedDistance = last->distance / vartime * (subvartime + current->frequency);
-
-		estimatedAccDistance += estimatedDistance;
-		if(interpolationOn) {
-			delta = iEval(millis());
-			estimatedHeading = last->heading + delta.heading * (gain.heading / 100.0f);
-		}
-		//else
-		//	estimatedDistance = (last->distance + stimatedSpeed * (millis() - last->time) / 1000.0f) * (gain.distance / 100.0f);
+		estimatedDistance = (current->distance * gain.distance / 100);
 	}
 
-	//estimatedDistance = estimatedDistance * (gain.distance / 100.0f);
+	estimatedAccDistance = estimatedDistance;
 
 	angularDistance = estimatedDistance / earthRadius;
 	//
@@ -201,11 +172,10 @@ uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t 
 	estimated->lon_a = abs(estimated->lon / TELEMETRY_LATLON_DIVIDER_I);
 	estimated->lon_b = abs(estimated->lon % TELEMETRY_LATLON_DIVIDER_I);
 	estimated->lon_sgn = (estimated->lon < 0) ? -1 : 1;
-	estimated->time = millis();
+	estimated->time = estimatedTime;
 	estimated->heading = estimatedHeading;
-	estimated->speed = stimatedSpeed;
+	estimated->speed = estimatedSpeed;
 	estimated->distance = estimatedDistance;
-	estimated->frequency = estimatedFrequency;
 	positionIndex++;
 	estimated->index = positionIndex;
 
@@ -267,10 +237,10 @@ void epsVectorCurrentToLast(epsVector_t *current,epsVector_t *last){
 	last->lon_a = current->lon_a;
 	last->lon_b = current->lon_b;
 	last->lon_sgn = current->lon_sgn;
-	last->frequency = current->frequency;
 }
 
-void epsVectorLoad(epsVector_t *current,int32_t lat,int32_t lon,float distance, uint32_t last_time, uint32_t currentTime,epsVectorGain_t gain){
+void epsVectorLoad(epsVector_t *current,int32_t lat,int32_t lon,float distance, uint32_t last_time, uint32_t currentTime){
+
 	current->lat = lat;
 	current->lon = lon;
 	current->time = currentTime;
@@ -284,7 +254,7 @@ void epsVectorLoad(epsVector_t *current,int32_t lat,int32_t lon,float distance, 
 	current->lon_sgn = (current->lon < 0) ? -1 : 1;
 	positionIndex++;
 	current->index = positionIndex;
-	current->frequency =  gain.distance * (currentTime - last_time) / 100;
+
 }
 
 uint16_t getPositionVectorIndex(void){

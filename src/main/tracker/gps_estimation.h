@@ -35,7 +35,6 @@ typedef struct {
 	uint32_t time;
 	uint16_t index;
 	uint8_t type;
-	uint16_t frequency;
 } pvQElement_t;
 
 typedef struct {
@@ -52,7 +51,6 @@ typedef struct {
 	int8_t lon_sgn;
 	uint32_t time;
 	uint16_t index;
-	uint16_t frequency;
 } epsVector_t;
 
 
@@ -67,8 +65,9 @@ bool pvEmpty();
 bool pvPut(epsVector_t *pvector, uint8_t vectorType);
 pvQElement_t pvGet(void);
 void epsVectorsInit(epsVector_t *last, epsVector_t *current, epsVector_t *esttimated, uint8_t interpolation,uint8_t interpolation_points);
-uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t *estimated,epsVectorGain_t gain, bool hasFix);
-void epsVectorLoad(epsVector_t *current,int32_t lat,int32_t lon,float distance, uint32_t last_time, uint32_t currentTime,epsVectorGain_t gain);
+void epsVectorAddPoint(epsVector_t *last, epsVector_t *current);
+uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t *estimated,epsVectorGain_t gain, uint32_t eps_frequency);
+void epsVectorLoad(epsVector_t *current,int32_t lat,int32_t lon,float distance, uint32_t last_time, uint32_t currentTime);
 void epsVectorCurrentToLast(epsVector_t *current,epsVector_t *last);
 void epsVectorDecompose(epsVector_t *pvector);
 float epsVectorSpeed(uint32_t last_time,uint32_t currentTime, float distance);
