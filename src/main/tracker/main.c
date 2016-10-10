@@ -813,17 +813,6 @@ void updateTargetPosition(void){
 	}
 }
 
-/*void calcEstimatedPosition(bool hasFix){
-	if(homeSet && lostTelemetry == false) {
-		if(hasFix || (!hasFix && millis()- epsVectorTimer > targetEstimated.frequency && targetEstimated.frequency > 0)){//masterConfig.eps_frequency)) {
-			epsVectorEstimate(&targetLast,&targetCurrent,&targetEstimated,masterConfig.eps_gain,gotFix);
-			targetPosition.distance = distance_between(trackerPosition.lat / TELEMETRY_LATLON_DIVIDER_F, trackerPosition.lon / TELEMETRY_LATLON_DIVIDER_F, targetPosition.lat / TELEMETRY_LATLON_DIVIDER_F, targetPosition.lon / TELEMETRY_LATLON_DIVIDER_F);
-			targetPosition.heading = course_to(trackerPosition.lat / TELEMETRY_LATLON_DIVIDER_F, trackerPosition.lon / TELEMETRY_LATLON_DIVIDER_F, targetEstimated.lat / TELEMETRY_LATLON_DIVIDER_F, targetEstimated.lon / TELEMETRY_LATLON_DIVIDER_F) * 10.0f;
-			epsVectorTimer = millis();
-		}
-	}
-}*/
-
 void calcEstimatedPosition(){
 	if(homeSet && lostTelemetry == false) {
 		if(millis()- epsVectorTimer > masterConfig.eps_frequency){
