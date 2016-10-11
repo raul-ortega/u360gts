@@ -139,8 +139,7 @@ uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t 
 	estimatedTime = millis();
 
 	if(interpolationOn) {
-		delta.heading = 0;
-		delta.speed = 0;
+
 		if(iFull()) {
 			delta = iEval(estimatedTime);
 		}
