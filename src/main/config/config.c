@@ -746,12 +746,12 @@ static void resetConf(void)
 
    	// Estimation Position System (EPS)
    	featureClear(FEATURE_EPS);
-   	masterConfig.eps_gain.distance = 50;
-   	masterConfig.eps_gain.heading = 50;
-   	//masterConfig.eps_gain.speed = 50;
-   	//masterConfig.eps_frequency = 250;
+   	masterConfig.eps_gain.distance = 100;
+   	masterConfig.eps_gain.heading = 100;
+   	masterConfig.eps_gain.speed = 100;
+   	masterConfig.eps_frequency = 250;
    	masterConfig.eps_max_speed = 0;
-   	masterConfig.eps_interpolation = 0;
+   	masterConfig.eps_interpolation = 1;
    	masterConfig.eps_interpolation_points = 3;
 
    	//VBAT
