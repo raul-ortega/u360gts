@@ -114,12 +114,16 @@ void epsVectorAddPoint(epsVector_t *last, epsVector_t *current){
 
 		iPoint_t delta;
 
-		delta.heading = current->heading - last->heading;
+
 		delta.speed = current->speed - last->speed;
+		delta.heading = current->heading - last->heading;
+
+		if(current->heading < last->heading)
+			delta.heading = delta.heading + 360;
 
 		if (delta.heading > 180)
 			delta.heading -= 360.0f;
-		else if (delta.heading <= -180)
+		else if (delta.heading < -180)
 			delta.heading += 360.0f;
 
 		iPutPoint(current->time,delta.heading,delta.speed);
@@ -145,9 +149,11 @@ uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t 
 			delta = iEval(estimatedTime);
 		}
 		estimatedHeading = current->heading + delta.heading * (gain.heading / 100.0f);
+		estimatedHeading = fmod(estimatedHeading,360.0f);
 		estimatedSpeed = current->speed + delta.speed * (gain.speed / 100.0f);
 		vartime = estimatedTime - current->time;
-		estimatedDistance = estimatedSpeed * vartime;
+		//estimatedDistance = estimatedSpeed * vartime;
+		estimatedDistance = estimatedSpeed * (vartime / 1000.0f);
 	} else {
 		estimatedDistance = (current->distance * gain.distance / 100);
 	}
