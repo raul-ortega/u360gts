@@ -807,7 +807,7 @@ void updateTargetPosition(void){
 					epsVectorCurrentToLast(&targetCurrent,&targetLast);
 				}
 				gotFix = false;
-			} else if(feature(FEATURE_EPS) && trackingStarted)
+			} else if(feature(FEATURE_EPS))
 				calcEstimatedPosition();
 		}
 	}
