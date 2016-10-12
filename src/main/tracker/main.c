@@ -1029,7 +1029,7 @@ void updateMFD(void){
 }
 
 void updateTracking(void){
-	if(!PROTOCOL(TP_MFD) && !PROTOCOL(TP_CALIBRATING_MAG) && !PROTOCOL(TP_CALIBRATING_PAN0 && !PROTOCOL(TP_CALIBRATING_MAXPAN)) && masterConfig.pan0_calibrated==1) {
+	if(!PROTOCOL(TP_MFD) && !PROTOCOL(TP_CALIBRATING_MAG) && !PROTOCOL(TP_CALIBRATING_PAN0) && !PROTOCOL(TP_CALIBRATING_MAXPAN) && masterConfig.pan0_calibrated==1) {
 		if(PROTOCOL(TP_SERVOTEST)) {
 			homeSet = true;
 			trackingStarted = true;
