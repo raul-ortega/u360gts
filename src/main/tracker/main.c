@@ -1270,7 +1270,7 @@ void updateCalibratePan(void)
     			saveConfigAndNotify();
      			// ACTIVATE MAX PWMPAN CALCULATION
     			ENABLE_PROTOCOL(TP_CALIBRATING_MAXPAN);
-    			pwmPan = masterConfig.pan0 - 500;
+    			pwmPan = masterConfig.pan0 - 600;
     			pwmWriteServo(panServo, pwmPan);
     			servoPanTimer = millis();
     		}
