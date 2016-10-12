@@ -142,7 +142,7 @@ void calcEstimatedPosition();
 bool couldLolcalGpsSetHome(bool setByUser);
 bool couldTelemetrySetHome();
 void updateCalibratePan(void);
-
+uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2);
 //EASING
 int16_t _lastTilt;
 int16_t tilt;
@@ -1234,7 +1234,7 @@ void updateCalibratePan(void)
     		trackerPosition.heading = getHeading();
     		servoPanTimer = millis();
 
-    		deltaHeading = abs(calculateDeltaHeading(trackerPosition.heading,targetPosition.heading));
+    		deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
 
     		if (deltaHeading > 0){
     			// SERVO IS STILL MOVING
@@ -1256,7 +1256,7 @@ void updateCalibratePan(void)
     		servoPanTimer = millis();
    			trackerPosition.heading = getHeading();
    			// due to interference the magnetometer could oscillate while the servo is stopped
-   			deltaHeading = abs(calculateDeltaHeading(trackerPosition.heading,targetPosition.heading));
+   			deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
     		if (deltaHeading > 5){
     			// SERVO IS STILL MOVING
     			targetPosition.heading = trackerPosition.heading;
@@ -1284,7 +1284,7 @@ void updateCalibratePan(void)
 		if(millis() - servoPanTimer > 100) {
 			trackerPosition.heading = getHeading();
 			servoPanTimer = millis();
-			deltaHeading = abs(calculateDeltaHeading(trackerPosition.heading,targetPosition.heading));
+			deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
 			targetPosition.heading = trackerPosition.heading;
 
 			if(maxDeltaHeading == 0)
@@ -1315,7 +1315,7 @@ void updateCalibratePan(void)
 
 uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2){
 
-	uint16_t deltaHeading;
+	int32_t deltaHeading;
 
 	deltaHeading = heading1 - heading2;
 
@@ -1327,5 +1327,5 @@ uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2){
 	else if (deltaHeading < -180)
 		deltaHeading += 360.0f;
 
-	return deltaHeading;
+	return (uint16_t) abs(deltaHeading);
 }
