@@ -172,8 +172,8 @@ uint16_t pwmPan;
 uint16_t pwmTilt;
 uint16_t _lastPwmTilt;
 
-uint16_t maxDeltaHeading;
-uint16_t maxPwmPan;
+int16_t maxDeltaHeading;
+int16_t maxPwmPan;
 
 //TARGET/TRACKER POSITION
 // The target position (lat/lon)
@@ -978,7 +978,7 @@ void updateSetHomeButton(void){
 }
 
 void updateSetHomeByGPS(void){
-	if(PROTOCOL(TP_SERVOTEST) || PROTOCOL(TP_MFD) || PROTOCOL(TP_CALIBRATING_MAG) || PROTOCOL(TP_CALIBRATING_PAN))
+	if(PROTOCOL(TP_SERVOTEST) || PROTOCOL(TP_MFD) || PROTOCOL(TP_CALIBRATING_MAG) || PROTOCOL(TP_CALIBRATING_PAN0) || PROTOCOL(TP_CALIBRATING_MAXPAN))
 		return;
 	if(homeReset && lostTelemetry){
 			telemetry_lat = 0;
@@ -1029,7 +1029,7 @@ void updateMFD(void){
 }
 
 void updateTracking(void){
-	if(!PROTOCOL(TP_MFD) && !PROTOCOL(TP_CALIBRATING_MAG) && !PROTOCOL(TP_CALIBRATING_PAN) && masterConfig.pan0_calibrated==1) {
+	if(!PROTOCOL(TP_MFD) && !PROTOCOL(TP_CALIBRATING_MAG) && !PROTOCOL(TP_CALIBRATING_PAN0 && !PROTOCOL(TP_CALIBRATING_MAXPAN)) && masterConfig.pan0_calibrated==1) {
 		if(PROTOCOL(TP_SERVOTEST)) {
 			homeSet = true;
 			trackingStarted = true;
@@ -1217,7 +1217,7 @@ void updateCalibratePan(void)
     	servoPanTimer = millis();
     	targetPosition.heading = 0;
         DISABLE_STATE(CALIBRATE_PAN);
-        ENABLE_PROTOCOL(TP_CALIBRATING_PAN);
+        ENABLE_PROTOCOL(TP_CALIBRATING_PAN0);
         pwmPan = 1400;
         pwmWriteServo(panServo, pwmPan);
         ENABLE_STATE(CALIBRATE_MAG);
@@ -1229,17 +1229,12 @@ void updateCalibratePan(void)
      }
 
     // CALIBRATE PAN0
-    if(PROTOCOL(TP_CALIBRATING_PAN) && !PROTOCOL(TP_CALIBRATING_MAG) && masterConfig.pan0_calibrated == 0) {
+    if(PROTOCOL(TP_CALIBRATING_PAN0) && !PROTOCOL(TP_CALIBRATING_MAG) && masterConfig.pan0_calibrated == 0) {
     	if(millis() - servoPanTimer > 100) {
     		trackerPosition.heading = getHeading();
     		servoPanTimer = millis();
 
     		deltaHeading = abs(calculateDeltaHeading(trackerPosition.heading,targetPosition.heading));
-
-    		if(deltaHeading > maxDeltaHeading) {
-    			maxDeltaHeading = deltaHeading;
-    			maxPwmPan = pwmPan;
-    		}
 
     		if (deltaHeading > 0){
     			// SERVO IS STILL MOVING
@@ -1256,28 +1251,65 @@ void updateCalibratePan(void)
     }
 
     // CHECK IF PAN0 HAS BEEN WELL CALIBRATED 3 SECONDS LATER
-    if(PROTOCOL(TP_CALIBRATING_PAN) && !PROTOCOL(TP_CALIBRATING_MAG) && masterConfig.pan0_calibrated == 1) {
+    if(PROTOCOL(TP_CALIBRATING_PAN0) && !PROTOCOL(TP_CALIBRATING_MAG) && masterConfig.pan0_calibrated == 1) {
     	if(millis() - servoPanTimer > 3000){
     		servoPanTimer = millis();
    			trackerPosition.heading = getHeading();
    			// due to interference the magnetometer could oscillate while the servo is stopped
-   			deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
-    		if (abs(deltaHeading) > 5){
+   			deltaHeading = abs(calculateDeltaHeading(trackerPosition.heading,targetPosition.heading));
+    		if (deltaHeading > 5){
     			// SERVO IS STILL MOVING
     			targetPosition.heading = trackerPosition.heading;
     			masterConfig.pan0_calibrated = 0;
     		}
     		else {
     			// CALIBRATION FIHISHED WITH SUCCESS
-    			DISABLE_PROTOCOL(TP_CALIBRATING_PAN);
+    			DISABLE_PROTOCOL(TP_CALIBRATING_PAN0);
     			masterConfig.pan0 = pwmPan;
     			masterConfig.pan0_calibrated = 1;
     			saveConfigAndNotify();
+     			// ACTIVATE MAX PWMPAN CALCULATION
+    			ENABLE_PROTOCOL(TP_CALIBRATING_MAXPAN);
+    			pwmPan = masterConfig.pan0 - 500;
+    			pwmWriteServo(panServo, pwmPan);
+    			servoPanTimer = millis();
     		}
 
     	}
 
     }
+
+    // CALIBRATE MAX PAN
+	if(PROTOCOL(TP_CALIBRATING_MAXPAN) && !PROTOCOL(TP_CALIBRATING_MAG)) {
+		if(millis() - servoPanTimer > 100) {
+			trackerPosition.heading = getHeading();
+			servoPanTimer = millis();
+			deltaHeading = abs(calculateDeltaHeading(trackerPosition.heading,targetPosition.heading));
+			targetPosition.heading = trackerPosition.heading;
+
+			if(maxDeltaHeading == 0)
+				maxDeltaHeading = deltaHeading;
+			else {
+				if (pwmPan < masterConfig.pan0 && deltaHeading < maxDeltaHeading && maxPwmPan == 0){
+					maxPwmPan = abs(masterConfig.pan0 - pwmPan);
+				}
+				if (pwmPan > masterConfig.pan0 && deltaHeading > maxDeltaHeading){
+					maxDeltaHeading = deltaHeading;
+					maxPwmPan = pwmPan -  masterConfig.pan0;
+				}
+			}
+
+			pwmPan += 10;
+
+			if(pwmPan > masterConfig.pan0 + 500 ) {
+				masterConfig.max_pid_gain = maxPwmPan;
+				pwmWriteServo(panServo, masterConfig.pan0);
+				DISABLE_PROTOCOL(TP_CALIBRATING_MAXPAN);
+				saveConfigAndNotify();
+			} else
+				pwmWriteServo(panServo, pwmPan);
+		}
+	}
 
 }
 
