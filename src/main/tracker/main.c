@@ -172,6 +172,9 @@ uint16_t pwmPan;
 uint16_t pwmTilt;
 uint16_t _lastPwmTilt;
 
+uint16_t maxDeltaHeading;
+uint16_t maxPwmPan;
+
 //TARGET/TRACKER POSITION
 // The target position (lat/lon)
 positionVector_t targetPosition;
@@ -1208,6 +1211,7 @@ void saveLastTilt(bool writteEeprom){
 
 void updateCalibratePan(void)
 {
+	uint16_t deltaHeading;
 	// ENABLE CALIBRATING PAN0 PROCCESS
     if (STATE(CALIBRATE_PAN)) {
     	servoPanTimer = millis();
@@ -1219,6 +1223,8 @@ void updateCalibratePan(void)
         ENABLE_STATE(CALIBRATE_MAG);
         masterConfig.pan0_calibrated = 0;
         masterConfig.pan0_calibrated=0;
+        maxPwmPan = 0;
+        maxDeltaHeading = 0;
         return;
      }
 
@@ -1227,7 +1233,15 @@ void updateCalibratePan(void)
     	if(millis() - servoPanTimer > 100) {
     		trackerPosition.heading = getHeading();
     		servoPanTimer = millis();
-    		if (abs(trackerPosition.heading - targetPosition.heading) > 0){
+
+    		deltaHeading = abs(calculateDeltaHeading(trackerPosition.heading,targetPosition.heading));
+
+    		if(deltaHeading > maxDeltaHeading) {
+    			maxDeltaHeading = deltaHeading;
+    			maxPwmPan = pwmPan;
+    		}
+
+    		if (deltaHeading > 0){
     			// SERVO IS STILL MOVING
     			targetPosition.heading = trackerPosition.heading;
     			pwmPan++;
@@ -1247,7 +1261,8 @@ void updateCalibratePan(void)
     		servoPanTimer = millis();
    			trackerPosition.heading = getHeading();
    			// due to interference the magnetometer could oscillate while the servo is stopped
-    		if (abs(trackerPosition.heading - targetPosition.heading) > 5){
+   			deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
+    		if (abs(deltaHeading) > 5){
     			// SERVO IS STILL MOVING
     			targetPosition.heading = trackerPosition.heading;
     			masterConfig.pan0_calibrated = 0;
@@ -1264,4 +1279,21 @@ void updateCalibratePan(void)
 
     }
 
+}
+
+uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2){
+
+	uint16_t deltaHeading;
+
+	deltaHeading = heading1 - heading2;
+
+	if(heading1 < heading2)
+		deltaHeading = deltaHeading + 360;
+
+	if (deltaHeading > 180)
+		deltaHeading -= 360.0f;
+	else if (deltaHeading < -180)
+		deltaHeading += 360.0f;
+
+	return deltaHeading;
 }
