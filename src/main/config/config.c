@@ -710,6 +710,7 @@ static void resetConf(void)
     //MAG
     masterConfig.profile[0].mag_declination = 0;
     DECLINATION=masterConfig.profile[0].mag_declination;
+    masterConfig.mag_calibrated = 0;
 
     //TILT
     masterConfig.tilt0 = 1050;

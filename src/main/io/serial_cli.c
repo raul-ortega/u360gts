@@ -720,6 +720,7 @@ const clivalue_t valueTable[] = {
 	//{ "gps_port",      		   	VAR_UINT8  | TRACKER_VALUE, &masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex, .config.minmax = { 0,  4 } },
 	{ "start_tracking_distance",   	VAR_UINT8  | TRACKER_VALUE, &masterConfig.start_tracking_distance, .config.minmax = { 0,  100 } },
     { "mag_declination",            VAR_INT16  | TRACKER_VALUE, &masterConfig.profile[0].mag_declination, .config.minmax = { -18000,  18000 } },
+	{ "mag_calibrated",          	VAR_UINT8  | TRACKER_VALUE, &masterConfig.mag_calibrated, .config.minmax = { 0,  1 } },
 	{ "min_logic_level",            VAR_UINT8  | PROFILE_VALUE, &masterConfig.min_logic_level, .config.minmax = { 0,  255 } },
 	{ "nopid_min_delta",            VAR_FLOAT  | TRACKER_VALUE, &masterConfig.nopid_min_delta, .config.minmax = { 0,  100 } },
 	{ "nopid_map_angle",            VAR_UINT8  | TRACKER_VALUE, &masterConfig.nopid_map_angle, .config.minmax = { 0,  180 } },

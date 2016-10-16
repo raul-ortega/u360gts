@@ -114,6 +114,7 @@ typedef struct master_t {
     // EASING
     uint16_t pan0;
     uint8_t pan0_calibrated;
+    uint8_t mag_calibrated;
     uint8_t min_pan_speed;
     float offset;
     int8_t offset_trim;
