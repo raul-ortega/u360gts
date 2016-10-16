@@ -141,6 +141,8 @@ uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t 
 	estimatedHeading = current->heading;
 	estimatedSpeed = current->speed;
 	estimatedTime = millis();
+	vartime = estimatedTime - current->time;
+	estimatedDistance = current->speed * vartime *(gain.distance / 100);
 
 	if(interpolationOn) {
 		delta.heading = 0;
@@ -151,14 +153,10 @@ uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t 
 		estimatedHeading = current->heading + delta.heading * (gain.heading / 100.0f);
 		estimatedHeading = fmod(estimatedHeading,360.0f);
 		estimatedSpeed = current->speed + delta.speed * (gain.speed / 100.0f);
-		vartime = estimatedTime - current->time;
-		//estimatedDistance = estimatedSpeed * vartime;
 		estimatedDistance = estimatedSpeed * (vartime / 1000.0f);
-	} else {
-		estimatedDistance = (current->distance * gain.distance / 100);
 	}
 
-	estimatedAccDistance = estimatedDistance;
+	estimatedAccDistance += estimatedDistance;
 
 	angularDistance = estimatedDistance / earthRadius;
 	//
