@@ -29,14 +29,11 @@
 
 float speed;
 uint16_t vartime;
-int16_t residualTime;
-float residualGain;
 uint32_t estimatedTime;
 float estimatedDistance;
 float estimatedAccDistance;
 float estimatedHeading;
 float estimatedSpeed;
-uint16_t estimatedFrequency;
 uint16_t positionIndex=0;
 
 bool interpolationOn;
@@ -129,7 +126,7 @@ void epsVectorAddPoint(epsVector_t *last, epsVector_t *current){
 		iPutPoint(current->time,delta.heading,delta.speed);
 }
 
-uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t *estimated,epsVectorGain_t gain, uint32_t eps_frequency){
+void epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t *estimated,epsVectorGain_t gain, uint32_t eps_frequency){
 	float angularDistance;
 	float headingRadians;
 	iPoint_t delta;
@@ -186,7 +183,6 @@ uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t 
 
 	if(!pvFull())
 		pvPut(estimated,2);
-	return estimatedFrequency;
 }
 
 void epsVectorsInit(epsVector_t *last, epsVector_t *current, epsVector_t *estimated, uint8_t interpolation,uint8_t points){
