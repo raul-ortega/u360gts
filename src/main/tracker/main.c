@@ -206,6 +206,8 @@ bool homeSet_BY_GPS = false;
 
 //TIMERS
 unsigned long servoPanTimer = 0;
+unsigned long servoPanVarTime = 0;
+unsigned long minServoPanVarTime = 0;
 unsigned long servoPanTimerStart = 0;
 unsigned long debugTimer = 0;
 unsigned long easingTimer = 0;
@@ -1213,6 +1215,7 @@ void saveLastTilt(bool writteEeprom){
 void updateCalibratePan(void)
 {
 	uint16_t deltaHeading;
+	float slope;
 	// ENABLE CALIBRATING PAN0 PROCCESS
     if (STATE(CALIBRATE_PAN)) {
     	servoPanTimer = millis();
@@ -1221,11 +1224,13 @@ void updateCalibratePan(void)
         ENABLE_PROTOCOL(TP_CALIBRATING_PAN0);
         pwmPan = 1400;
         pwmWriteServo(panServo, pwmPan);
-        ENABLE_STATE(CALIBRATE_MAG);
         masterConfig.pan0_calibrated = 0;
         masterConfig.pan0_calibrated=0;
         maxPwmPan = 0;
         maxDeltaHeading = 0;
+        if(masterConfig.mag_calibrated==0) {
+                	ENABLE_STATE(CALIBRATE_MAG);
+        }
         return;
      }
 
@@ -1265,6 +1270,7 @@ void updateCalibratePan(void)
     		}
     		else {
     			// CALIBRATION FIHISHED WITH SUCCESS
+    			masterConfig.mag_calibrated==1;
     			DISABLE_PROTOCOL(TP_CALIBRATING_PAN0);
     			masterConfig.pan0 = pwmPan;
     			masterConfig.pan0_calibrated = 1;
@@ -1274,6 +1280,8 @@ void updateCalibratePan(void)
     			pwmPan = masterConfig.pan0 - 600;
     			pwmWriteServo(panServo, pwmPan);
     			servoPanTimer = millis();
+    			trackerPosition.heading = getHeading();
+    			targetPosition.heading = trackerPosition.heading;
     		}
 
     	}
@@ -1282,36 +1290,29 @@ void updateCalibratePan(void)
 
     // CALIBRATE MAX PAN
 	if(PROTOCOL(TP_CALIBRATING_MAXPAN) && !PROTOCOL(TP_CALIBRATING_MAG)) {
-		if(millis() - servoPanTimer > 100) {
-			trackerPosition.heading = getHeading();
-			servoPanTimer = millis();
-			deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
-			targetPosition.heading = trackerPosition.heading;
-
-			if(maxDeltaHeading == 0)
-				maxDeltaHeading = deltaHeading;
-			else {
-				if (pwmPan < masterConfig.pan0 && deltaHeading < maxDeltaHeading && maxPwmPan == 0){
-					maxPwmPan = abs(masterConfig.pan0 - pwmPan);
-				}
-				if (pwmPan > masterConfig.pan0 && deltaHeading > maxDeltaHeading){
-					maxDeltaHeading = deltaHeading;
-					maxPwmPan = pwmPan -  masterConfig.pan0;
-				}
-			}
-
+		trackerPosition.heading = getHeading();
+		deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
+		if(deltaHeading > 450){
+			servoPanVarTime = millis() - servoPanTimer;
+			slope = (servoPanVarTime/10.0f);
+			if(slope > 0.0f)
+				printf("%d, %d,\r\n", pwmPan,servoPanVarTime);
+			// Enviar nuevo pulso
 			pwmPan += 10;
-
-			if(pwmPan > masterConfig.pan0 + 500 ) {
+			if(pwmPan > masterConfig.pan0 + 600) {
+				//Calcular máximo y finalizar
 				masterConfig.max_pid_gain = maxPwmPan;
 				pwmWriteServo(panServo, masterConfig.pan0);
 				DISABLE_PROTOCOL(TP_CALIBRATING_MAXPAN);
 				saveConfigAndNotify();
-			} else
+			} else {
 				pwmWriteServo(panServo, pwmPan);
+				trackerPosition.heading = getHeading();
+				targetPosition.heading = trackerPosition.heading;
+				servoPanTimer = millis();
+			}
 		}
 	}
-
 }
 
 uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2){

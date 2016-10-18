@@ -142,7 +142,7 @@ uint16_t epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t 
 	estimatedSpeed = current->speed;
 	estimatedTime = millis();
 	vartime = estimatedTime - current->time;
-	estimatedDistance = current->speed * vartime *(gain.distance / 100);
+	estimatedDistance = current->speed * (vartime / 1000.0f) *(gain.distance / 100);
 
 	if(interpolationOn) {
 		delta.heading = 0;
