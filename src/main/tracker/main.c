@@ -141,7 +141,7 @@ float map(long x, long in_min, long in_max, long out_min, long out_max);
 void calcEstimatedPosition();
 bool couldLolcalGpsSetHome(bool setByUser);
 bool couldTelemetrySetHome();
-void updateCalibratePan(void);
+void updateCalibratePan();
 uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2);
 //EASING
 int16_t _lastTilt;
@@ -172,9 +172,20 @@ uint16_t pwmPan;
 uint16_t pwmTilt;
 uint16_t _lastPwmTilt;
 
+uint16_t minPwmPan;
+uint16_t maxPwmPan;
 int16_t maxDeltaHeading;
-int16_t maxPwmPan;
 
+//OFFSET TRIM STATE
+typedef enum {
+	PWMPAN0_UNKNOWN,
+	FINDING_OUT_MIN_PWMPAN0,
+	MIN_PWMPAN0_FOUND,
+	FINDING_OUT_MAX_PWMPAN0,
+	MAX_PWMPAN0_FOUND,
+	PWMPAN0_CALCULATED_WITH_SUCCESS
+};
+uint8_t pwmPanState = PWMPAN0_UNKNOWN;
 //TARGET/TRACKER POSITION
 // The target position (lat/lon)
 positionVector_t targetPosition;
@@ -1212,7 +1223,7 @@ void saveLastTilt(bool writteEeprom){
 	}
 }
 
-void updateCalibratePan(void)
+void updateCalibratePan()
 {
 	uint16_t deltaHeading;
 	float slope;
@@ -1224,71 +1235,111 @@ void updateCalibratePan(void)
         ENABLE_PROTOCOL(TP_CALIBRATING_PAN0);
         pwmPan = 1400;
         pwmWriteServo(panServo, pwmPan);
-        masterConfig.pan0_calibrated = 0;
         masterConfig.pan0_calibrated=0;
-        maxPwmPan = 0;
+        minPwmPan = 1500;
+        maxPwmPan = 1500;
         maxDeltaHeading = 0;
         if(masterConfig.mag_calibrated==0) {
                 	ENABLE_STATE(CALIBRATE_MAG);
         }
+        pwmPanState = FINDING_OUT_MIN_PWMPAN0;
         return;
      }
 
-    // CALIBRATE PAN0
-    if(PROTOCOL(TP_CALIBRATING_PAN0) && !PROTOCOL(TP_CALIBRATING_MAG) && masterConfig.pan0_calibrated == 0) {
-    	if(millis() - servoPanTimer > 100) {
-    		trackerPosition.heading = getHeading();
-    		servoPanTimer = millis();
+    //CALIBRATING PWMPAN0
+    if(PROTOCOL(TP_CALIBRATING_PAN0) && !PROTOCOL(TP_CALIBRATING_MAG)){
+    	if(masterConfig.pan0_calibrated == 0){
+			// CALCULATING MIN AND MAX PAN0
+			if(millis() - servoPanTimer > 100 && (pwmPanState == FINDING_OUT_MIN_PWMPAN0 || pwmPanState == FINDING_OUT_MAX_PWMPAN0)){
+				trackerPosition.heading = getHeading();
+				deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
+				if (deltaHeading > 2){
+					// SERVO IS STILL MOVING
+					targetPosition.heading = trackerPosition.heading;
+					if(pwmPanState == FINDING_OUT_MIN_PWMPAN0) {
+						pwmPan++;
+						if(pwmPan > maxPwmPan + 100)
+							pwmPan = minPwmPan - 100;
+					} else if(pwmPanState == FINDING_OUT_MAX_PWMPAN0){
+						pwmPan--;
+						if(pwmPan < minPwmPan - 100)
+							pwmPan = maxPwmPan + 100;
+					}
+					pwmWriteServo(panServo, pwmPan);
+				} else {
+					// SERVO SEEMS TO BE STOPPED
+					if(pwmPanState == FINDING_OUT_MIN_PWMPAN0){
+						pwmPanState = MIN_PWMPAN0_FOUND;
+						minPwmPan = pwmPan;
+						printf("min %d\n", minPwmPan);
+					} else if(pwmPanState == FINDING_OUT_MAX_PWMPAN0){
+						pwmPanState = MAX_PWMPAN0_FOUND;
+						maxPwmPan = pwmPan;
+						if(maxPwmPan < minPwmPan)
+							maxPwmPan = minPwmPan;
+						printf("max %d\n", maxPwmPan);
+					}
+				}
+				servoPanTimer = millis();
+			}
+			//CHECK IF MIN AND MAX PAN0 HAS BEEN WELL CALIBRATED 3 SECONDS LATER
+			if(pwmPanState == MIN_PWMPAN0_FOUND || pwmPanState == MAX_PWMPAN0_FOUND) {
+				if(millis() - servoPanTimer > 3000){
+					trackerPosition.heading = getHeading();
+					// due to interference the magnetometer could oscillate while the servo is stopped
+					deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
+					if (deltaHeading > 50){
+						// SERVO IS STILL MOVING
+						targetPosition.heading = trackerPosition.heading;
+						if(pwmPanState == MIN_PWMPAN0_FOUND) {
+							pwmPanState = FINDING_OUT_MIN_PWMPAN0;
+							pwmPan = 1400;
+						} else if(pwmPanState == MAX_PWMPAN0_FOUND){
+							pwmPanState = FINDING_OUT_MAX_PWMPAN0;
+							pwmPan = 1600;
+						}
+						pwmWriteServo(panServo, pwmPan);
+					}
+					else {
+						// SERVO IS STOPED
+						if(pwmPanState == MIN_PWMPAN0_FOUND){
+							//targetPosition.heading = trackerPosition.heading;
+							pwmPanState = FINDING_OUT_MAX_PWMPAN0;
+							pwmPan = 1600;
+							pwmWriteServo(panServo, pwmPan);
+						} else if(pwmPanState == MAX_PWMPAN0_FOUND) {
+							// CALIBRATION FIHISHED WITH SUCCESS
+							pwmPanState = PWMPAN0_CALCULATED_WITH_SUCCESS;
+							masterConfig.mag_calibrated = 1;
+							masterConfig.pan0_calibrated = 1;
+							DISABLE_PROTOCOL(TP_CALIBRATING_PAN0);
+							masterConfig.min_pan_speed = (uint16_t)(maxPwmPan - minPwmPan)/2.0f;
+							masterConfig.pan0 = minPwmPan + masterConfig.min_pan_speed;
+							printf("Calibration has finished with success:\n");
+							printf("  set pan0=%d\n", masterConfig.pan0);
+							printf("  set min_pan_speed=%d\n", masterConfig.min_pan_speed);
+							printf("  set pan0_calibrated=%d\n", masterConfig.mag_calibrated);
+							saveConfigAndNotify();
+							// ACTIVATE MAX PWMPAN CALCULATION
+							/*ENABLE_PROTOCOL(TP_CALIBRATING_MAXPAN);
+							pwmPan = masterConfig.pan0 - 600;
+							pwmWriteServo(panServo, pwmPan);*/
+							trackerPosition.heading = getHeading();
+							targetPosition.heading = trackerPosition.heading;
+						}
+					}
+					servoPanTimer = millis();
+				}
 
-    		deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
-
-    		if (deltaHeading > 0){
-    			// SERVO IS STILL MOVING
-    			targetPosition.heading = trackerPosition.heading;
-    			pwmPan++;
-    			if(pwmPan > 1600) pwmPan = 1400;
-    			pwmWriteServo(panServo, pwmPan);
-    		} else {
-    			// SERVO SEEMS TO BE STOPPED
-    			masterConfig.pan0_calibrated = 1;
-    			servoPanTimer = millis();
-    		}
+			}
     	}
+
+
+
     }
 
-    // CHECK IF PAN0 HAS BEEN WELL CALIBRATED 3 SECONDS LATER
-    if(PROTOCOL(TP_CALIBRATING_PAN0) && !PROTOCOL(TP_CALIBRATING_MAG) && masterConfig.pan0_calibrated == 1) {
-    	if(millis() - servoPanTimer > 3000){
-    		servoPanTimer = millis();
-   			trackerPosition.heading = getHeading();
-   			// due to interference the magnetometer could oscillate while the servo is stopped
-   			deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
-    		if (deltaHeading > 5){
-    			// SERVO IS STILL MOVING
-    			targetPosition.heading = trackerPosition.heading;
-    			masterConfig.pan0_calibrated = 0;
-    		}
-    		else {
-    			// CALIBRATION FIHISHED WITH SUCCESS
-    			masterConfig.mag_calibrated==1;
-    			DISABLE_PROTOCOL(TP_CALIBRATING_PAN0);
-    			masterConfig.pan0 = pwmPan;
-    			masterConfig.pan0_calibrated = 1;
-    			saveConfigAndNotify();
-     			// ACTIVATE MAX PWMPAN CALCULATION
-    			ENABLE_PROTOCOL(TP_CALIBRATING_MAXPAN);
-    			pwmPan = masterConfig.pan0 - 600;
-    			pwmWriteServo(panServo, pwmPan);
-    			servoPanTimer = millis();
-    			trackerPosition.heading = getHeading();
-    			targetPosition.heading = trackerPosition.heading;
-    		}
 
-    	}
-
-    }
-
-    // CALIBRATE MAX PAN
+    /*// CALIBRATE MAX PAN
 	if(PROTOCOL(TP_CALIBRATING_MAXPAN) && !PROTOCOL(TP_CALIBRATING_MAG)) {
 		trackerPosition.heading = getHeading();
 		deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
@@ -1296,7 +1347,7 @@ void updateCalibratePan(void)
 			servoPanVarTime = millis() - servoPanTimer;
 			slope = (servoPanVarTime/10.0f);
 			if(slope > 0.0f)
-				printf("%d, %d,\r\n", pwmPan,servoPanVarTime);
+				printf("%d, %d,%d\r\n", pwmPan,servoPanVarTime,deltaHeading);
 			// Enviar nuevo pulso
 			pwmPan += 10;
 			if(pwmPan > masterConfig.pan0 + 600) {
@@ -1312,7 +1363,7 @@ void updateCalibratePan(void)
 				servoPanTimer = millis();
 			}
 		}
-	}
+	}*/
 }
 
 uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2){
@@ -1322,12 +1373,12 @@ uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2){
 	deltaHeading = heading1 - heading2;
 
 	if(heading1 < heading2)
-		deltaHeading = deltaHeading + 360;
+		deltaHeading = deltaHeading + 3600;
 
-	if (deltaHeading > 180)
-		deltaHeading -= 360.0f;
-	else if (deltaHeading < -180)
-		deltaHeading += 360.0f;
+	if (deltaHeading > 1800)
+		deltaHeading -= 3600;
+	else if (deltaHeading < -1800)
+		deltaHeading += 3600;
 
 	return (uint16_t) abs(deltaHeading);
 }
