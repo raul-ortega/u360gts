@@ -146,11 +146,11 @@ void epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t *est
 		delta.speed = 0;
 		if(iFull()) {
 			delta = iEval(estimatedTime);
+			estimatedHeading = current->heading + delta.heading * (gain.heading / 100.0f);
+			estimatedHeading = fmod(estimatedHeading,360.0f);
+			estimatedSpeed = current->speed + delta.speed * (gain.speed / 100.0f);
+			estimatedDistance = estimatedSpeed * (vartime / 1000.0f);
 		}
-		estimatedHeading = current->heading + delta.heading * (gain.heading / 100.0f);
-		estimatedHeading = fmod(estimatedHeading,360.0f);
-		estimatedSpeed = current->speed + delta.speed * (gain.speed / 100.0f);
-		estimatedDistance = estimatedSpeed * (vartime / 1000.0f);
 	}
 
 	estimatedAccDistance += estimatedDistance;
