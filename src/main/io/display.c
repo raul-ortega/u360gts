@@ -573,11 +573,20 @@ void showCliModePage(void)
 
 void showTelemetryPage(void){
 
+	uint16_t chars = 0;
+	uint8_t sentences = 0;
+	uint8_t failed_cs = 0;
+
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
 	i2c_OLED_set_line(rowIndex++);
     if(!PROTOCOL(TP_MFD)) {
+    	if(PROTOCOL(TP_GPS_TELEMETRY)){
+    		TinyGPS_stats(&chars,&sentences,&failed_cs);
+    	}
     	if(telemetry_sats>99)
-    		tfp_sprintf(lineBuffer, "Sats: %02d  ", 99);
+    		telemetry_sats = 99;
+    	if(PROTOCOL(TP_GPS_TELEMETRY))
+    		tfp_sprintf(lineBuffer, "Sats: %02d     FCS:%d", telemetry_sats,failed_cs);
     	else
     		tfp_sprintf(lineBuffer, "Sats: %02d  ", telemetry_sats);
 		padLineBuffer();
