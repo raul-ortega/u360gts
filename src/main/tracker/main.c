@@ -424,13 +424,13 @@ void tracker_loop(void)
 
 		updateHeading();
 
-	    updateMenuButton();
+		updateMenuButton();
 
-	    updateSetHomeButton();
+		updateSetHomeButton();
 
-	    updateSetHomeByGPS();
+		updateSetHomeByGPS();
 
-	    updateMFD();
+		updateMFD();
 
 		updateTracking();
 	}
@@ -801,7 +801,7 @@ void updateTargetPosition(void){
 				currentDistance = distance_between(targetLast.lat / TELEMETRY_LATLON_DIVIDER_F,targetLast.lon / TELEMETRY_LATLON_DIVIDER_F,targetPosition.lat / TELEMETRY_LATLON_DIVIDER_F,targetPosition.lon / TELEMETRY_LATLON_DIVIDER_F);
 				currentTimeMillis = millis();
 				currentSpeed = epsVectorSpeed(targetLast.time,currentTimeMillis,currentDistance);
-				if(currentDistance > 0 && (masterConfig.eps_max_speed == 0 || targetCurrent.speed < masterConfig.eps_max_speed)){
+				if(masterConfig.eps_max_speed == 0 || targetCurrent.speed < masterConfig.eps_max_speed){
 					epsVectorLoad(&targetCurrent,targetPosition.lat,targetPosition.lon,currentDistance,targetLast.time,currentTimeMillis);//epsVectorSpeed(targetLast.time,currentTimeMillis,currentDistance);
 					if(homeSet) {
 						if(feature(FEATURE_EPS)) {
@@ -1011,6 +1011,8 @@ void updateSetHomeByGPS(void){
 	} else if(!homeSet && couldLolcalGpsSetHome(false)) {
 		homeReset = true;
 		home_timer_reset = 0;
+	} else if(masterConfig.update_home_by_local_gps == 1 && homeSet && couldLolcalGpsSetHome(false)){
+		setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude);
 	}
 }
 
@@ -1053,7 +1055,10 @@ void updateTracking(void){
 		}
 
 		if(trackingStarted) {
-
+			if(lostTelemetry == true){
+				pwmWritePanServo(masterConfig.pan0);
+				return;
+			}
 			if(!PROTOCOL(TP_SERVOTEST))
 				calcTilt();
 

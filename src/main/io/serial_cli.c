@@ -731,7 +731,8 @@ const clivalue_t valueTable[] = {
 	{ "eps_frequency",     			VAR_UINT16 | TRACKER_VALUE, &masterConfig.eps_frequency, .config.minmax = { 100,  1000 } },
 	{ "eps_max_speed",   	        VAR_UINT8 | TRACKER_VALUE, &masterConfig.eps_max_speed, .config.minmax = { 0,  255 } },
     { "eps_interpolation",   	    VAR_UINT8 | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.eps_interpolation, .config.lookup = { TABLE_OFF_ON } },
-	{ "eps_interpolation_points",   VAR_UINT8 | TRACKER_VALUE, &masterConfig.eps_interpolation_points, .config.minmax = { 2,  10 } }
+	{ "eps_interpolation_points",   VAR_UINT8 | TRACKER_VALUE, &masterConfig.eps_interpolation_points, .config.minmax = { 2,  10 } },
+    { "update_home_by_local_gps",   VAR_UINT8 | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.update_home_by_local_gps, .config.lookup = { TABLE_OFF_ON } }
 };
 
 #define VALUE_COUNT (sizeof(valueTable) / sizeof(clivalue_t))
