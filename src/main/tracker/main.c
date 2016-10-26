@@ -1055,7 +1055,7 @@ void updateTracking(void){
 		}
 
 		if(trackingStarted) {
-			if(lostTelemetry == true){
+			if(lostTelemetry == true && !cliMode){
 				pwmWritePanServo(masterConfig.pan0);
 				return;
 			}
