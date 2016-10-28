@@ -77,41 +77,35 @@ bool iGet(){
 }
 
 iPoint_t iEval(float A){
+
 	int i;
 	int j;
-	int index_i = iQIn;
+	int index_i = iQIn - 1;
 	int index_j = index_i;
-	float dif_Aj;
-	float dif_ij;
-	iPoint_t S;
-	iPoint_t T;
-	iPoint_t K;
-	K.heading = 0.0f;
-	K.speed = 0.0f;
-	for(i=0; i<INT_QSIZE - 1; i++)
+	iPoint_t l;
+	iPoint_t v;
+	v.heading = 0;
+	v.speed = 0;
+	for(i=1; i<INT_QSIZE + 1; i++)
 	{
 		index_i = (index_i + 1) % INT_QSIZE;
-		index_j=iQIn;
-		S.heading = 1.0f;
-		T.heading = 1.0f;
-		S.speed = 1.0f;
-		T.speed = 1.0f;
-		for(j=0; j<INT_QSIZE - 1; j++)
+		index_j = iQIn - 1;;
+		l.heading = iPoints[index_i].heading;
+		l.speed = iPoints[index_i].speed;
+		for(j=1; j<INT_QSIZE + 1; j++)
 		{
 			index_j = (index_j + 1) % INT_QSIZE;
+
 			if(index_j!=index_i)
 			{
-				dif_Aj = (A - iPoints[index_j].time);
-				dif_ij = (iPoints[index_i].time - iPoints[index_j].time);
-				S.heading = S.heading * dif_Aj;
-				T.heading = T.heading * dif_ij;
-				S.speed = S.speed * dif_Aj;
-				T.speed = T.speed * dif_ij;
+				l.heading = (l.heading * (A - iPoints[index_j].time * 1.0f))/(iPoints[index_i].time * 1.0f - iPoints[index_j].time * 1.0f);
+				l.speed = (l.speed * (A - iPoints[index_j].time))/(iPoints[index_i].time - iPoints[index_j].time);
+				//printf("%d %d %d %d %.2f %d %d %d\n",i,j,index_i,index_j,A,iPoints[index_i].time,iPoints[index_j].time);
 			}
 		}
-		K.time = A;
-		K.heading = K.heading +((S.heading / T.heading) * iPoints[index_i].heading);
-		K.speed = K.speed + ((S.speed/T.speed) * iPoints[index_i].speed);
+		v.heading = v.heading + l.heading;
+		v.speed = v.speed + l.speed;
 	}
-	return K;
+	v.time = A;
+	return v;
 }
