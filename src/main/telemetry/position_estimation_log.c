@@ -148,6 +148,10 @@ void addPOSEST_vector(pvQElement_t *epsVector){
 	tfp_sprintf(temp,"%d,%d,%d,%d",epsVector->time,(uint16_t)epsVector->distance,(uint16_t)epsVector->heading,(uint16_t)epsVector->speed);
 	addPOSEST_serialize(temp);
 
+	tfp_sprintf(temp,",%d",(uint16_t) telemetry_course);
+	addPOSEST_serialize(temp);
+
+
 }
 void addPOSEST_trackerData(void){
 	char temp[20];
