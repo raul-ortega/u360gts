@@ -50,7 +50,7 @@ float f_speed_mps();
 float f_speed_kmph();
 bool gpsisdigit(char c);
   //_term[0] = '\0';
-
+uint8_t get_sentence_type(void);
 
 
 //
@@ -446,4 +446,8 @@ float f_hdop()
 
 bool gpsisdigit(char c) {
 	return (c >= '0' && c <= '9');
+}
+
+uint8_t get_sentence_type(void){
+	return _sentence_type;
 }

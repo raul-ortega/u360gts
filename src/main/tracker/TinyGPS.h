@@ -112,6 +112,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   float f_speed_kmph();
   float f_hdop();
 
+  uint8_t get_sentence_type(void);
   //static int library_version() { return _GPS_VERSION; }
 
   float distance_between (float lat1, float long1, float lat2, float long2);
