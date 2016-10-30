@@ -111,7 +111,8 @@ void gps_encodeTargetData(uint8_t c) {
         	telemetry_sats = (int16_t)satellites();
         }
       }
-      gotFix = true;
+      if (get_sentence_type() != _GPS_SENTENCE_GPRMC)
+    	  gotFix = true;
     }
   }
 }
