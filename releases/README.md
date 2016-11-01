@@ -3,10 +3,10 @@
 ##Stable 7.0.0 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.0.0.zip).
 
 ###Bugfixes
-	
-	-After landing the plane below the limit of the starting tracking distance the trakcer coninued spining.
-	
-	-Latitude and Longitude data are discarded from GPRMC frames when using GPS_TELEMETRY protocol to prevent errors when estimating positions.
+
+-After landing the plane below the limit of the starting tracking distance the trakcer coninued spining.
+
+-Latitude and Longitude data are discarded from GPRMC frames when using GPS_TELEMETRY protocol to prevent errors when estimating positions.
 	
 	###New features
 	
