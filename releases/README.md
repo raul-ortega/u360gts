@@ -1,8 +1,8 @@
 #Releases
 
-##Stable 7.0.0 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.0.0.zip)
+##Stable 7.0.0 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.0.0.zip).
 
-    ###Bugfixes
+###Bugfixes
 	
 	-After landing the plane below the limit of the starting tracking distance the trakcer coninued spining.
 	
