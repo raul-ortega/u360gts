@@ -83,6 +83,9 @@ const uint32_t baudRates[] = {0, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 11
 
 #define BAUD_RATE_COUNT (sizeof(baudRates) / sizeof(baudRates[0]))
 
+uint8_t cliCharCounterDetected=0;
+uint8_t cliCharCounter=0;
+
 baudRate_e lookupBaudRateIndex(uint32_t baudRate)
 {
     uint8_t index;
@@ -410,10 +413,6 @@ void waitForSerialPortToFinishTransmitting(serialPort_t *serialPort)
     };
 }
 
-void cliEnter(serialPort_t *serialPort);
-
-uint8_t cliCharCounterDetected=0;
-uint8_t cliCharCounter=0;
 void evaluateOtherData(serialPort_t *serialPort, uint8_t receivedChar)
 {
 #ifndef USE_CLI
@@ -429,9 +428,9 @@ void evaluateOtherData(serialPort_t *serialPort, uint8_t receivedChar)
     		cliCharCounterDetected=1;
     	}
     	else if(cliCharCounterDetected==3) {
+    		cliCharCounter=0;
+    		cliCharCounterDetected=0;
 			cliEnter(serialPort);
-			cliCharCounter=0;
-			cliCharCounterDetected=0;
     	}
     }
 #endif
