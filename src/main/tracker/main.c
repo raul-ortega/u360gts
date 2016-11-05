@@ -750,8 +750,9 @@ void updateReadTelemetry(void){
 
 		LED0_ON;
 
-		if(!PROTOCOL(TP_SERVOTEST)) {
-			gotTelemetry = true;
+		gotTelemetry = true;
+
+		if(!PROTOCOL(TP_SERVOTEST) && lostTelemetry) {
 			lostTelemetry = false;
 			lostTelemetry_timer = 0;
 		}
@@ -769,8 +770,10 @@ void updateTelemetryLost(void){
 		return;
 	}
 
-	if (!gotTelemetry && lostTelemetry_timer == 0)
+	if (!gotTelemetry && lostTelemetry_timer == 0){
 		lostTelemetry_timer = millis();
+		return;
+	}
 
 	if(!gotTelemetry && (millis() - lostTelemetry_timer > 3000)){
 		lostTelemetry = true;
