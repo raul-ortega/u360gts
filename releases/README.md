@@ -1,6 +1,6 @@
 #Releases
 
-## Stable 7.0.0 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.0.0.zip).
+## Stable 7.0.1 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.0.1.zip).
 
 ### Bugfixes
 
