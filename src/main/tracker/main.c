@@ -1145,6 +1145,7 @@ void processMenuFeature(uint16_t featureIndex){
 void processMenuCalibrate(void){
 	exitMenuMode();
 	pwmPan0 = masterConfig.pan0;
+	pwmPanCalibrationPulse = masterConfig.pan_calibration_pulse;
 	ENABLE_STATE(CALIBRATE_MAG);
 }
 
@@ -1242,7 +1243,7 @@ void updateCalibratePan()
     	targetPosition.heading = 0;
         DISABLE_STATE(CALIBRATE_PAN);
         ENABLE_PROTOCOL(TP_CALIBRATING_PAN0);
-        pwmPan = 1400;
+        pwmPan = masterConfig.pan_calibration_pulse;
         pwmWriteServo(panServo, pwmPan);
         masterConfig.pan0_calibrated=0;
         minPwmPan = 1500;

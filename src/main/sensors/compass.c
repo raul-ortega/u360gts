@@ -50,6 +50,7 @@ mag_t mag;                   // mag access functions
 extern uint32_t currentTime; // FIXME dependency on global variable, pass it in instead.
 
 extern uint16_t pwmPan0;
+extern uint16_t pwmPanCalibrationPulse;
 
 extern uint8_t cliMode;
 
@@ -96,7 +97,7 @@ void updateCompass(flightDynamicsTrims_t *magZero)
         displayShowFixedPage(PAGE_CALIBRATING_MAG);
         displayResetPageCycling();
     	displayDisablePageCycling();
-        pwmWriteServo(panServo, 1400);
+        pwmWriteServo(panServo, pwmPanCalibrationPulse);
     }
 
     if (magInit) {              // we apply offset only once mag calibration is done

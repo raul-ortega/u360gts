@@ -700,7 +700,9 @@ static void resetConf(void)
 
     //PAN
     masterConfig.pan0 = 1500;
-    pwmPan0=masterConfig.pan0;
+    pwmPan0 = masterConfig.pan0;
+    masterConfig.pan_calibration_pulse = 1400;
+    pwmPanCalibrationPulse = masterConfig.pan_calibration_pulse;
     masterConfig.pan0_calibrated = 0;
     masterConfig.min_pan_speed = 0;
     masterConfig.offset = 90;
