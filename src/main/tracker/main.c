@@ -1303,10 +1303,10 @@ void updateCalibratePan()
 						targetPosition.heading = trackerPosition.heading;
 						if(pwmPanState == MIN_PWMPAN0_FOUND) {
 							pwmPanState = FINDING_OUT_MIN_PWMPAN0;
-							pwmPan = 1400;
+							pwmPan = masterConfig.pan_calibration_pulse;
 						} else if(pwmPanState == MAX_PWMPAN0_FOUND){
 							pwmPanState = FINDING_OUT_MAX_PWMPAN0;
-							pwmPan = 1600;
+							pwmPan = 1500 + (1500 - masterConfig.pan_calibration_pulse);
 						}
 						pwmWriteServo(panServo, pwmPan);
 					}
@@ -1315,7 +1315,7 @@ void updateCalibratePan()
 						if(pwmPanState == MIN_PWMPAN0_FOUND){
 							//targetPosition.heading = trackerPosition.heading;
 							pwmPanState = FINDING_OUT_MAX_PWMPAN0;
-							pwmPan = 1600;
+							pwmPan = 1500 + (1500 - masterConfig.pan_calibration_pulse);
 							pwmWriteServo(panServo, pwmPan);
 						} else if(pwmPanState == MAX_PWMPAN0_FOUND) {
 							// CALIBRATION FIHISHED WITH SUCCESS

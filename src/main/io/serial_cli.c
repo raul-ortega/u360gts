@@ -702,6 +702,7 @@ const clivalue_t valueTable[] = {
 	{ "pid_divider",           		VAR_UINT8  | TRACKER_VALUE, &masterConfig.max_pid_divider, .config.minmax = { 0,  255 } },
 	{ "pan0",           			VAR_UINT16  | TRACKER_VALUE, &masterConfig.pan0, .config.minmax = { 0,  3000 } },
 	{ "pan0_calibrated",          	VAR_UINT8  | TRACKER_VALUE, &masterConfig.pan0_calibrated, .config.minmax = { 0,  1 } },
+	{ "pan_calibration_pulse",		VAR_UINT16  | TRACKER_VALUE, &masterConfig.pan_calibration_pulse, .config.minmax = { 1,  1500 } },
 	{ "min_pan_speed",     			VAR_INT8   | TRACKER_VALUE, &masterConfig.min_pan_speed, .config.minmax = { 0,  100 } },
 	{ "offset",     				VAR_FLOAT  | TRACKER_VALUE, &masterConfig.offset, .config.minmax = { -360,  360 } },
 	{ "offset_trim",   				VAR_INT8   | TRACKER_VALUE, &masterConfig.offset_trim, .config.minmax = { -20,  20 } },
