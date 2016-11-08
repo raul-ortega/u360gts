@@ -715,8 +715,8 @@ static void resetConf(void)
     masterConfig.mag_calibrated = 0;
 
     //TILT
-    masterConfig.tilt0 = 1050;
-    masterConfig.tilt90 = 2025;
+    masterConfig.tilt0 = 500;
+    masterConfig.tilt90 = 1400;
 
     //EASING
     featureSet(FEATURE_EASING);
@@ -725,8 +725,8 @@ static void resetConf(void)
     masterConfig.easing_min_angle = 4;
     masterConfig.easing_milis = 15;
 
-    //NOPID CONTROL
-    featureClear(FEATURE_NOPID);
+	//NOPID feature by default
+	featureSet(FEATURE_NOPID);
     masterConfig.nopid_min_delta = 0.2;
     masterConfig.nopid_max_speed = 200;
     masterConfig.nopid_map_angle = 90;
@@ -741,20 +741,18 @@ static void resetConf(void)
    	featureSet(FEATURE_DISPLAY);
 
    	//GPS
-   	featureSet(FEATURE_GPS);
-   	if(masterConfig.telemetry_protocol==TP_MFD) {
-   		featureClear(FEATURE_GPS);
-   	}
+   	featureClear(FEATURE_GPS);
    	masterConfig.gps_min_sats = 6;
+   	masterConfig.update_home_by_local_gps = 0;
 
    	// Estimation Position System (EPS)
    	featureClear(FEATURE_EPS);
    	masterConfig.eps_gain.distance = 100;
-   	masterConfig.eps_gain.heading = 100;
-   	masterConfig.eps_gain.speed = 100;
+   	masterConfig.eps_gain.heading = 50;
+   	masterConfig.eps_gain.speed = 60;
    	masterConfig.eps_frequency = 250;
    	masterConfig.eps_max_speed = 0;
-   	masterConfig.eps_interpolation = 1;
+   	masterConfig.eps_interpolation = 0;
    	masterConfig.eps_interpolation_points = 3;
 
    	//VBAT
