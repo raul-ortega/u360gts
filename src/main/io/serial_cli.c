@@ -2443,11 +2443,15 @@ static void cliVersion(char *cmdline)
 }
 static void cliCalibrateCompass(void)
 {
+	pwmPan0 = masterConfig.pan0;
+	pwmPanCalibrationPulse = masterConfig.pan_calibration_pulse;
 	ENABLE_STATE(CALIBRATE_MAG);
 }
 
 static void cliCalibratePan(void)
 {
+	pwmPan0 = masterConfig.pan0;
+	pwmPanCalibrationPulse = masterConfig.pan_calibration_pulse;
 	ENABLE_STATE(CALIBRATE_PAN);
 }
 
