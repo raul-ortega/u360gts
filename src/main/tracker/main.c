@@ -1245,11 +1245,11 @@ void updateCalibratePan()
         ENABLE_PROTOCOL(TP_CALIBRATING_PAN0);
         pwmPan = masterConfig.pan_calibration_pulse;
         pwmWriteServo(panServo, pwmPan);
-        masterConfig.pan0_calibrated=0;
+        masterConfig.pan0_calibrated = 0;
         minPwmPan = 1500;
         maxPwmPan = 1500;
         maxDeltaHeading = 0;
-        if(masterConfig.mag_calibrated==0) {
+        if(masterConfig.mag_calibrated == 0) {
                 	ENABLE_STATE(CALIBRATE_MAG);
         }
         pwmPanState = FINDING_OUT_MIN_PWMPAN0;
