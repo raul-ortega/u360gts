@@ -1,6 +1,13 @@
 #Releases
 
-## Stable 7.0.1 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.0.1.zip).
+## Development 7.1.0 [DOWNLOAD]https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.1.0.zip).
+
+### New features
+
+* Added parameter pan_calibration_pulse to set the pwm pulse to which the calibration starts.
+* Default parameter values changed.
+
+## Stable 7.0.1 [DOWNLOAD]https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.0.1.zip).
 
 ### Bugfixes
 
