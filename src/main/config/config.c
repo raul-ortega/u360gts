@@ -747,6 +747,7 @@ static void resetConf(void)
 
    	// Estimation Position System (EPS)
    	featureClear(FEATURE_EPS);
+   	masterConfig.eps = 1;
    	masterConfig.eps_gain.distance = 100;
    	masterConfig.eps_gain.heading = 50;
    	masterConfig.eps_gain.speed = 60;
