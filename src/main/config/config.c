@@ -751,10 +751,10 @@ static void resetConf(void)
    	masterConfig.eps_gain.heading = 50;
    	masterConfig.eps_gain.speed = 60;
    	masterConfig.eps_frequency = 250;
-   	masterConfig.eps_max_speed = 0;
    	masterConfig.eps_interpolation = 0;
    	masterConfig.eps_interpolation_points = 3;
-
+   	// FILTERS
+   	masterConfig.max_speed_filter = 0;
    	//VBAT
    	featureSet(FEATURE_VBAT);
 
