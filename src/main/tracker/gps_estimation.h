@@ -66,7 +66,7 @@ bool pvPut(epsVector_t *pvector, uint8_t vectorType);
 pvQElement_t pvGet(void);
 void epsVectorsInit(epsVector_t *last, epsVector_t *current, epsVector_t *esttimated, uint8_t interpolation,uint8_t interpolation_points);
 void epsVectorAddPoint(epsVector_t *last, epsVector_t *current);
-void epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t *estimated,epsVectorGain_t gain, uint32_t eps_frequency);
+void epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t *estimated,epsVectorGain_t gain, uint32_t eps_frequency,uint8_t eps_mode);
 void epsVectorLoad(epsVector_t *current,int32_t lat,int32_t lon,float distance, uint32_t last_time, uint32_t currentTime);
 void epsVectorCurrentToLast(epsVector_t *current,epsVector_t *last);
 void epsVectorDecompose(epsVector_t *pvector);

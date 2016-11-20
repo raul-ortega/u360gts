@@ -809,16 +809,19 @@ void updateTargetPosition(void){
 					epsVectorLoad(&targetCurrent,targetPosition.lat,targetPosition.lon,currentDistance,targetLast.time,currentTimeMillis);//epsVectorSpeed(targetLast.time,currentTimeMillis,currentDistance);
 					if(homeSet) {
 						if(feature(FEATURE_EPS)) {
-
 							targetCurrent.heading = course_to(targetLast.lat / TELEMETRY_LATLON_DIVIDER_F,targetLast.lon / TELEMETRY_LATLON_DIVIDER_F,targetCurrent.lat / TELEMETRY_LATLON_DIVIDER_F,targetCurrent.lon / TELEMETRY_LATLON_DIVIDER_F);
+							if(masterConfig.eps > 1){
+								if(!pvFull())
+									pvPut(&targetCurrent,1);
 
-							if(!pvFull())
-								pvPut(&targetCurrent,1);
-
-							if(masterConfig.eps_interpolation) {
-								epsVectorAddPoint(&targetLast,&targetCurrent);
+								if(masterConfig.eps_interpolation) {
+									epsVectorAddPoint(&targetLast,&targetCurrent);
+								}
 							}
-
+							if(masterConfig.eps == 1 || masterConfig.eps == 3) {
+								calcEstimatedPosition();
+								epsVectorTimer = millis();
+							}
 						} else {
 							targetPosition.distance = distance_between(trackerPosition.lat / TELEMETRY_LATLON_DIVIDER_F, trackerPosition.lon / TELEMETRY_LATLON_DIVIDER_F, targetPosition.lat / TELEMETRY_LATLON_DIVIDER_F, targetPosition.lon / TELEMETRY_LATLON_DIVIDER_F);
 							targetPosition.heading = course_to(trackerPosition.lat / TELEMETRY_LATLON_DIVIDER_F, trackerPosition.lon / TELEMETRY_LATLON_DIVIDER_F, targetPosition.lat / TELEMETRY_LATLON_DIVIDER_F, targetPosition.lon / TELEMETRY_LATLON_DIVIDER_F) * 10.0f;
@@ -828,7 +831,7 @@ void updateTargetPosition(void){
 				}
 				gotFix = false;
 			}
-			if(feature(FEATURE_EPS))
+			if(feature(FEATURE_EPS) && masterConfig.eps > 1)
 				calcEstimatedPosition();
 		}
 	}
@@ -836,8 +839,8 @@ void updateTargetPosition(void){
 
 void calcEstimatedPosition(){
 	if(homeSet && lostTelemetry == false) {
-		if(millis()- epsVectorTimer > masterConfig.eps_frequency){
-			epsVectorEstimate(&targetLast,&targetCurrent,&targetEstimated,masterConfig.eps_gain,masterConfig.eps_frequency);
+		if(masterConfig.eps == 1 || (millis()- epsVectorTimer > masterConfig.eps_frequency && masterConfig.eps > 1)){
+			epsVectorEstimate(&targetLast,&targetCurrent,&targetEstimated,masterConfig.eps_gain,masterConfig.eps_frequency,masterConfig.eps);
 			targetPosition.distance = distance_between(trackerPosition.lat / TELEMETRY_LATLON_DIVIDER_F, trackerPosition.lon / TELEMETRY_LATLON_DIVIDER_F, targetPosition.lat / TELEMETRY_LATLON_DIVIDER_F, targetPosition.lon / TELEMETRY_LATLON_DIVIDER_F);
 			targetPosition.heading = course_to(trackerPosition.lat / TELEMETRY_LATLON_DIVIDER_F, trackerPosition.lon / TELEMETRY_LATLON_DIVIDER_F, targetEstimated.lat / TELEMETRY_LATLON_DIVIDER_F, targetEstimated.lon / TELEMETRY_LATLON_DIVIDER_F) * 10.0f;
 			epsVectorTimer = millis();

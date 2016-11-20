@@ -126,7 +126,7 @@ void epsVectorAddPoint(epsVector_t *last, epsVector_t *current){
 		iPutPoint(current->time,delta.heading,delta.speed);
 }
 
-void epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t *estimated,epsVectorGain_t gain, uint32_t eps_frequency){
+void epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t *estimated,epsVectorGain_t gain, uint32_t eps_frequency,uint8_t eps_mode){
 	float angularDistance;
 	float headingRadians;
 	iPoint_t delta;
@@ -138,23 +138,27 @@ void epsVectorEstimate(epsVector_t *last, epsVector_t *current, epsVector_t *est
 	estimatedHeading = current->heading;
 	estimatedSpeed = current->speed;
 	estimatedTime = millis();
-	vartime = estimatedTime - current->time;
-	estimatedDistance = current->speed * (vartime / 1000.0f) *(gain.distance / 100.0f);
 
-	if(interpolationOn) {
-		delta.heading = 0;
-		delta.speed = 0;
-		if(iFull()) {
-			delta = iEval(estimatedTime);
-			estimatedHeading = current->heading + delta.heading * (gain.heading / 100.0f);
-			if(estimatedHeading < 0)
-				estimatedHeading += 360;
-			if(estimatedHeading > 360)
-				estimatedHeading -= 360;
-			//estimatedHeading = fmod(estimatedHeading,360.0f);
-			estimatedSpeed = current->speed + delta.speed * (gain.speed / 100.0f);
-			estimatedDistance = estimatedSpeed * (vartime / 1000.0f);
+	if(eps_mode > 1) {
+		vartime = estimatedTime - current->time;
+		estimatedDistance = current->speed * (vartime / 1000.0f) *(gain.distance / 100.0f);
+		if(interpolationOn) {
+			delta.heading = 0;
+			delta.speed = 0;
+			if(iFull()) {
+				delta = iEval(estimatedTime);
+				estimatedHeading = current->heading + delta.heading * (gain.heading / 100.0f);
+				if(estimatedHeading < 0)
+					estimatedHeading += 360;
+				if(estimatedHeading > 360)
+					estimatedHeading -= 360;
+				//estimatedHeading = fmod(estimatedHeading,360.0f);
+				estimatedSpeed = current->speed + delta.speed * (gain.speed / 100.0f);
+				estimatedDistance = estimatedSpeed * (vartime / 1000.0f);
+			}
 		}
+	} else if(eps_mode == 1) {
+		estimatedDistance = (current->distance * gain.distance / 100.0);
 	}
 
 	estimatedAccDistance += estimatedDistance;
