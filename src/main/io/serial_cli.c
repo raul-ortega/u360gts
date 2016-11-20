@@ -726,6 +726,7 @@ const clivalue_t valueTable[] = {
 	{ "nopid_min_delta",            VAR_FLOAT  | TRACKER_VALUE, &masterConfig.nopid_min_delta, .config.minmax = { 0,  100 } },
 	{ "nopid_map_angle",            VAR_UINT8  | TRACKER_VALUE, &masterConfig.nopid_map_angle, .config.minmax = { 0,  180 } },
     { "nopid_max_speed",            VAR_UINT16 | TRACKER_VALUE, &masterConfig.nopid_max_speed, .config.minmax = { 0,  500 } },
+	{ "eps",     					VAR_UINT8 | TRACKER_VALUE, &masterConfig.eps, .config.minmax = { 1,  3 } },
 	{ "eps_distance_gain",     		VAR_UINT16 | TRACKER_VALUE, &masterConfig.eps_gain.distance, .config.minmax = { 1,  1000 } },
 	{ "eps_heading_gain",     		VAR_UINT16 | TRACKER_VALUE, &masterConfig.eps_gain.heading, .config.minmax = { 1,  1000 } },
 	{ "eps_speed_gain",     		VAR_UINT16 | TRACKER_VALUE, &masterConfig.eps_gain.speed, .config.minmax = { 1,  1000 } },

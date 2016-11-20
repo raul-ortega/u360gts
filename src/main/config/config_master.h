@@ -136,6 +136,7 @@ typedef struct master_t {
 	float nopid_min_delta;
 	uint16_t nopid_max_speed;
 	uint8_t nopid_map_angle;
+	uint8_t eps;
 	epsVectorGain_t eps_gain;
 	uint16_t eps_frequency;
 	uint8_t eps_max_speed;
