@@ -139,11 +139,11 @@ typedef struct master_t {
 	uint8_t eps;
 	epsVectorGain_t eps_gain;
 	uint16_t eps_frequency;
-	uint8_t eps_max_speed;
 	uint8_t eps_interpolation;
 	uint8_t eps_interpolation_points;
 	uint8_t update_home_by_local_gps;
 	uint16_t pan_calibration_pulse;
+	uint8_t max_speed_filter;
 } master_t;
 
 extern master_t masterConfig;
