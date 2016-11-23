@@ -254,6 +254,8 @@ typedef enum {
 
 uint8_t OFFSET_TRIM_STATE = TRIM_STATE_DISABLED;
 uint8_t EPS_MODE;
+uint16_t EPS_DISTANCE_GAIN;
+uint16_t EPS_FREQUENCY;
 //DEBUG VARS
 uint16_t debugIndex=0;
 
@@ -328,6 +330,7 @@ void tracker_setup(void)
   }
 
   setEpsMode();
+  updateEPSParams();
 
   OFFSET_TRIM = masterConfig.offset_trim;
   OFFSET = masterConfig.offset - OFFSET_TRIM;
@@ -1468,4 +1471,9 @@ uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2){
 
 void setEpsMode(void){
 	EPS_MODE =  masterConfig.eps;
+}
+
+void updateEPSParams(){
+	EPS_DISTANCE_GAIN = masterConfig.eps_gain.distance;
+	EPS_FREQUENCY = masterConfig.eps_frequency;
 }
