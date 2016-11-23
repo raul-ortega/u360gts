@@ -1287,7 +1287,8 @@ void proccessMenu(uint8_t menuButton) {
 		} else if (menuState == MENU_TELEMETRY_BAUDRATE) {
 			processMenuTelemetryBaudrate();
 		}
-		//indexMenuOption=0;
+		if(menuState != MENU_EPS_DISTANCEGAIN && menuState != MENU_EPS_FREQUENCY)
+			indexMenuOption=0;
 		displayShowFixedPage(PAGE_MENU);
 	}
 
