@@ -47,6 +47,9 @@ typedef enum {
 	MENU_SET,
 	MENU_SOFTSERIAL,*/
 	MENU_EPS,
+	MENU_EPS_MODE,
+	MENU_EPS_DISTANCEGAIN,
+	MENU_EPS_FREQUENCY,
 	MENU_EASING,
 	MENU_EXIT
 } menuStates_e;
@@ -103,6 +106,30 @@ typedef enum {
     OP_250000,
 	OP_TELEMETRY_BAUDRATE_EXIT,
 } telemetryBaudlMenu_e;
+
+typedef enum {
+    OP_MODE,
+	OP_DISTANCEGAIN,
+	OP_FREQUENCY,
+    OP_EPS_SAVE,
+	OP_EPS_EXIT
+} epsMenu_e;
+
+typedef enum {
+    OP_DISABLED,
+	OP_MODE1,
+	OP_MODE2,
+    OP_MODE3,
+	OP_EPS_MODE_EXIT
+} epsModeMenu_e;
+
+typedef enum {
+    OP_INCREASE10,
+	OP_DECREASE10,
+	OP_INCREASE1,
+	OP_DCREASE1,
+	OP_INCREASEDECREASE_EXIT
+} increaseDecreaseMenu_e;
 
 void updateDisplay(void);
 
