@@ -87,6 +87,8 @@ extern int8_t OFFSET_TRIM;
 extern uint8_t OFFSET_TRIM_STATE;
 
 extern uint8_t EPS_MODE;
+extern uint16_t EPS_DISTANCE_GAIN;
+extern uint16_t EPS_FREQUENCY;
 
 int16_t master_telemetry_protocol;
 
@@ -585,6 +587,16 @@ void showMainMenuPage(){
 			//i2c_OLED_send_string(lineBuffer);
 		}
 		i2c_OLED_send_string(lineBuffer);
+	}
+
+	if(currentMenu == epsParamIncreaseDecrease){
+		i2c_OLED_set_line(rowIndex++);
+		if(menuState == MENU_EPS_DISTANCEGAIN)
+			tfp_sprintf(lineBuffer, "Dist. gain: %d", EPS_DISTANCE_GAIN);
+		else
+			tfp_sprintf(lineBuffer, "Frequency: %d", EPS_FREQUENCY);
+		i2c_OLED_send_string(lineBuffer);
+
 	}
 }
 
