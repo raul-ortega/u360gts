@@ -86,6 +86,8 @@ extern int8_t OFFSET_TRIM;
 
 extern uint8_t OFFSET_TRIM_STATE;
 
+extern uint8_t EPS_MODE;
+
 int16_t master_telemetry_protocol;
 
 controlRateConfig_t *getControlRateConfig(uint8_t profileIndex);
@@ -230,6 +232,21 @@ static const char* const telemetryBaudrateMenu[] = {
 	"EXIT         "
 };
 
+static const char* const epsModeMenu[]={
+	"DISABLED     ",
+	"MODE 1		  ",
+	"MODE 2       ",
+	"MODE 1+2     ",
+	"EXIT"
+};
+
+static const char* const epsMenu[]={
+	"MODE         ",
+	"DISTANCE GAIN",
+	"FREQUENCY    ",
+	"EXIT"
+};
+
 static const char* const epsParamIncreaseDecrease[] = {
 	"+10          ",
 	"-10          ",
@@ -363,8 +380,10 @@ void showTitle()
     	for(i=0;i<10;i++) {
     		if(master_telemetry_protocol & (1<<i)) {
     			i2c_OLED_send_string(telemetry_protocols_Titles[i]);
-    			if(feature(FEATURE_EPS) && !PROTOCOL(TP_MFD))
-    				i2c_OLED_send_string(" EPS");
+    			if(feature(FEATURE_EPS) && !PROTOCOL(TP_MFD)){
+    				tfp_sprintf(lineBuffer, " EPS%s",EPS_MODE);
+    				i2c_OLED_send_string(lineBuffer);
+    			}
     			else
     				i2c_OLED_send_string("    ");
     			break;
@@ -507,8 +526,23 @@ void showMainMenuPage(){
 			menuTitleIndex = MENU_GPS-1;
 			break;
 		case MENU_EPS:
-			currentMenu = enableDisableMenu;
-			menuItems = OP_ENABLEDISABLE_EXIT+1;
+			currentMenu = epsMenu;
+			menuItems = OP_EPS_EXIT+1;
+			menuTitleIndex = MENU_EPS-1;
+			break;
+		case MENU_EPS_MODE:
+			currentMenu = epsModeMenu;
+			menuItems = OP_EPS_MODE_EXIT+1;
+			menuTitleIndex = MENU_EPS-1;
+			break;
+		case MENU_EPS_DISTANCEGAIN:
+			currentMenu = epsParamIncreaseDecrease;
+			menuItems = OP_INCREASEDECREASE_EXIT+1;
+			menuTitleIndex = MENU_EPS-1;
+			break;
+		case MENU_EPS_FREQUENCY:
+			currentMenu = epsParamIncreaseDecrease;
+			menuItems = OP_INCREASEDECREASE_EXIT+1;
 			menuTitleIndex = MENU_EPS-1;
 			break;
 		case MENU_EASING:

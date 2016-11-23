@@ -143,6 +143,7 @@ bool couldLolcalGpsSetHome(bool setByUser);
 bool couldTelemetrySetHome();
 void updateCalibratePan();
 uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2);
+void setEpsMode(void);
 //EASING
 int16_t _lastTilt;
 int16_t tilt;
@@ -250,7 +251,7 @@ typedef enum {
 	DISABLING_TRIM_STATE,
 	TRIM_STATE_DISABLED_BY_USER
 };
-
+uint8_t  EPS_MODE;
 uint8_t OFFSET_TRIM_STATE = TRIM_STATE_DISABLED;
 
 //DEBUG VARS
@@ -325,6 +326,8 @@ void tracker_setup(void)
     	ENABLE_PROTOCOL(TP_LTM_FRSKYD);
     	break;
   }
+
+  setEpsMode();
 
   OFFSET_TRIM = masterConfig.offset_trim;
   OFFSET = masterConfig.offset - OFFSET_TRIM;
@@ -1129,8 +1132,69 @@ void processMenuGPS(void){
 }
 
 void processMenuEPS(void){
-	processMenuFeature(FEATURE_EPS);
+	/*processMenuFeature(FEATURE_EPS);*/
+		menuOption = indexMenuOption % (OP_EPS_EXIT+1);
+	if(menuOption == OP_EPS_EXIT){
+		menuState = MENU_ROOT;
+		indexMenuOption = OP_EXIT;
+	}
+	if(menuOption == OP_EPS_SAVE) {
+		writeEEPROM();
+		systemReset();
+	} else if(menuOption == OP_MODE)
+		menuState = MENU_EPS_MODE;
+	else if(menuOption == OP_DISTANCEGAIN)
+		menuState = MENU_EPS_DISTANCEGAIN;
+	else if(menuOption == OP_FREQUENCY)
+		menuState = MENU_EPS_FREQUENCY;
+	else
+		menuState = MENU_TELEMETRY;
 }
+
+void processMenuEPSMode(void){
+	menuOption = indexMenuOption % (OP_EPS_MODE_EXIT+1);
+	if(menuOption == OP_EPS_MODE_EXIT)
+		menuState = MENU_EPS;
+	else {
+		masterConfig.eps = (1 << (2+menuOption));
+		setEpsMode();
+		if(masterConfig.eps == 0)
+			featureSet(FEATURE_EPS);
+		else
+			featureClear(FEATURE_EPS);
+		menuState = MENU_EPS;
+	}
+	indexMenuOption = OP_EPS_SAVE;
+}
+
+void processMenuEPSIncreasDecreaseParamValue(uint16_t *param){
+	menuOption = indexMenuOption % (OP_INCREASEDECREASE_EXIT+1);
+	if(menuOption == OP_INCREASEDECREASE_EXIT)
+		menuState = MENU_EPS;
+	else {
+		switch(menuOption){
+		case 0:
+			*param +=10;
+			break;
+		case 1:
+			*param -=10;
+			break;
+		case 2:
+			*param +=1;
+			break;
+		case 3:
+			*param -=1;
+			break;
+		}
+		if(*param < 1)
+			*param = 1;
+		if(*param > 1000)
+			*param = 1000;
+		menuState = MENU_EPS;
+	}
+	indexMenuOption = menuOption; //OP_EPS_SAVE;
+}
+
 void processMenuEASING(void){
 	processMenuFeature(FEATURE_EASING);
 }
@@ -1206,7 +1270,13 @@ void proccessMenu(uint8_t menuButton) {
 			processMenuGPS();
 		} else if(menuState == MENU_EPS) {
 			processMenuEPS();
-		} else if(menuState == MENU_EASING) {
+		} else if(menuState == MENU_EPS_MODE) {
+			processMenuEPSMode();
+		} else if(menuState == MENU_EPS_DISTANCEGAIN) {
+			processMenuEPSIncreasDecreaseParamValue(&masterConfig.eps_gain.distance);
+		} else if(menuState == MENU_EPS_FREQUENCY) {
+			processMenuEPSIncreasDecreaseParamValue(&masterConfig.eps_frequency);
+		}else if(menuState == MENU_EASING) {
 			processMenuEASING();
 		// Telemetry
 		} else if(menuState == MENU_TELEMETRY) {
@@ -1394,4 +1464,8 @@ uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2){
 		deltaHeading += 3600;
 
 	return (uint16_t) abs(deltaHeading);
+}
+
+void setEpsMode(void){
+	EPS_MODE =  masterConfig.eps;
 }
