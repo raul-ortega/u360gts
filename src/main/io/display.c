@@ -383,11 +383,11 @@ void showTitle()
     		if(master_telemetry_protocol & (1<<i)) {
     			i2c_OLED_send_string(telemetry_protocols_Titles[i]);
     			if(feature(FEATURE_EPS) && !PROTOCOL(TP_MFD)){
-    				tfp_sprintf(lineBuffer, " EPS%s",EPS_MODE);
+    				tfp_sprintf(lineBuffer, " EPS%d",EPS_MODE);
     				i2c_OLED_send_string(lineBuffer);
     			}
     			else
-    				i2c_OLED_send_string("    ");
+    				i2c_OLED_send_string("      ");
     			break;
     		}
     	}
