@@ -254,8 +254,6 @@ static const char* const epsMenu[]={
 static const char* const epsParamIncreaseDecrease[] = {
 	"+10          ",
 	"-10          ",
-	"+1           ",
-	"-1           ",
 	"EXIT         "
 };
 
