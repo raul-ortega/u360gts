@@ -318,7 +318,7 @@ void updateRxStatus(void)
     i2c_OLED_send_char(rxStatus);
 }
 
-void updateFailsafeStatus(void)
+/*void updateFailsafeStatus(void)
 {
     char failsafeIndicator = '?';
     switch (failsafePhase()) {
@@ -343,7 +343,7 @@ void updateFailsafeStatus(void)
     }
     i2c_OLED_set_xy(SCREEN_CHARACTER_COLUMN_COUNT - 3, 0);
     i2c_OLED_send_char(failsafeIndicator);
-}
+}*/
 
 void showTitle()
 {
