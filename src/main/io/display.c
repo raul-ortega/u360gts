@@ -234,17 +234,19 @@ static const char* const telemetryBaudrateMenu[] = {
 
 static const char* const epsModeMenu[]={
 	"DISABLED     ",
-	"MODE 1		  ",
+	"MODE 1       ",
 	"MODE 2       ",
 	"MODE 1+2     ",
-	"EXIT"
+	"SAVE         ",
+	"EXIT         "
 };
 
 static const char* const epsMenu[]={
 	"MODE         ",
 	"DISTANCE GAIN",
 	"FREQUENCY    ",
-	"EXIT"
+	"SAVE         ",
+	"EXIT         "
 };
 
 static const char* const epsParamIncreaseDecrease[] = {
