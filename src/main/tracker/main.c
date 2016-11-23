@@ -1156,7 +1156,7 @@ void processMenuEPSMode(void){
 	if(menuOption == OP_EPS_MODE_EXIT)
 		menuState = MENU_EPS;
 	else {
-		masterConfig.eps = (1 << (2+menuOption));
+		masterConfig.eps = menuOption;
 		setEpsMode();
 		if(masterConfig.eps == 0)
 			featureSet(FEATURE_EPS);
