@@ -1,5 +1,27 @@
 #Releases
 
+## Development 7.2.0 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.2.0.zip).
+
+### New features
+
+* **EPS has now 3 modes:**
+
+- Mode 1: it is the first implementation in version 5.0.: only param eps_distance_gain is needed. In this mode, every time a position data is received a estimation is calculated.
+
+- Mode 2: it is the current EPS system, parameters eps_distance_gain and eps_frequency are mandatory. In this mode a estimation is calculated every time the clock reach the eps_frequency. No estimation is calculated when a position data is received.
+
+- Mode 3 is a mix of mode 1 and mode 2: estimations are calculated every time the timer reach the eps_frequency. The timer is reset every time a new position data is received.
+
+* **EPS on menú display:**
+
+A new menu for EPS has been implemented. It allows:
+
+- Disabling EP feature.
+
+- Setting the EPS mode.
+
+- Changing the values or parameters eps_distance_gain and eps_frequency.
+
 ## Development 7.1.0 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.1.0.zip).
 
 ### New features
