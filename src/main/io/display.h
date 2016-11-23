@@ -124,10 +124,8 @@ typedef enum {
 } epsModeMenu_e;
 
 typedef enum {
-    OP_INCREASE10,
-	OP_DECREASE10,
-	OP_INCREASE1,
-	OP_DCREASE1,
+    OP_INCREASE,
+	OP_DECREASE,
 	OP_INCREASEDECREASE_EXIT
 } increaseDecreaseMenu_e;
 
