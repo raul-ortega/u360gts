@@ -1158,15 +1158,16 @@ void processMenuEPSMode(void){
 	menuOption = indexMenuOption % (OP_EPS_MODE_EXIT+1);
 	if(menuOption == OP_EPS_MODE_EXIT)
 		menuState = MENU_EPS;
-	else {
+	else if(menuOption >= OP_DISABLED && menuOption <= OP_MODE3){
 		masterConfig.eps = menuOption;
 		setEpsMode();
-		if(masterConfig.eps == 0)
-			featureSet(FEATURE_EPS);
-		else
+		if(masterConfig.eps == OP_DISABLED)
 			featureClear(FEATURE_EPS);
+		else
+			featureSet(FEATURE_EPS);
 		menuState = MENU_EPS;
-	}
+	} else
+		menuState = MENU_TELEMETRY;
 	indexMenuOption = OP_EPS_SAVE;
 }
 
@@ -1176,24 +1177,19 @@ void processMenuEPSIncreasDecreaseParamValue(uint16_t *param){
 		menuState = MENU_EPS;
 	else {
 		switch(menuOption){
-		case 0:
+		case OP_INCREASE:
 			*param +=10;
 			break;
-		case 1:
+		case OP_DECREASE:
 			*param -=10;
-			break;
-		case 2:
-			*param +=1;
-			break;
-		case 3:
-			*param -=1;
 			break;
 		}
 		if(*param < 1)
 			*param = 1;
 		if(*param > 1000)
 			*param = 1000;
-		menuState = MENU_EPS;
+		updateEPSParams();
+		//menuState = MENU_EPS;
 	}
 	indexMenuOption = menuOption; //OP_EPS_SAVE;
 }
@@ -1291,7 +1287,7 @@ void proccessMenu(uint8_t menuButton) {
 		} else if (menuState == MENU_TELEMETRY_BAUDRATE) {
 			processMenuTelemetryBaudrate();
 		}
-		indexMenuOption=0;
+		//indexMenuOption=0;
 		displayShowFixedPage(PAGE_MENU);
 	}
 
