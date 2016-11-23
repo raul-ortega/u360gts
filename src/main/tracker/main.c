@@ -253,7 +253,7 @@ typedef enum {
 };
 
 uint8_t OFFSET_TRIM_STATE = TRIM_STATE_DISABLED;
-uint8_t  EPS_MODE;
+uint8_t EPS_MODE;
 //DEBUG VARS
 uint16_t debugIndex=0;
 
