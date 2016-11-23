@@ -230,6 +230,14 @@ static const char* const telemetryBaudrateMenu[] = {
 	"EXIT         "
 };
 
+static const char* const epsParamIncreaseDecrease[] = {
+	"+10          ",
+	"-10          ",
+	"+1           ",
+	"-1           ",
+	"EXIT         "
+};
+
 uint8_t indexMenuOption = 0;
 uint8_t maxMenuOptions = 5;
 uint8_t menuState = 0;
