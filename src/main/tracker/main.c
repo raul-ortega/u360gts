@@ -691,6 +691,9 @@ void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int1
   tracker->lat = lat;
   tracker->lon = lon;
   tracker->alt = alt;
+  if(feature(FEATURE_DEBUG)) {
+	  tracker->lat = 47403583; tracker->lon = 8535850; tracker->alt = 474;
+  }
   homeSet = true;
   homeSet_BY_GPS = true;
   homeReset = false;
@@ -1030,6 +1033,9 @@ void updateSetHomeByGPS(void){
 }
 
 bool couldLolcalGpsSetHome(bool setByUser){
+	if(feature(FEATURE_DEBUG)){
+		  return true;
+	}
 	return ((setByUser && GPS_numSat >= 4) || (!setByUser && GPS_numSat >= masterConfig.gps_min_sats)) && feature(FEATURE_GPS) && STATE(GPS_FIX);
 }
 
