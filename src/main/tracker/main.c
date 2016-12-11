@@ -687,7 +687,7 @@ void setHomeByTelemetry(positionVector_t *tracker, positionVector_t *target) {
   epsVectorLoad(&targetCurrent,target->lat,target->lon,0,0,millis());
 }
 
-void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int16_t alt) {
+void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int16_t alt, bool home_updated) {
   tracker->lat = lat;
   tracker->lon = lon;
   tracker->alt = alt;
@@ -698,8 +698,10 @@ void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int1
   homeSet_BY_GPS = true;
   homeReset = false;
   home_timer_reset = 0;
-  epsVectorLoad(&targetLast,lat,lon,0,0,0);
-  epsVectorLoad(&targetCurrent,lat,lon,0,0,millis());
+  if(!home_updated) {
+	  epsVectorLoad(&targetLast,lat,lon,0,0,0);
+	  epsVectorLoad(&targetCurrent,lat,lon,0,0,millis());
+  }
 }
 
 void updateBatteryStatus(void){
@@ -976,7 +978,7 @@ void updateSetHomeButton(void){
 						setHomeByTelemetry(&trackerPosition, &targetPosition);
 					// By local GPS because telemetry hasn't got enought sats and we don't want wait more time.
 					else if(!homeSet && couldLolcalGpsSetHome(true))
-						setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude);
+						setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude,false);
 				// RESET HOME
 				} else if (homeButtonCurrentState && (millis() - home_timer > 2000) && !PROTOCOL(TP_MFD)) {
 					if(homeSet && !homeReset && !trackingStarted){
@@ -1023,12 +1025,12 @@ void updateSetHomeByGPS(void){
 		homeReset = false;
 		home_timer_reset = 0;
 		//if((!homeSet || (homeSet && homeSet_BY_GPS)) && feature(FEATURE_GPS) && STATE(GPS_FIX) && (GPS_numSat >= masterConfig.home_min_sats)) // || GPS_numSat>3))
-		setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude);
+		setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude,false);
 	} else if(!homeSet && couldLolcalGpsSetHome(false)) {
 		homeReset = true;
 		home_timer_reset = 0;
 	} else if(masterConfig.update_home_by_local_gps == 1 && homeSet && couldLolcalGpsSetHome(false)){
-		setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude);
+		setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude,true);
 	}
 }
 
