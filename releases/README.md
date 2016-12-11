@@ -1,5 +1,11 @@
 #Releases
 
+## Development 7.2.1 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.2.1.zip).
+
+### Bugfixes
+
+* Solved the erratic movements when using Local GPS and update_home_by_local_gps is set to ON for continuous home position updating.
+
 ## Development 7.2.0 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.2.0.zip).
 
 ### New features
