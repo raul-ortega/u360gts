@@ -494,7 +494,7 @@ static void resetConf(void)
 
     resetSerialConfig(&masterConfig.serialConfig);
 
-    masterConfig.looptime = 3500;
+    masterConfig.looptime = 1000;
     masterConfig.emf_avoidance = 0;
     masterConfig.i2c_overclock = 0;
 
@@ -760,7 +760,7 @@ static void resetConf(void)
    	featureSet(FEATURE_VBAT);
 
    	//BUTTONS
-   	masterConfig.min_logic_level=15;
+   	masterConfig.min_logic_level=60;
 
    	//TELEMETRY OUT
    	featureSet(FEATURE_TELEMETRY);
