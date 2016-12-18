@@ -1,5 +1,11 @@
 #Releases
 
+## Development 7.2.2 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.2.2.zip).
+
+### Bugfixes
+
+* Default looptime has been set to 100 to solve the overrun on uart when receiving telemetry at frecuency higer than 2 Hz. It has been tested up to 10 Hz with GPS Telemetry and there are no errors in checksums. In order to get buttons working well, the parameter min_logic_level has been set to 60 by default.
+
 ## Development 7.2.1 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.2.1.zip).
 
 ### Bugfixes
