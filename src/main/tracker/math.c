@@ -103,6 +103,8 @@ float easeTilt(float t, float b, float c, float d) {
 	  return easeOutCirc(t, b, c, d);
   else if(masterConfig.easing == EASE_OUT_EXPO)
  	  return easeOutExpo(t, b, c, d);
+  else if(masterConfig.easing == EASE_INOUT_CUBIC)
+ 	  return easeInOutCubic(t, b, c, d);
   else if(masterConfig.easing == EASE_OUT_CUBIC)
  	  return easeOutCubic(t, b, c, d);
   else
@@ -124,8 +126,16 @@ float easeOutExpo(float t, float b, float c, float d) {
 	return (t==d) ? b+c : c * (-pow(2, -10 * t/d) + 1) + b;
 }
 
+float easeInOutCubic(float t, float b, float c, float d) {
+	t /= d/2;
+	if (t < 1) return c/2*t*t*t + b;
+	t -= 2;
+	return c/2*(t*t*t + 2) + b;
+}
+
 float easeOutCubic(float t, float b, float c, float d) {
 	t /= d;
 	t--;
 	return c*(t*t*t + 1) + b;
 }
+
