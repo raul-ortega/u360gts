@@ -92,7 +92,8 @@ float lonScale = 1.0f;
 enum {
 	EASE_OUT_QRT = 1,
 	EASE_OUT_CIRC,
-	EASE_OUT_EXPO
+	EASE_OUT_EXPO,
+	EASE_OUT_CUBIC,
 };
 
 float easeTilt(float t, float b, float c, float d) {
@@ -102,6 +103,8 @@ float easeTilt(float t, float b, float c, float d) {
 	  return easeOutCirc(t, b, c, d);
   else if(masterConfig.easing == EASE_OUT_EXPO)
  	  return easeOutExpo(t, b, c, d);
+  else if(masterConfig.easing == EASE_OUT_CUBIC)
+ 	  return easeOutCubic(t, b, c, d);
   else
 	  return easeOutQuart(t, b, c, d);
 }
@@ -119,4 +122,10 @@ float easeOutCirc(float t, float b, float c, float d) {
 
 float easeOutExpo(float t, float b, float c, float d) {
 	return (t==d) ? b+c : c * (-pow(2, -10 * t/d) + 1) + b;
+}
+
+float easeOutCubic(float t, float b, float c, float d) {
+	t /= d;
+	t--;
+	return c*(t*t*t + 1) + b;
 }
