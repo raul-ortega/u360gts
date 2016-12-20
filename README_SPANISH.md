@@ -73,4 +73,8 @@ Podrás configurar e inteactuar con tu antenna tracker a través de [u360gts-con
 
 También permite la configuración por interfaz de línea de comandos desde consola serie.
 
+# Versiones del Firmware u360gts
+
+[https://github.com/raul-ortega/u360gts/releases](https://github.com/raul-ortega/u360gts/releases)
+
 Encontrarás información detallada sobre la instalación y configuración del firmware en la [WIKI](https://github.com/raul-ortega/amv-open360tracker-32bits/wiki).
