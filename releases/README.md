@@ -1,5 +1,11 @@
 #Releases
 
+## Development 7.3.0 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.3.0.zip).
+
+### New features
+
+* The easing function Out Cubic has been added. This new function provides a smoother movement of the tilt servo. Read more information about the Ease Out Cubic function at [http://easings.net/](http://easings.net/)
+
 ## Development 7.2.2 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.2.2.zip).
 
 ### Bugfixes
