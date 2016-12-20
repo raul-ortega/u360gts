@@ -15,7 +15,7 @@ Este firmware ha sido desarrollado para su utilización controladoras basadas mi
 * 360 grados de rotación contínua.
 * Soporta múltiples protocolos de telemetría.
 * Realiza conversión de protocolo y reenvío a aplicaciones externas.
-* Completamente configurable desde [https://github.com/raul-ortega/u360gts-configurator](u360gts-configurator) (cross platform) y consola serie (modo CLI).
+* Completamente configurable desde [u360gts-configurator](https://github.com/raul-ortega/u360gts-configurator) (cross platform) y consola serie (modo CLI).
 * Efecto de amortiguación para servo tilt.
 * Establecimiento automático de la posición home con GPS local.
 * Información detallada del estado en display OLED.
@@ -67,7 +67,7 @@ Convierte la telemetría de entrada a diferentes formatos de telemetría de sali
 
 **CONFIGURADOR MULTI PLATAFORMA**
 
-Podrás configurar e inteactuar con tu antenna tracker a través de (https://github.com/raul-ortega/u360gts-configurator)[u360gts-configurator], una aplicación multi plataforma para Google Chrome que facilita la configuración de los parámetros, las operaciones de control, así como realizar pruebas mediante simulación.
+Podrás configurar e inteactuar con tu antenna tracker a través de [u360gts-configurator](https://github.com/raul-ortega/u360gts-configurator), una aplicación multi plataforma para Google Chrome que facilita la configuración de los parámetros, las operaciones de control, así como realizar pruebas mediante simulación.
 
 **CONFIGURADOR POR LÍNEA DE COMANDOS**
 
