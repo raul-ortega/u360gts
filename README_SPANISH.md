@@ -15,7 +15,7 @@ Este firmware ha sido desarrollado para su utilización controladoras basadas mi
 * 360 grados de rotación contínua.
 * Soporta múltiples protocolos de telemetría.
 * Realiza conversión de protocolo y reenvío a aplicaciones externas.
-* Configurable a través de línea de comandos (32 bits).
+* Completamente configurable desde [https://github.com/raul-ortega/u360gts-configurator](u360gts-configurator) (cross platform) y consola serie (modo CLI).
 * Efecto de amortiguación para servo tilt.
 * Establecimiento automático de la posición home con GPS local.
 * Información detallada del estado en display OLED.
@@ -41,7 +41,6 @@ Protocolos soportados:
 - **FRSKY X (Smartport)**
 - **LTM (Light Telemetry)**
 
-
 **AMORTIGUACIÓN EN SERVO TILT**
 
 Se aplica efecto de amortiguación (configurable) para evitar daños en el servo tilt y otros mecanismos cuando se utiliza con antenas de grandes dimensiones. 
@@ -65,5 +64,13 @@ Con la versión de 32 bits es posible configurar hasta 4 puertos serie (2 uart y
 **COMUNICACIÓN CON APLICACIONES EXTERNAS**
 
 Convierte la telemetría de entrada a diferentes formatos de telemetría de salida para conectar con aplicaciones externas: MAVLINK, NMEA, MFD. Podrás monitorizar el movimiento del aeromodelo con aplicaciones como Missión Planner, Oruxmaps, Droidplanner/Tower, etc...
+
+**CONFIGURADOR MULTI PLATAFORMA**
+
+Podrás configurar e inteactuar con tu antenna tracker a través de [https://github.com/raul-ortega/u360gts-configurator](u360gts-configurator), una aplicación multi plataforma para Google Chrome que facilita la configuración de los parámetros, las operaciones de control, así como realizar pruebas mediante simulación.
+
+**CONFIGURADOR POR LÍNEA DE COMANDOS**
+
+También permite la configuración por interfaz de línea de comandos desde consola serie.
 
 Encontrarás información detallada sobre la instalación y configuración del firmware en la [WIKI](https://github.com/raul-ortega/amv-open360tracker-32bits/wiki).
