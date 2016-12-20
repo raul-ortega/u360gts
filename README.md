@@ -13,7 +13,7 @@ This firmware has been developed for controllers based on STM32F series micropro
 * 360 degrees continous rotation
 * Multiprotocol
 * Protocol conversion and fordwarding
-* Fully configurable from the [https://github.com/raul-ortega/u360gts-configurator](u360gts-configurator) (cross platform) and serial console (CLI mode).
+* Fully configurable from the [u360gts-configurator](https://github.com/raul-ortega/u360gts-configurator) (cross platform) and serial console (CLI mode).
 * Tilt easing
 * Automatic home position
 * Detailled status data on OLED display
@@ -57,7 +57,7 @@ Examples:
 
 **CROSS PLATFORM CONFIGURATOR**
 
-Yo can configure and interact with the antenna tracker through the u360gts-configurator, a cross platform  app which will facilitate setting parameters, control operations, and test its behavior by simulation.
+Yo can configure and interact with the antenna tracker through the [u360gts-configurator](https://github.com/raul-ortega/u360gts-configurator), a cross platform  app which will facilitate setting parameters, control operations, and test its behavior by simulation.
 
 **COMMAND LINE INTERFACE**
 
