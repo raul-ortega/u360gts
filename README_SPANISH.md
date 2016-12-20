@@ -67,7 +67,7 @@ Convierte la telemetría de entrada a diferentes formatos de telemetría de sali
 
 **CONFIGURADOR MULTI PLATAFORMA**
 
-Podrás configurar e inteactuar con tu antenna tracker a través de [https://github.com/raul-ortega/u360gts-configurator](u360gts-configurator), una aplicación multi plataforma para Google Chrome que facilita la configuración de los parámetros, las operaciones de control, así como realizar pruebas mediante simulación.
+Podrás configurar e inteactuar con tu antenna tracker a través de (https://github.com/raul-ortega/u360gts-configurator)[u360gts-configurator], una aplicación multi plataforma para Google Chrome que facilita la configuración de los parámetros, las operaciones de control, así como realizar pruebas mediante simulación.
 
 **CONFIGURADOR POR LÍNEA DE COMANDOS**
 
