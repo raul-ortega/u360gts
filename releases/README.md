@@ -30,7 +30,7 @@
 
 * Mode 3 is a mix of mode 1 and mode 2: estimations are calculated every time the timer reach the eps_frequency. The timer is reset every time a new position data is received.
 
-####EPS on menú display
+####EPS on menu display
 
 A new menu for EPS has been implemented. It allows:
 
