@@ -333,7 +333,7 @@ void tracker_setup(void)
   updateEPSParams();
 
   OFFSET_TRIM = masterConfig.offset_trim;
-  OFFSET = masterConfig.offset - OFFSET_TRIM;
+  OFFSET = getOffset(masterConfig.offset,masterConfig.offset_trim);
 
   gotAlt = false;
   gotFix = false;
@@ -639,11 +639,14 @@ int getHeading(void) {
 	imuVector.A[2]=magADC[2];
 
 	OFFSET_TRIM = masterConfig.offset_trim;
-	OFFSET = masterConfig.offset - OFFSET_TRIM;
+	OFFSET = getOffset(masterConfig.offset,masterConfig.offset_trim);
 
-	int16_t imuheading=imuCalculateHeading(&imuVector);
+	int16_t imuheading = imuCalculateHeading(&imuVector);
 
 	return imuheading;
+}
+int16_t getOffset(int16_t offset_master,int8_t offset_trim){
+	return offset_master + (int16_t)offset_trim;
 }
 
 void updateDigitalButtons(void) {
