@@ -144,6 +144,8 @@ bool couldTelemetrySetHome();
 void updateCalibratePan();
 uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2);
 void setEpsMode(void);
+int16_t getOffset(int16_t offset_master,int8_t offset_trim);
+
 //EASING
 int16_t _lastTilt;
 int16_t tilt;
