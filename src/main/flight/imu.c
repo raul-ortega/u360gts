@@ -238,9 +238,10 @@ int16_t imuCalculateHeading(t_fp_vector *vec)
     if (heading > 2 * M_PIf)
        heading -= 2 * M_PIf;
 
-	return (int) ((heading * 1800.0f / M_PI) + magneticDeclination + (OFFSET*10.0f))%3600;
+	return (int) ((heading * 1800.0f / M_PIf) + magneticDeclination + (OFFSET * 10.0f)) % 3600;
 
 }
+
 int16_t imuCalculateHeading2(t_fp_vector *vec)
 {
     int16_t head;
