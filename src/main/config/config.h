@@ -41,7 +41,7 @@ typedef enum {
 uint16_t pwmPan0;
 uint16_t pwmPanCalibrationPulse;
 
-float OFFSET;
+int16_t OFFSET;
 int8_t OFFSET_TRIM;
 float DECLINATION;
 
