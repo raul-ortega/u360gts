@@ -720,6 +720,7 @@ const clivalue_t valueTable[] = {
 	{ "telemetry_diy_gps",          VAR_UINT8  | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.telemetry_diy_gps, .config.lookup = { TABLE_OFF_ON } },
 	//{ "gps_port",      		   	VAR_UINT8  | TRACKER_VALUE, &masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex, .config.minmax = { 0,  4 } },
 	{ "start_tracking_distance",   	VAR_UINT8  | TRACKER_VALUE, &masterConfig.start_tracking_distance, .config.minmax = { 0,  100 } },
+	{ "start_tracking_altitude",   	VAR_UINT8  | TRACKER_VALUE, &masterConfig.start_tracking_altitude, .config.minmax = { 0,  100 } },
     { "mag_declination",            VAR_INT16  | TRACKER_VALUE, &masterConfig.profile[0].mag_declination, .config.minmax = { -18000,  18000 } },
 	{ "mag_calibrated",          	VAR_UINT8  | TRACKER_VALUE, &masterConfig.mag_calibrated, .config.minmax = { 0,  1 } },
 	{ "min_logic_level",            VAR_UINT8  | PROFILE_VALUE, &masterConfig.min_logic_level, .config.minmax = { 0,  255 } },

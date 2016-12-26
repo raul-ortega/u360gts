@@ -127,6 +127,7 @@ typedef struct master_t {
 	uint16_t easing_last_tilt;
 	uint16_t telemetry_protocol;
 	uint8_t start_tracking_distance;
+	uint8_t start_tracking_altitude;
 	uint8_t init_servos;
 	uint8_t telemetry_min_sats;
 	uint8_t telemetry_diy_gps;

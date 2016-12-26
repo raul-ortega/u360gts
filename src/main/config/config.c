@@ -733,7 +733,8 @@ static void resetConf(void)
 
     //TRACKER PROTOCOL
     masterConfig.telemetry_protocol = TP_GPS_TELEMETRY;
-    masterConfig.start_tracking_distance=10;
+    masterConfig.start_tracking_distance = 10;
+    masterConfig.start_tracking_altitude = 1;
    	masterConfig.telemetry_min_sats = 6;
    	masterConfig.telemetry_diy_gps = 0;
 
