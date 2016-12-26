@@ -72,7 +72,7 @@ static imuRuntimeConfig_t *imuRuntimeConfig;
 static pidProfile_t *pidProfile;
 static accDeadband_t *accDeadband;
 
-extern float OFFSET;
+extern int16_t OFFSET;
 extern float DECLINATION;
 
 void imuConfigure(
