@@ -1,5 +1,11 @@
 #Releases
 
+## Development 7.3.3 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.3.3.zip).
+
+### Bugfixes
+
+* After landing the aircraft the antenna tracker keeps spinning until it is powered off. Other times, when the aircarft flies over the vertical of the antenna tracker it stopped tracking. Both issues were caused because the altitude were not taked into acoount to detecet if the aircraft is whithin the tracking distance limits. In this version has been added the parameter start_tracking_altitude to control if the aircraft has landed. Its default value is set to 2 (2 meters). 
+
 ## Development 7.3.0 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.3.0.zip).
 
 ### New features
