@@ -723,7 +723,7 @@ static void resetConf(void)
     masterConfig.easing = 2 ;
     masterConfig.easing_steps = 60;
     masterConfig.easing_min_angle = 4;
-    masterConfig.easing_milis = 15;
+    masterConfig.easing_millis = 15;
 
 	//NOPID feature by default
 	featureSet(FEATURE_NOPID);

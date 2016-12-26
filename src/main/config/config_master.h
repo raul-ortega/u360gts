@@ -123,7 +123,7 @@ typedef struct master_t {
 	uint8_t easing;
 	uint8_t easing_steps;
 	uint8_t easing_min_angle;
-	uint8_t easing_milis;
+	uint8_t easing_millis;
 	uint16_t easing_last_tilt;
 	uint16_t telemetry_protocol;
 	uint8_t start_tracking_distance;

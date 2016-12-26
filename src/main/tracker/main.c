@@ -449,7 +449,7 @@ void tracker_loop(void)
     }
 
 	if(feature(FEATURE_EASING)) {
-		if(millis()-easingTimer > masterConfig.easing_milis){
+		if(millis()-easingTimer > masterConfig.easing_millis){
 		  servo_tilt_update();
 		  easingTimer = millis();
 		}
