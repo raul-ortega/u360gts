@@ -559,8 +559,8 @@ void calculatePID(void)
 	Accumulator += Error[0];  // accumulator is sum of errors
 	if (Accumulator > masterConfig.max_pid_accumulator)
 		Accumulator = masterConfig.max_pid_accumulator;
-	if (Accumulator < -1*masterConfig.max_pid_accumulator)
-		Accumulator = -1*masterConfig.max_pid_accumulator;
+	if (Accumulator < -1 * masterConfig.max_pid_accumulator)
+		Accumulator = -1 * masterConfig.max_pid_accumulator;
 	PID += masterConfig.i * Accumulator; // add integral gain and error accumulation
 	Dk = masterConfig.d * (Error[0] - Error[10]);
 	PID += Dk; // differential gain comes next
@@ -647,6 +647,7 @@ int getHeading(void) {
 
 	return imuheading;
 }
+
 int16_t getOffset(int16_t offset_master,int8_t offset_trim){
 	return offset_master - (int16_t)offset_trim;
 }
@@ -1075,12 +1076,12 @@ void updateTracking(void){
 		if(PROTOCOL(TP_SERVOTEST)) {
 			homeSet = true;
 			trackingStarted = true;
-		}
-		else {
-			trackingStarted = (homeSet && targetPosition.distance >= masterConfig.start_tracking_distance);
+		} else {
+			trackingStarted = (homeSet && ((targetPosition.distance >= masterConfig.start_tracking_distance) || \
+					(targetPosition.distance < masterConfig.start_tracking_distance && (targetPosition.alt - trackerPosition.alt) >= masterConfig.start_tracking_altitude))) ;
 		}
 
-		if(trackingStarted) {
+		if(trackingStarted)  {
 			if(lostTelemetry == true && !cliMode){
 				pwmWritePanServo(masterConfig.pan0);
 				return;
@@ -1100,8 +1101,7 @@ void updateTracking(void){
 
 		} else {
 			OFFSET_TRIM_STATE = TRIM_STATE_DISABLED;
-			if(homeSet && (targetPosition.alt - trackerPosition.alt <= 1) && !cliMode )
-				pwmWritePanServo(masterConfig.pan0);
+			pwmWritePanServo(masterConfig.pan0);
 		}
 	}
 }
