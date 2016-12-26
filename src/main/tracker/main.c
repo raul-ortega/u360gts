@@ -1101,7 +1101,8 @@ void updateTracking(void){
 
 		} else {
 			OFFSET_TRIM_STATE = TRIM_STATE_DISABLED;
-			pwmWritePanServo(masterConfig.pan0);
+			if(homeSet && !cliMode )
+				pwmWritePanServo(masterConfig.pan0);
 		}
 	}
 }
