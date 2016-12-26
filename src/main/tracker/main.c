@@ -643,7 +643,7 @@ int getHeading(void) {
 	OFFSET_TRIM = masterConfig.offset_trim;
 	OFFSET = getOffset(masterConfig.offset,masterConfig.offset_trim);
 
-	int16_t imuheading = imuCalculateHeading(&imuVector);
+	int imuheading = imuCalculateHeading(&imuVector);
 
 	return imuheading;
 }
