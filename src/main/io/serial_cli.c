@@ -690,9 +690,9 @@ const clivalue_t valueTable[] = {
     { "blackbox_device",            VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.blackbox_device, .config.lookup = { TABLE_BLACKBOX_DEVICE } },
 #endif
 */
-    /*{ "magzero_x",                  VAR_INT16  | MASTER_VALUE, &masterConfig.magZero.raw[X], .config.minmax = { -32768,  32767 } },
+    { "magzero_x",                  VAR_INT16  | MASTER_VALUE, &masterConfig.magZero.raw[X], .config.minmax = { -32768,  32767 } },
     { "magzero_y",                  VAR_INT16  | MASTER_VALUE, &masterConfig.magZero.raw[Y], .config.minmax = { -32768,  32767 } },
-    { "magzero_z",                  VAR_INT16  | MASTER_VALUE, &masterConfig.magZero.raw[Z], .config.minmax = { -32768,  32767 } },*/
+    { "magzero_z",                  VAR_INT16  | MASTER_VALUE, &masterConfig.magZero.raw[Z], .config.minmax = { -32768,  32767 } },
 	{ "p",           				VAR_UINT16 | TRACKER_VALUE, &masterConfig.p, .config.minmax = { 0,  50000 } },
 	{ "i",           				VAR_UINT16 | TRACKER_VALUE, &masterConfig.i, .config.minmax = { 0,  50000 } },
 	{ "d",           				VAR_UINT16 | TRACKER_VALUE, &masterConfig.d, .config.minmax = { 0,  50000 } },
