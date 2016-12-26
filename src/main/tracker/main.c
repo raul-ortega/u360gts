@@ -648,7 +648,7 @@ int getHeading(void) {
 	return imuheading;
 }
 int16_t getOffset(int16_t offset_master,int8_t offset_trim){
-	return offset_master + (int16_t)offset_trim;
+	return offset_master - (int16_t)offset_trim;
 }
 
 void updateDigitalButtons(void) {
