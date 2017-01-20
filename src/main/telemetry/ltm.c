@@ -182,8 +182,8 @@ static void ltm_sframe(void)
 {
     uint8_t lt_flightmode = 0;
     uint8_t lt_statemode = 1;
-    uint16_t vbat = 0;
-    uint16_t rssi = 0;
+    //uint16_t vbat = 0;
+    //uint16_t rssi = 0;
 
     ltm_initialise_packet('S');
     ltm_serialise_16(vbat * 100);    //vbat converted to mv
