@@ -115,6 +115,7 @@ static const char* const pageTitles[] = {
     "AMV-OPEN360TRACKER",
     "ARMED",
     "BATTERY",
+	"RSSI",
     "TELEMETRY",
 	"PLEASE WAIT"
 #ifdef GPS
@@ -134,7 +135,8 @@ const pageId_e cyclePageIds[] = {
 #ifdef GPS
     PAGE_GPS,
 #endif
-    PAGE_BATTERY
+    PAGE_BATTERY,
+	PAGE_RSSI
 #ifdef ENABLE_DEBUG_OLED_PAGE
     ,PAGE_DEBUG,
 #endif
@@ -261,7 +263,7 @@ uint8_t indexMenuOption = 0;
 uint8_t maxMenuOptions = 5;
 uint8_t menuState = 0;
 
-
+extern uint16_t rssi;
 
 void resetDisplay(void) {
     displayPresent = ug2864hsweg01InitI2C();
@@ -844,7 +846,21 @@ void showBatteryPage(void)
         drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, capacityPercentage);
     }
 }
+void showRSSIPage(void)
+{
+    uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
 
+    if (feature(FEATURE_RSSI_ADC)) {
+        tfp_sprintf(lineBuffer, "Value: %d Percent: %d%", rssi, rssi);
+        padLineBuffer();
+        i2c_OLED_set_line(rowIndex++);
+        i2c_OLED_send_string(lineBuffer);
+
+        /*uint8_t batteryPercentage = calculateBatteryPercentage();
+        i2c_OLED_set_line(rowIndex++);
+        drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, batteryPercentage);*/
+    }
+}
 void showSensorsPage(void)
 {
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
@@ -996,6 +1012,13 @@ void updateDisplay(void)
         case PAGE_BATTERY:
             if (feature(FEATURE_VBAT)) {
             	showBatteryPage();
+		   } else {
+			   pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
+		   }
+		   break;
+        case PAGE_RSSI:
+            if (feature(FEATURE_RSSI_ADC)) {
+            	showRSSIPage();
 		   } else {
 			   pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
 		   }
