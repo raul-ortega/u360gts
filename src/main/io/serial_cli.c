@@ -196,6 +196,7 @@ static const char * const featureNames[] = {
 	"NOPID",
 	"DEBUG",
 	"EPS",
+	"RSSI_ADC",
 	NULL
 };
 
