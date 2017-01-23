@@ -297,6 +297,8 @@ extern uint8_t telemetry_diy_gps;
 extern int32_t telemetry_lat;
 extern int32_t telemetry_lon;
 
+#define DELAY_50_HZ (1000000 / 50)
+
 void tracker_setup(void)
 {
   switch(masterConfig.telemetry_protocol)
@@ -448,9 +450,9 @@ void tracker_loop(void)
 
 	//update RSSI every 50Hz
 	if (feature(FEATURE_RSSI_ADC)) {
-			rssiUpdateAt = currentTime + DELAY_50_HZ;
-		    if ((int32_t)(currentTime - rssiUpdateAt) >= 0);
-	        updateRSSIADC(currentTime);
+		rssiUpdateAt = currentTime + DELAY_50_HZ;
+		if ((int32_t)(currentTime - rssiUpdateAt) >= 0)
+			updateRSSIADC(currentTime);
 	}
 
 
