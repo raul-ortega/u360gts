@@ -35,7 +35,8 @@ typedef enum {
 	FEATURE_EASING = 1 << 9,
 	FEATURE_NOPID = 1 << 10,
 	FEATURE_DEBUG = 1 << 11,
-	FEATURE_EPS = 1 << 12
+	FEATURE_EPS = 1 << 12,
+	FEATURE_RSSI_ADC = 1 << 13
 } features_e;
 
 uint16_t pwmPan0;
