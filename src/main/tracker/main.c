@@ -231,6 +231,7 @@ unsigned long currentTimeMillis = 0;
 
 //RSSI
 static uint32_t rssiUpdateAt = 0;
+extern uint16_t rssi;
 
 //Display
 uint8_t displayPageIndex=0;
@@ -737,6 +738,7 @@ void updateFixedPages(void){
 	displayPageIndex =
 			PAGE_GPS * (displayPageIndex == PAGE_TELEMETRY && feature(FEATURE_GPS) && !PROTOCOL(TP_MFD)) + \
 			PAGE_BATTERY * ((displayPageIndex == PAGE_TELEMETRY && !feature(FEATURE_GPS) && feature(FEATURE_VBAT)) || (displayPageIndex == PAGE_GPS && feature(FEATURE_VBAT))) + \
+			PAGE_RSSI * ((displayPageIndex == PAGE_TELEMETRY && !feature(FEATURE_GPS) && !feature(FEATURE_VBAT) && feature(FEATURE_RSSI_ADC)) || (displayPageIndex == PAGE_BATTERY && feature(FEATURE_RSSI_ADC))) + \
 			PAGE_TELEMETRY * (displayPageIndex == 0);
 	if(displayPageIndex !=0 ){
 		//Show fixed page
