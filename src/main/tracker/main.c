@@ -443,6 +443,9 @@ void tracker_loop(void)
 		updateTracking();
 	}
 
+	//update RSSI
+	updateRSSI(currentTime);
+
 	//update display
     if (feature(FEATURE_DISPLAY)) {
         updateDisplay();
