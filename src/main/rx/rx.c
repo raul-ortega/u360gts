@@ -612,9 +612,10 @@ void updateRSSI(uint32_t currentTime)
 
     /*if (rxConfig->rssi_channel > 0) {
         updateRSSIPWM();
-    } else if (feature(FEATURE_RSSI_ADC)) {
+    */
+    if (feature(FEATURE_RSSI_ADC)) {
         updateRSSIADC(currentTime);
-    }*/
+    }
 }
 
 void initRxRefreshRate(uint16_t *rxRefreshRatePtr) {
