@@ -229,6 +229,9 @@ unsigned long lostTelemetry_timer = 0;
 unsigned long epsVectorTimer = 0;
 unsigned long currentTimeMillis = 0;
 
+//RSSI
+static uint32_t rssiUpdateAt = 0;
+
 //Display
 uint8_t displayPageIndex=0;
 extern uint8_t menuState;
@@ -443,8 +446,13 @@ void tracker_loop(void)
 		updateTracking();
 	}
 
-	//update RSSI
-	updateRSSI(currentTime);
+	//update RSSI every 50Hz
+	if (feature(FEATURE_RSSI_ADC)) {
+			rssiUpdateAt = currentTime + DELAY_50_HZ;
+		    if ((int32_t)(currentTime - rssiUpdateAt) >= 0);
+	        updateRSSIADC(currentTime);
+	}
+
 
 	//update display
     if (feature(FEATURE_DISPLAY)) {
