@@ -115,7 +115,6 @@ static const char* const pageTitles[] = {
     "AMV-OPEN360TRACKER",
     "ARMED",
     "BATTERY",
-	"RSSI",
     "TELEMETRY",
 	"PLEASE WAIT"
 #ifdef GPS
@@ -135,8 +134,7 @@ const pageId_e cyclePageIds[] = {
 #ifdef GPS
     PAGE_GPS,
 #endif
-    PAGE_BATTERY,
-	PAGE_RSSI
+    PAGE_BATTERY
 #ifdef ENABLE_DEBUG_OLED_PAGE
     ,PAGE_DEBUG,
 #endif
