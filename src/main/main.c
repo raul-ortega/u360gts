@@ -248,13 +248,13 @@ void init(void)
 #endif
     pwm_params.useVbat = feature(FEATURE_VBAT);
     pwm_params.useSoftSerial = feature(FEATURE_SOFTSERIAL);
-    //pwm_params.useParallelPWM = feature(FEATURE_RX_PARALLEL_PWM);
-    //pwm_params.useRSSIADC = feature(FEATURE_RSSI_ADC);
+    pwm_params.useParallelPWM = false;//feature(FEATURE_RX_PARALLEL_PWM);
+    pwm_params.useRSSIADC = feature(FEATURE_RSSI_ADC);
     pwm_params.useCurrentMeterADC = feature(FEATURE_CURRENT_METER)
         && masterConfig.batteryConfig.currentMeterType == CURRENT_SENSOR_ADC;
-    //pwm_params.useLEDStrip = feature(FEATURE_LED_STRIP);
-    //pwm_params.usePPM = feature(FEATURE_RX_PPM);
-    //pwm_params.useSerialRx = feature(FEATURE_RX_SERIAL);
+    pwm_params.useLEDStrip = false;//feature(FEATURE_LED_STRIP);
+    pwm_params.usePPM = true;//feature(FEATURE_RX_PPM);
+    pwm_params.useSerialRx = false;//feature(FEATURE_RX_SERIAL);
 #ifdef SONAR
     pwm_params.useSonar = feature(FEATURE_SONAR);
 #endif
@@ -360,7 +360,7 @@ void init(void)
     drv_adc_config_t adc_params;
 
     adc_params.enableVBat = feature(FEATURE_VBAT);
-    //adc_params.enableRSSI = feature(FEATURE_RSSI_ADC);
+    adc_params.enableRSSI = feature(FEATURE_RSSI_ADC);
     adc_params.enableCurrentMeter = feature(FEATURE_CURRENT_METER);
     adc_params.enableExternal1 = false;
 #ifdef OLIMEXINO
