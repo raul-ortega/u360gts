@@ -190,10 +190,10 @@ void rxInit(rxConfig_t *rxConfig, modeActivationCondition_t *modeActivationCondi
         rxMspInit(rxConfig, &rxRuntimeConfig, &rcReadRawFunc);
     }
 
-    if (feature(FEATURE_RX_PPM) || feature(FEATURE_RX_PARALLEL_PWM)) {
+    if (feature(FEATURE_RX_PPM) || feature(FEATURE_RX_PARALLEL_PWM)) {*/
         rxRefreshRate = 20000;
         rxPwmInit(&rxRuntimeConfig, &rcReadRawFunc);
-    }*/
+    /*}*/
 
     rxRuntimeConfig.auxChannelCount = rxRuntimeConfig.channelCount - STICK_CHANNEL_COUNT;
 }
@@ -344,14 +344,14 @@ void updateRx(uint32_t currentTime)
         }
     }
 
-    if (feature(FEATURE_RX_PPM)) {
+    if (feature(FEATURE_RX_PPM)) {*/
         if (isPPMDataBeingReceived()) {
             rxSignalReceivedNotDataDriven = true;
             rxIsInFailsafeModeNotDataDriven = false;
             needRxSignalBefore = currentTime + DELAY_10_HZ;
             resetPPMDataReceivedState();
         }
-    }
+        /*}
 
     if (feature(FEATURE_RX_PARALLEL_PWM)) {
         if (isPWMDataBeingReceived()) {
@@ -610,12 +610,10 @@ void updateRSSIADC(uint32_t currentTime)
 void updateRSSI(uint32_t currentTime)
 {
 
-    /*if (rxConfig->rssi_channel > 0) {
-        updateRSSIPWM();
-
-    if (feature(FEATURE_RSSI_ADC)) {
+	if(rxConfig->rssi_channel > 0)
+	        updateRSSIPWM();
+	else if(feature(FEATURE_RSSI_ADC))
         updateRSSIADC(currentTime);
-    }*/
 
 }
 
