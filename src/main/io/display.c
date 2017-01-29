@@ -396,6 +396,9 @@ void showTitle()
     	}
     } else if(pageState.pageId==PAGE_MENU){
     	return;
+    } else if(pageState.pageId==PAGE_BATTERY) {
+    	if(feature(FEATURE_VBAT))
+    		i2c_OLED_send_string(pageTitles[pageState.pageId]);
     } else {
     	i2c_OLED_send_string(pageTitles[pageState.pageId]);
     }
@@ -846,22 +849,37 @@ void showBatteryPage(void)
         i2c_OLED_set_line(rowIndex++);
         drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, capacityPercentage);
     }
-}
-void showRSSIPage(void)
-{
-    uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
 
-    if (feature(FEATURE_RSSI_ADC)) {
-        tfp_sprintf(lineBuffer, "Value: %d Percent: %d%", rssi, rssi);
+    if (feature(FEATURE_RSSI_ADC) || (rxConfig->rssi_channel > 0)) {
+    	if(feature(FEATURE_VBAT))
+    		i2c_OLED_set_line(rowIndex++);
+
+		tfp_sprintf(lineBuffer, "RSSI");
+		i2c_OLED_set_line(rowIndex++);
+		i2c_OLED_send_string(lineBuffer);
+
+		uint8_t rssiPercentage1 = calculateRssiPercentage();
+		uint8_t rssiPercentage2 = ((uint32_t)rssiPercentage1 * 100) / rxConfig->rssi_zoom;
+		/*uint8_t rssiA = calculateRssiVoltage() / 10;
+		uint8_t rssiB = calculateRssiVoltage() % 10;
+
+        tfp_sprintf(lineBuffer, "Value: %drssi_zoom.%d v %d %%", rssiA, rssiB, rssiPercentage1);*/
+        tfp_sprintf(lineBuffer, "Value: %d %%", rssiPercentage1);
+
         padLineBuffer();
         i2c_OLED_set_line(rowIndex++);
         i2c_OLED_send_string(lineBuffer);
 
-        /*uint8_t batteryPercentage = calculateBatteryPercentage();
         i2c_OLED_set_line(rowIndex++);
-        drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, batteryPercentage);*/
+        drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, rssiPercentage1);
+
+        if(rssiPercentage1 <= rxConfig->rssi_zoom && rxConfig->rssi_zoom > 0){
+        	i2c_OLED_set_line(rowIndex++);
+        	drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, rssiPercentage2);
+        }
     }
 }
+
 void showSensorsPage(void)
 {
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
@@ -1017,15 +1035,8 @@ void updateDisplay(void)
             showWelcomePage();
             break;
         case PAGE_BATTERY:
-            if (feature(FEATURE_VBAT)) {
+            if(feature(FEATURE_VBAT) || feature(FEATURE_RSSI_ADC) || (rxConfig->rssi_channel > 0)) {
             	showBatteryPage();
-		   } else {
-			   pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
-		   }
-		   break;
-        case PAGE_RSSI:
-            if (feature(FEATURE_RSSI_ADC)) {
-            	showRSSIPage();
 		   } else {
 			   pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
 		   }
