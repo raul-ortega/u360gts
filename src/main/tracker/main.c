@@ -445,12 +445,13 @@ void tracker_loop(void)
 
 		updateTracking();
 
-	//update RSSI every 50Hz
-	if (feature(FEATURE_RSSI_ADC)) {
-		rssiUpdateAt = currentTime + DELAY_50_HZ;
-		if ((int32_t)(currentTime - rssiUpdateAt) >= 0)
-			updateRSSIADC(currentTime);
+		//update RSSI every 50Hz
+		if (feature(FEATURE_RSSI_ADC) || (masterConfig.rxConfig.rssi_channel > 0)) {
+			updateRSSI(currentTime);
+		}
 	}
+
+
 
 
 	//update display
