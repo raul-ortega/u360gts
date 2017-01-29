@@ -54,9 +54,9 @@ void rxPwmInit(rxRuntimeConfig_t *rxRuntimeConfigPtr, rcReadRawDataPtr *callback
         rxRuntimeConfigPtr->channelCount = MAX_SUPPORTED_RC_PARALLEL_PWM_CHANNEL_COUNT;
         *callback = pwmReadRawRC;
     }
-    if (feature(FEATURE_RX_PPM)) {
+    if (feature(FEATURE_RX_PPM)) {*/
         rxRuntimeConfigPtr->channelCount = MAX_SUPPORTED_RC_PPM_CHANNEL_COUNT;
         *callback = ppmReadRawRC;
-    }*/
+    /*}*/
 }
 
