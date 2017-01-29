@@ -618,11 +618,11 @@ void showCliModePage(void)
 
     i2c_OLED_set_line(rowIndex++);
 
-    tfp_sprintf(lineBuffer, "PWM PAN:  %04d ms", pwmPan);
+    tfp_sprintf(lineBuffer, "PWM PAN:  %04d uS", pwmPan);
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
 
-    tfp_sprintf(lineBuffer, "PWM TILT: %04d ms", pwmTilt);
+    tfp_sprintf(lineBuffer, "PWM TILT: %04d uS", pwmTilt);
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
 
