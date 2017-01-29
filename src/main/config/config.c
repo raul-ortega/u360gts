@@ -766,6 +766,11 @@ static void resetConf(void)
    	//TELEMETRY OUT
    	featureSet(FEATURE_TELEMETRY);
 
+   	//RSSI
+   	featureSet(FEATURE_RSSI_ADC);
+   	masterConfig.rxConfig.rssi_scale = 30;
+   	masterConfig.rxConfig.rssi_zoom = 35;
+
 /////////////////////////////
 
     // copy first profile into remaining profile
