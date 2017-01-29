@@ -623,7 +623,9 @@ uint8_t calculateRssiPercentage(void){
 	return ((uint32_t)rssi * 100) / 1023;
 }
 
-}
+/*uint8_t calculateRssiVoltage(void){
+	return ((uint32_t)(rssi * rxConfig->rssi_scale * 33) / 4095);
+}*/
 
 void initRxRefreshRate(uint16_t *rxRefreshRatePtr) {
     *rxRefreshRatePtr = rxRefreshRate;
