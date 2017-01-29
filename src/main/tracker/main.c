@@ -734,8 +734,7 @@ void updateFixedPages(void){
 
 	displayPageIndex =
 			PAGE_GPS * (displayPageIndex == PAGE_TELEMETRY && feature(FEATURE_GPS) && !PROTOCOL(TP_MFD)) + \
-			PAGE_BATTERY * ((displayPageIndex == PAGE_TELEMETRY && !feature(FEATURE_GPS) && feature(FEATURE_VBAT)) || (displayPageIndex == PAGE_GPS && feature(FEATURE_VBAT))) + \
-			PAGE_RSSI * ((displayPageIndex == PAGE_TELEMETRY && !feature(FEATURE_GPS) && !feature(FEATURE_VBAT) && feature(FEATURE_RSSI_ADC)) || (displayPageIndex == PAGE_BATTERY && feature(FEATURE_RSSI_ADC))) + \
+			PAGE_BATTERY * ((displayPageIndex == PAGE_TELEMETRY && !feature(FEATURE_GPS) && (feature(FEATURE_VBAT) || feature(FEATURE_RSSI_ADC) || (masterConfig.rxConfig.rssi_channel > 0))) || (displayPageIndex == PAGE_GPS && (feature(FEATURE_VBAT) || feature(FEATURE_RSSI_ADC) || (masterConfig.rxConfig.rssi_channel > 0)))) + \
 			PAGE_TELEMETRY * (displayPageIndex == 0);
 	if(displayPageIndex !=0 ){
 		//Show fixed page
