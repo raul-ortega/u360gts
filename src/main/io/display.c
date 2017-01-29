@@ -695,7 +695,7 @@ void showTelemetryPage(void){
 		i2c_OLED_send_string(lineBuffer);
     }
 
-    if(!feature(FEATURE_GPS) && !feature(FEATURE_VBAT))
+    if(!feature(FEATURE_GPS) && !feature(FEATURE_VBAT) && !feature(FEATURE_RSSI_ADC) && !(rxConfig->rssi_channel > 0))
     	displayDisablePageCycling();
 }
 
