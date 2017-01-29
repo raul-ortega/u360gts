@@ -230,7 +230,6 @@ unsigned long epsVectorTimer = 0;
 unsigned long currentTimeMillis = 0;
 
 //RSSI
-static uint32_t rssiUpdateAt = 0;
 extern uint16_t rssi;
 
 //Display
@@ -297,8 +296,6 @@ extern const uint32_t baudRates[];
 extern uint8_t telemetry_diy_gps;
 extern int32_t telemetry_lat;
 extern int32_t telemetry_lon;
-
-#define DELAY_50_HZ (1000000 / 50)
 
 void tracker_setup(void)
 {
@@ -447,7 +444,6 @@ void tracker_loop(void)
 		updateMFD();
 
 		updateTracking();
-	}
 
 	//update RSSI every 50Hz
 	if (feature(FEATURE_RSSI_ADC)) {
