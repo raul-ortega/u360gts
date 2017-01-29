@@ -21,7 +21,6 @@ typedef enum {
     PAGE_WELCOME,
     PAGE_ARMED,
     PAGE_BATTERY,
-	PAGE_RSSI,
     PAGE_TELEMETRY,
 	PAGE_CALIBRATING_MAG,
 #ifdef GPS
