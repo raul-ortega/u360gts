@@ -98,6 +98,8 @@ uint16_t SERVOTEST_TILT = 0;
 
 extern uint16_t cycleTime; // FIXME dependency on mw.c
 
+extern uint16_t rssi;
+
 //void gpsEnablePassthrough(serialPort_t *gpsPassthroughPort);
 
 static serialPort_t *cliPort;
@@ -141,6 +143,7 @@ static void cliGpsPassthrough(char *cmdline);
 #endif*/
 
 static void cliHelp(char *cmdline);
+static void cliRssi();
 /*static void cliMap(char *cmdline);
 
 #ifdef LED_STRIP
@@ -321,7 +324,8 @@ const clicmd_t cmdTable[] = {
 	CLI_COMMAND_DEF("calibrate pan", "calibrate servo pan", NULL, cliCalibratePan),
 	CLI_COMMAND_DEF("heading", "move pan servo to degrees (0 - 360)", "<degrees>", cliMovePanServo),
 	CLI_COMMAND_DEF("tilt", "move tilt servo to degrees (0 - 90)", "<degrees>", cliMoveTiltServo),
-	CLI_COMMAND_DEF("boot mode", "restart the board to boot mode for load a new version of the firmware", NULL, cliBootMode)
+	CLI_COMMAND_DEF("boot mode", "restart the board to boot mode for load a new version of the firmware", NULL, cliBootMode),
+	CLI_COMMAND_DEF("rssi", "show rssi status", NULL, cliRssi)
 };
 #define CMD_COUNT (sizeof(cmdTable) / sizeof(clicmd_t))
 
@@ -2653,5 +2657,8 @@ void displayCliMode(){
     if(feature(FEATURE_DISPLAY)) {
     	displayShowFixedPage(PAGE_CLI_MODE);
     }
+}
+static void cliRssi(void){
+	printf("# rssi: %d %d %\r\n",rssi,calculateRssiPercentage());
 }
 #endif
