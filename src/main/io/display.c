@@ -98,6 +98,7 @@ controlRateConfig_t *getControlRateConfig(uint8_t profileIndex);
 
 #define DISPLAY_UPDATE_FREQUENCY (MICROSECONDS_IN_A_SECOND / 5)
 #define PAGE_CYCLE_FREQUENCY (MICROSECONDS_IN_A_SECOND * 5)
+#define PAGE_TOGGLE_FREQUENCY (MICROSECONDS_IN_A_SECOND / 2)
 
 static uint32_t nextDisplayUpdateAt = 0;
 static bool displayPresent = false;
@@ -160,6 +161,8 @@ typedef struct pageState_s {
     uint8_t pageFlags;
     uint8_t cycleIndex;
     uint32_t nextPageAt;
+    uint32_t nextToggleAt;
+    uint8_t toggleCounter;
 } pageState_t;
 
 static pageState_t pageState;
@@ -938,7 +941,6 @@ void showDebugPage(void)
 
 void updateDisplay(void)
 {
-
     uint32_t now = micros();
     static uint8_t previousArmedState = 0;
 
@@ -987,6 +989,8 @@ void updateDisplay(void)
     if (pageState.pageChanging) {
         pageState.pageFlags &= ~PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
         pageState.nextPageAt = now + PAGE_CYCLE_FREQUENCY;
+        pageState.nextToggleAt = now + PAGE_TOGGLE_FREQUENCY;
+        pageState.toggleCounter = 0;
 
         // Some OLED displays do not respond on the first initialisation so refresh the display
         // when the page changes in the hopes the hardware responds.  This also allows the
@@ -997,11 +1001,16 @@ void updateDisplay(void)
             return;
         }
         handlePageChange();
-    }
+	}
 
-    if (!displayPresent) {
-        return;
-    }
+	if (!displayPresent) {
+		return;
+	}
+
+	if ((int32_t)(now - pageState.nextToggleAt) >= 0L) {
+		pageState.toggleCounter++;
+		pageState.nextToggleAt += PAGE_TOGGLE_FREQUENCY;
+	}
 
     switch(pageState.pageId) {
         case PAGE_WELCOME:
