@@ -873,10 +873,11 @@ void showBatteryPage(void)
         i2c_OLED_set_line(rowIndex++);
         drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, rssiPercentage1);
 
-        if(rssiPercentage1 <= rxConfig->rssi_zoom && rxConfig->rssi_zoom > 0){
-        	i2c_OLED_set_line(rowIndex++);
-        	drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, rssiPercentage2);
-        }
+        if(rssiPercentage1 > rxConfig->rssi_zoom)
+        	rssiPercentage2 = 100;
+
+		i2c_OLED_set_line(rowIndex++);
+		drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, rssiPercentage2);
     }
 }
 
