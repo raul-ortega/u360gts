@@ -1,6 +1,16 @@
 #Releases
 
-## Development 7.3.3 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.3.3.zip).
+## Development 8.0.0 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-8.0.0.zip).
+
+### New features
+
+* RSSI signal strength is shown on OLED display. It allows reading analogic signal up to 3.3 volts through RC_CH 2 (RC channel 2). This new feature has to be activated with the **feature RSSI_ADC** command. On the display is shown a bar with the percentage of signal. Parameter rssi_scale must be set to adjust the máximum voltage value to 100%. Parameter rssi_zoom is used to show more detail when the signal strength is lower than its value.
+
+### Bugfixes
+
+* Longitude minus sign not displayed when the aircraft was flying east of meridian 0.
+
+## Stable 7.3.3 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-7.3.3.zip).
 
 ### Bugfixes
 
