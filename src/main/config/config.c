@@ -767,8 +767,8 @@ static void resetConf(void)
    	featureSet(FEATURE_TELEMETRY);
 
    	//RSSI
-   	featureSet(FEATURE_RSSI_ADC);
-   	masterConfig.rxConfig.rssi_scale = 30;
+   	//featureSet(FEATURE_RSSI_ADC);
+   	masterConfig.rxConfig.rssi_scale = RSSI_SCALE_DEFAULT;
    	masterConfig.rxConfig.rssi_zoom = 35;
 
 /////////////////////////////
