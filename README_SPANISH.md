@@ -22,7 +22,8 @@ Este firmware ha sido desarrollado para su utilización controladoras basadas mi
 * Información detallada del estado en display OLED.
 * Señal RSSI en display OLED.
 * Menú de configuración en display OLED.
-* Sistema de control PID para movimientos precisos del servo PAN. 
+* Sistema de control PID para movimientos precisos del servo PAN.
+* Sistema de estimación de la posición.
 * Hasta 4 puertos serie ( 2 en 8 bits), con asignación dinámica (32 bits). 
 
 **ROTACIÓN CONTÍUNA DE 360º**
@@ -51,11 +52,9 @@ Este sistema de seguidor de antena es capaz de procesar paquetes de telemetra a 
 
 Se aplica efecto de amortiguación (configurable) para evitar daños en el servo tilt y otros mecanismos cuando se utiliza con antenas de grandes dimensiones. 
 
-
 **POSICIÓN HOME AUTOMÁTICA**
 
 Soporta dispositivos GPS UBLOX y NMEA para el establecimiento automático e la posición HOME del antena tracker.
-
 
 **INFORMACIÓN EN DISPLAY**
 
@@ -65,10 +64,13 @@ Muestra información detallada sobre el estado del seguimiento, estado del GPS l
 
 Puede leer y mostrar en el display el porcentaje de la fuerza de la señal RSSI suministrada desde el receptor de vídeo o receptor de control, con un nivel de detalle mayor cuando el porcentaje cae bajo un valor prefijado por el usuario.
 
+**SISTEMA DE ESTIMACIÓN DE LA POSICIÓN**
+
+Incorpora un sistema de estimación de la posición que provee hasta 3 modos de estimación de la posición, especialmente útil para sistemas de telemetría de baja frecuencia. Mientras se espera la recepción de una nueva posición el tracker se anticipa moviendo la antena a posiciones intermedias, dotando de mayor precisión y fluidez al movimiento.
+
 **4 PUERTOS SERIE**
 
 Con la versión de 32 bits es posible configurar hasta 4 puertos serie (2 uart y 2 virtuales), con asignación dinámica de funciones (por ejemplo para gestión del GPS local o reenvío de telemetría a aplicaciones externas).
-
 
 **COMUNICACIÓN CON APLICACIONES EXTERNAS**
 
