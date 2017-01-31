@@ -21,6 +21,7 @@ This firmware has been developed for controllers based on STM32F series micropro
 * RSSI signal strength on OLED display.
 * Setup menu on OLED display.
 * Acurate PID control system.
+* Sistema de estimación de la posición.
 * 4 Serial ports, with dynamic assignment.
 
 
@@ -85,6 +86,10 @@ Now you can select the ingoing telemetry protocol,baud rate, enable/disable feat
 **RSSI SIGNAL STRENGTH ON DISPLAY**
 
 The rssi signal can be provided from video or control receiver. The percentage of signal strength is shown on the display with a higer level of detail when the value is lower than a prefixed value by the user.
+
+**SISTEMA DE ESTIMACIÓN DE LA POSICIÓN**
+
+Incorpora un sistema de estimación de la posición que provee hasta 3 modos de estimación de la posición, especialmente útil para sistemas de telemetría de baja frecuencia. Mientras se espera la recepción de una nueva posición el tracker se anticipa moviendo la antena a posiciones intermedias, dotando de mayor precisión y fluidez al movimiento.
 
 **4 SERIAL PORTS**
 
