@@ -17,6 +17,7 @@ This firmware has been developed for controllers based on STM32F series micropro
 * Tilt easing
 * Automatic home position
 * Detailled status data on OLED display
+* RSSI signal strength on OLED display
 * Setup menu on OLED display
 * Acurate PID control system
 * 4 Serial ports, with dynamic assignment.
@@ -75,7 +76,11 @@ You can connect a NMEA or UBLOX GPS device to the controller to automatically se
 
 Telemetry data, local gps status, battery monitoring and other usefull information, are displayed on an OLED display.
 
-Now you can select the ingoing telemetry protocol and baud rate through the setup menu on the OLED display.
+Now you can select the ingoing telemetry protocol,baud rate, enable/disable features, and other parameter settings through the setup menu on the OLED display.
+
+**RSSI SIGNAL STRENGTH ON DISPLAY**
+
+The rssi signal can be provided from video or control receiver. The percentage of signal strength is shown on the display with a higer level of detail when the value is lower than a prefixed value by the user.
 
 **4 SERIAL PORTS**
 
