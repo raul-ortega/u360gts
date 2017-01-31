@@ -14,11 +14,13 @@ Este firmware ha sido desarrollado para su utilización controladoras basadas mi
 
 * 360 grados de rotación contínua.
 * Soporta múltiples protocolos de telemetría.
+* Acepta telemetra a una frecuencia de hasta 10 Hz.
 * Realiza conversión de protocolo y reenvío a aplicaciones externas.
 * Completamente configurable desde [u360gts-configurator](https://github.com/raul-ortega/u360gts-configurator) (cross platform) y consola serie (modo CLI).
 * Efecto de amortiguación para servo tilt.
 * Establecimiento automático de la posición home con GPS local.
 * Información detallada del estado en display OLED.
+* Señal RSSI en display OLED.
 * Menú de configuración en display OLED.
 * Sistema de control PID para movimientos precisos del servo PAN. 
 * Hasta 4 puertos serie ( 2 en 8 bits), con asignación dinámica (32 bits). 
@@ -41,6 +43,10 @@ Protocolos soportados:
 - **FRSKY X (Smartport)**
 - **LTM (Light Telemetry)**
 
+** TELEMETRÍA A ALTA FRECUENCIA **
+
+Este sistema de seguidor de antena es capaz de procesar paquetes de telemetra a frecuancias de hasta 10 veces por segundo.
+
 **AMORTIGUACIÓN EN SERVO TILT**
 
 Se aplica efecto de amortiguación (configurable) para evitar daños en el servo tilt y otros mecanismos cuando se utiliza con antenas de grandes dimensiones. 
@@ -55,6 +61,9 @@ Soporta dispositivos GPS UBLOX y NMEA para el establecimiento automático e la p
 
 Muestra información detallada sobre el estado del seguimiento, estado del GPS local (sólo 32 bits), monitorización de la batería, y menú de configuración (sólo 32 bits).
 
+** SEÑAL RSSI EN DISPLAY**
+
+Puede leer y mostrar en el display el porcentaje de la fuerza de la señal RSSI suministrada desde el receptor de vídeo o receptor de control, con un nivel de detalle mayor cuando el porcentaje cae bajo un valor prefijado por el usuario.
 
 **4 PUERTOS SERIE**
 
