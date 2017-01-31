@@ -10,16 +10,17 @@ This firmware has been developed for controllers based on STM32F series micropro
 
 # Features
 
-* 360 degrees continous rotation
-* Multiprotocol
-* Protocol conversion and fordwarding
+* 360 degrees continous rotation.
+* Multiprotocol.
+* Acceps up to 10 Hz of input telemetry frequency.
+* Protocol conversion and fordwarding.
 * Fully configurable from the [u360gts-configurator](https://github.com/raul-ortega/u360gts-configurator) (cross platform) and serial console (CLI mode).
-* Tilt easing
-* Automatic home position
-* Detailled status data on OLED display
-* RSSI signal strength on OLED display
-* Setup menu on OLED display
-* Acurate PID control system
+* Tilt easing.
+* Automatic home position.
+* Detailled status data on OLED display.
+* RSSI signal strength on OLED display.
+* Setup menu on OLED display.
+* Acurate PID control system.
 * 4 Serial ports, with dynamic assignment.
 
 
@@ -41,6 +42,9 @@ These are the protocols that are supported:
 - **FRSKY X (Smartport)**
 - **LTM (Light Telemetry)**
 
+**INPUT TELEMETRY AT HIGH FREQUENCY**
+
+This antenna tracker system is capable of reading input telemetry packets sended from the aircraft at a frequency up to 10 times per seconds.
 
 **PROTOCOL CONVERSION AND FORWARDING**
 
