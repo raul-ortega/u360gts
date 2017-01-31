@@ -1,4 +1,4 @@
-# amv-open360tracker 32bits 
+# u360gts (amv-open360tracker 32bits)
 
 This is the 32 bits version of the "continuous 360 degree rotating antenna tracker system" for FPV. This project has been developed and maintained by users of the [FPV spanish community](http://www.aeromodelismovirtual.com/showthread.php?t=34530).
 
