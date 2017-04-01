@@ -1245,8 +1245,7 @@ void processMenuTelemetry(void){
 	if(menuOption == OP_TELMETRY_EXIT){
 		menuState = MENU_ROOT;
 		indexMenuOption = OP_EXIT;
-	}
-	if(menuOption == OP_TELMETRY_SAVE) {
+	} else if(menuOption == OP_TELMETRY_SAVE) {
 		writeEEPROM();
 		systemReset();
 	} else if(menuOption == OP_PROTOCOL)
