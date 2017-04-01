@@ -1165,6 +1165,7 @@ void processMenuEPS(void){
 	if(menuOption == OP_EPS_EXIT){
 		menuState = MENU_ROOT;
 		indexMenuOption = OP_EXIT;
+		return;
 	}
 	if(menuOption == OP_EPS_SAVE) {
 		writeEEPROM();
@@ -1176,7 +1177,7 @@ void processMenuEPS(void){
 	else if(menuOption == OP_FREQUENCY)
 		menuState = MENU_EPS_FREQUENCY;
 	else
-		menuState = MENU_TELEMETRY;
+		menuState = MENU_EPS;
 }
 
 void processMenuEPSMode(void){
@@ -1192,7 +1193,7 @@ void processMenuEPSMode(void){
 			featureSet(FEATURE_EPS);
 		menuState = MENU_EPS;
 	} else
-		menuState = MENU_TELEMETRY;
+		menuState = MENU_EPS;
 	indexMenuOption = OP_EPS_SAVE;
 }
 
@@ -1245,7 +1246,9 @@ void processMenuTelemetry(void){
 	if(menuOption == OP_TELMETRY_EXIT){
 		menuState = MENU_ROOT;
 		indexMenuOption = OP_EXIT;
-	} else if(menuOption == OP_TELMETRY_SAVE) {
+		return;
+	}
+	if(menuOption == OP_TELMETRY_SAVE) {
 		writeEEPROM();
 		systemReset();
 	} else if(menuOption == OP_PROTOCOL)
