@@ -1,5 +1,11 @@
 #Releases
 
+## Development 8.0.1 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-8.0.1.zip).
+
+### Bugfixes
+
+* Exit option on Telemetry Menu didn't work and Exit option on EPS Menu was redirected to Telemetry Menu.
+
 ## Development 8.0.0 [DOWNLOAD](https://github.com/raul-ortega/u360gts/blob/master/releases/amv-open360tracker_NAZE-8.0.0.zip).
 
 ### New features
