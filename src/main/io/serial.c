@@ -75,6 +75,8 @@ const serialPortIdentifier_e serialPortIdentifiers[SERIAL_PORT_COUNT] = {
 #endif
 };
 
+extern bool lostTelemetry;
+
 int16_t magHold;
 
 static uint8_t serialPortCount;
@@ -430,6 +432,7 @@ void evaluateOtherData(serialPort_t *serialPort, uint8_t receivedChar)
     	else if(cliCharCounterDetected==3) {
     		cliCharCounter=0;
     		cliCharCounterDetected=0;
+    		lostTelemetry = true;
 			cliEnter(serialPort);
     	}
     }

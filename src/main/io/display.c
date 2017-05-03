@@ -75,6 +75,7 @@ extern positionVector_t targetPosition;
 extern positionVector_t trackerPosition;
 extern bool gotFix;
 extern bool gotTelemetry;
+extern bool lostTelemetry;
 extern bool homeSet_BY_GPS;
 extern bool homeSet;
 extern bool homeReset;
@@ -331,7 +332,7 @@ void updateTicker(void)
     static uint8_t tickerIndex = 0;
     i2c_OLED_set_xy(SCREEN_CHARACTER_COLUMN_COUNT - 1, 0);
     i2c_OLED_send_char(tickerCharacters[tickerIndex]);
-    if(gotTelemetry || PROTOCOL(TP_CALIBRATING_MAG)){
+    if(!lostTelemetry || PROTOCOL(TP_CALIBRATING_MAG)){
 		tickerIndex++;
 		tickerIndex = tickerIndex % TICKER_CHARACTER_COUNT;
     }
