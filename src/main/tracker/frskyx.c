@@ -229,7 +229,8 @@ void processSportPacket(uint8_t *packet)
         }
         if ((NS == 'N' || NS == 'S') && (EW == 'E' || EW == 'W')) {
           gotFix = true;
-        }
+        } else
+        	telemetry_failed_cs++;
       }
       break;
   }

@@ -32,6 +32,8 @@ int32_t telemetry_time = 0;
 int32_t telemetry_date = 0;
 int16_t telemetry_age = 0;
 
+uint8_t telemetry_failed_cs = 0;
+
 float telemetry_course = 0.0f;
 float telemetry_speed = 0.0f;
 float telemetry_declination = 0.0f;
@@ -46,6 +48,10 @@ uint8_t telemetry_diy_gps = 0;
 uint8_t a;
 
 uint8_t LOCAL_GPS;
+
+uint16_t chars = 0;
+
+uint8_t sentences = 0;
 
 int32_t getTargetLat() {
   return telemetry_lat;
@@ -64,6 +70,10 @@ uint16_t getSats() {
 }
 
 void encodeTargetData(uint8_t c) {
+
+	uint16_t chars = 0;
+	uint8_t sentences = 0;
+
 	if(PROTOCOL(TP_MFD))
 		mfd_encodeTargetData(c);
 	else if(PROTOCOL(TP_GPS_TELEMETRY))
@@ -83,6 +93,9 @@ void encodeTargetData(uint8_t c) {
 }
 
 void gps_encodeTargetData(uint8_t c) {
+  //if(PROTOCOL(TP_GPS_TELEMETRY)){
+	TinyGPS_stats(&chars,&sentences,&telemetry_failed_cs);
+  //}
   if (TinyGPS_encode(c)) {
     unsigned long fix_age;
     get_position(&telemetry_lat, &telemetry_lon, &fix_age);

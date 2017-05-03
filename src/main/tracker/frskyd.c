@@ -274,6 +274,7 @@ void parseTelemHubByte(uint8_t c) {
 		frskyd_setAlt();
 		frskyd_setSats();
 		gotFix = true;
-	}
+	} else
+		telemetry_failed_cs++;
 }
 

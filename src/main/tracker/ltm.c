@@ -139,8 +139,8 @@ void ltm_encodeTargetData(uint8_t c) {
 	            dataState = IDLE;
 	        }
 	        else {                                                   // wrong checksum, drop packet
-	        dataState = IDLE;
-
+	        	dataState = IDLE;
+	        	telemetry_failed_cs++;
 	        }
 	      }
 	      else LTM_Buffer[LTM_Index++]=c;

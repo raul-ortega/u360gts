@@ -205,7 +205,7 @@ bool gotAlt;
 bool gotFix;
 bool settingHome;
 bool gotTelemetry=false;
-bool lostTelemetry=false;
+bool lostTelemetry=true;
 
 //TRACKER STATE VARS
 bool homeSet;
@@ -777,8 +777,6 @@ void updateReadTelemetry(void){
 		if(!PROTOCOL(TP_SERVOTEST)) encodeTargetData(c);
 
 		LED0_ON;
-
-
 
 		if(!PROTOCOL(TP_SERVOTEST)) {
 			gotTelemetry = true;

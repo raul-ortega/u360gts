@@ -69,6 +69,8 @@ void mavlink_encodeTargetData(uint8_t c) {
   mavlink_message_t msg;
   if (mavlink_parse_char(0, c, &msg, &status)) {
     mavlink_handleMessage(&msg);
+    if (status.parse_error > 0)
+    telemetry_failed_cs++;
   }
 }
 

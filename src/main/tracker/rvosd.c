@@ -140,6 +140,7 @@ void rvosd_encodeTargetData(uint8_t c) {
     }
     else{
       //needed?
+    	telemetry_failed_cs++;
     }
     frame_started = false;
   }
