@@ -73,6 +73,9 @@ void encodeTargetData(uint8_t c) {
 
 	uint16_t chars = 0;
 	uint8_t sentences = 0;
+	uint16_t current_protocol;
+
+	TelemetryPorotocolInit(protocolDetectionParser(c));
 
 	if(PROTOCOL(TP_MFD))
 		mfd_encodeTargetData(c);
@@ -141,4 +144,5 @@ int32_t gpsToLong(int8_t neg, uint16_t bp, uint16_t ap) {
   // take sign into account
   return ((int32_t)(first + second) * (uint32_t)neg);
 }
+
 

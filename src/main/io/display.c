@@ -952,6 +952,12 @@ void showDebugPage(void)
 }
 #endif
 
+void updateDisplayProtocolTitle(uint16_t protocol){
+	master_telemetry_protocol = protocol;
+	telemetry_failed_cs = 0;
+	handlePageChange();
+}
+
 void updateDisplay(void)
 {
     uint32_t now = micros();
