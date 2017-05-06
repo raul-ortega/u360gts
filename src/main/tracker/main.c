@@ -149,7 +149,7 @@ int16_t getOffset(int16_t offset_master,int8_t offset_trim);
 void updateTelemetryProtocol(uint16_t protocol);
 void protocolInit(void);
 void trackingInit(void);
-
+void telemetryPortInit(void);
 //EASING
 int16_t _lastTilt;
 int16_t tilt;
@@ -308,7 +308,8 @@ void tracker_setup(void)
 
   trackingInit();
 
-  trackerSerial = openSerialPort(masterConfig.serialConfig.portConfigs[0].identifier, FUNCTION_NONE, NULL, baudRates[masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex], MODE_RXTX, SERIAL_NOT_INVERTED);
+  telemetryPortInit();
+
   setPrintfSerialPort(trackerSerial);
 
   LED0_OFF;
@@ -342,6 +343,10 @@ void tracker_setup(void)
   epsVectorsInit(&targetLast,&targetCurrent,&targetEstimated,masterConfig.eps_interpolation,masterConfig.eps_interpolation_points);
 
  }
+
+void telemetryPortInit(void){
+	trackerSerial = openSerialPort(masterConfig.serialConfig.portConfigs[0].identifier, FUNCTION_NONE, NULL, baudRates[masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex], MODE_RXTX, SERIAL_NOT_INVERTED);
+}
 
 void trackingInit(void){
 	setEpsMode();
