@@ -49,9 +49,9 @@ uint16_t protocolDetectionParser(uint8_t c){
 	switch(detectionState){
 		case DETECTION_STATE_IDLE:
 			protocolDetected = 0;
-			if (c =='#') {
-				protocolDetected = TP_MFD;
-				detectionState = DETECTION_STATE_DETECTED;
+			if (c =='#' || c == 'X') {
+				detectionState = DETECTION_STATE_START_MFD;
+				detectionPacketIdex = 0;
 			} else if (c == 0x7E)
 				detectionState = DETECTION_STATE_START_FRXKY;
 			else if (c == 254 && detectionPacketIdex > 10) {
@@ -61,6 +61,15 @@ uint16_t protocolDetectionParser(uint8_t c){
 			} else if (c == '$')
 				detectionState = DETECTION_STATE_START;
 			detectionPacketIdex ++;
+			break;
+		case DETECTION_STATE_START_MFD:
+			if ((c == '#' || c == 'X') && detectionPacketIdex < 3)
+				detectionPacketIdex++;
+			else if (detectionPacketIdex > 5 && c == 'D'){
+				protocolDetected = TP_MFD;
+				detectionState = DETECTION_STATE_DETECTED;
+			} else
+				detectionState = DETECTION_STATE_IDLE;
 			break;
 		case DETECTION_STATE_START_FRXKY:
 			if (c == 0xFD) {
