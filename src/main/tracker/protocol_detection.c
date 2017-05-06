@@ -28,73 +28,80 @@
 #include <stdbool.h>
 #include "config/runtime_config.h"
 
+uint16_t protocolDetectionParser(uint8_t c);
 // machine states
 enum protocolDetectionStates {
-    IDLE,
-    STATE_START,
-	STATE_START_FRXKY_D,
-	STATE_START_FRXKY_X,
-	STATE_START_MAVLINK,
-    STATE_DETECTED
+    DETECTION_STATE_IDLE,
+    DETECTION_STATE_START,
+	DETECTION_STATE_START_FRXKY,
+	DETECTION_STATE_START_MAVLINK,
+    DETECTION_STATE_DETECTED
   };
 
-static uint8_t parserState = IDLE;
+static uint8_t detectionState = DETECTION_STATE_IDLE;
+static uint8_t detectionPacketIdex=0;
 static uint16_t protocolDetected = 0;
-static uint8_t packetIndex=0;
+static uint16_t lastProtocolDetected = 0;
 
-uint16_t protocolDetectionParser(uint8_t c) {
-		if (parserState == IDLE)
-			protocolDetected=0;
+uint16_t protocolDetectionParser(uint8_t c){
 
-		if (parserState == IDLE && c == 0x7E){
-			parserState = STATE_START_FRXKY_D;
-		} else if (parserState == STATE_START_FRXKY_D && c == 0xFD) {
+	switch(detectionState){
+		case DETECTION_STATE_IDLE:
+			protocolDetected = 0;
+			if (c == 0x7E)
+				detectionState = DETECTION_STATE_START_FRXKY;
+			else if (c == 254 && detectionPacketIdex > 10) {
+				/*detectionState = DETECTION_STATE_START_MAVLINK;*/
+				protocolDetected = TP_MAVLINK;
+				detectionState = DETECTION_STATE_DETECTED;
+			} else if (c == '$')
+				detectionState = DETECTION_STATE_START;
+			detectionPacketIdex ++;
+			break;
+		case DETECTION_STATE_START_FRXKY:
+			if (c == 0xFD) {
 				protocolDetected = TP_FRSKY_D;
-				parserState = STATE_DETECTED;
-		} else if (parserState == STATE_START_FRXKY_D && c ==0x10){
-			protocolDetected = TP_FRSKY_X;
-			parserState = STATE_DETECTED;
-		} else if (parserState == IDLE && c == 254){
-			parserState = STATE_START_MAVLINK;
-			packetIndex = 0;
-		} else if (parserState == STATE_START_MAVLINK && packetIndex >= 0 && packetIndex < 5){
-			parserState = STATE_START_MAVLINK;
-			packetIndex++;
-		} else if (parserState == STATE_START_MAVLINK && packetIndex == 5 && (c == 24 || c == 33)){
-			protocolDetected = TP_MAVLINK;
-			parserState = STATE_DETECTED;
-		} else if (parserState == IDLE && (c == '$')) {
-	    	parserState = STATE_START;
-	    } else if (parserState == STATE_START) {
-	    	switch(c){
-				case 'T': //LTM $T
+				detectionState = DETECTION_STATE_DETECTED;
+			} else if (detectionState == DETECTION_STATE_START_FRXKY && c ==0x10){
+				protocolDetected = TP_FRSKY_X;
+				detectionState = DETECTION_STATE_DETECTED;
+				detectionPacketIdex = 0;
+			} else if (detectionPacketIdex > 10)
+				detectionState = DETECTION_STATE_IDLE;
+			break;
+		case DETECTION_STATE_START_MAVLINK:
+			if (detectionPacketIdex < 5)
+				detectionPacketIdex++;
+			else if (c == 24 || c == 33){
+				protocolDetected = TP_MAVLINK;
+				detectionState = DETECTION_STATE_DETECTED;
+			} else
+				detectionState = DETECTION_STATE_IDLE;
+			break;
+		case DETECTION_STATE_START:
+			detectionState = DETECTION_STATE_DETECTED;
+			switch(c){
+				case 'T':
 					protocolDetected = TP_LTM;
-					parserState = STATE_DETECTED;
 					break;
-				case 'G': //NMEA $GGA
+				case 'G':
 					protocolDetected = TP_GPS_TELEMETRY;
-					parserState = STATE_DETECTED;
 					break;
-				case '1': //RVOSD $1
+				case '1':
 				case 'R':
 				case 'V':
 					protocolDetected = TP_RVOSD;
-					parserState = STATE_DETECTED;
 					break;
 				default:
-					parserState = IDLE;
-	    	}
-	    } else if (parserState == STATE_DETECTED && protocolDetected > 0){
-	    	DISABLE_PROTOCOL(0b111111111111);
-	    	ENABLE_PROTOCOL(protocolDetected);
-	    	parserState = IDLE;
-	    } else
-	    	parserState = IDLE;
+					detectionState = DETECTION_STATE_IDLE;
+					break;
+			}
+			break;
+		case DETECTION_STATE_DETECTED:
+			detectionState = DETECTION_STATE_IDLE;
+			detectionPacketIdex = 0;
+			break;
+	}
+	return protocolDetected;
 
-	    return (protocolDetected);
 }
-
-
-
-
-

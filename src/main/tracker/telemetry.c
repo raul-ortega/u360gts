@@ -53,6 +53,8 @@ uint16_t chars = 0;
 
 uint8_t sentences = 0;
 
+bool detectionIsEnabled = false;
+
 int32_t getTargetLat() {
   return telemetry_lat;
 }
@@ -69,13 +71,24 @@ uint16_t getSats() {
   return telemetry_sats;
 }
 
+void enableProtocolDetection(void){
+	detectionIsEnabled = true;
+}
+
+void disableProtocolDetection(void){
+	detectionIsEnabled = false;
+}
+
 void encodeTargetData(uint8_t c) {
 
 	uint16_t chars = 0;
 	uint8_t sentences = 0;
-	uint16_t current_protocol;
+	uint16_t protocolDetected = 0;
 
-	TelemetryPorotocolInit(protocolDetectionParser(c));
+	if(detectionIsEnabled) {
+		protocolDetected = protocolDetectionParser(c);
+		updateTelemetryProtocol(protocolDetected);
+	}
 
 	if(PROTOCOL(TP_MFD))
 		mfd_encodeTargetData(c);

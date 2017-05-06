@@ -25,6 +25,6 @@
 */
 #include <stdint.h>
 
-void protocolDetectionParser(uint8_t c);
+uint16_t protocolDetectionParser(uint8_t c);
 
 

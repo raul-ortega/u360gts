@@ -146,7 +146,9 @@ void updateCalibratePan();
 uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2);
 void setEpsMode(void);
 int16_t getOffset(int16_t offset_master,int8_t offset_trim);
-void TelemetryPorotocolInit(uint16_t protocol);
+void updateTelemetryProtocol(uint16_t protocol);
+void protocolInit(void);
+void trackingInit(void);
 
 //EASING
 int16_t _lastTilt;
@@ -302,33 +304,9 @@ extern int32_t telemetry_lon;
 void tracker_setup(void)
 {
 
-  TelemetryPorotocolInit(masterConfig.telemetry_protocol);
+  protocolInit();
 
-  setEpsMode();
-  updateEPSParams();
-
-  OFFSET_TRIM = masterConfig.offset_trim;
-  OFFSET = getOffset(masterConfig.offset,masterConfig.offset_trim);
-
-  gotAlt = false;
-  gotFix = false;
-
-  homeSet = false;
-  homeReset = false;
-
-  trackingStarted = false;
-
-  settingHome = false;
-
-  previousState = true;
-  homeButtonPreviousState = true;
-
-  currentState = true;
-  homeButtonCurrentState = true;
-
-  gotNewHeading = false;
-
-  menuState = 0;
+  trackingInit();
 
   trackerSerial = openSerialPort(masterConfig.serialConfig.portConfigs[0].identifier, FUNCTION_NONE, NULL, baudRates[masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex], MODE_RXTX, SERIAL_NOT_INVERTED);
   setPrintfSerialPort(trackerSerial);
@@ -365,7 +343,33 @@ void tracker_setup(void)
 
  }
 
+void trackingInit(void){
+	setEpsMode();
+	updateEPSParams();
 
+	OFFSET_TRIM = masterConfig.offset_trim;
+	OFFSET = getOffset(masterConfig.offset,masterConfig.offset_trim);
+
+	gotAlt = false;
+	gotFix = false;
+
+	homeSet = false;
+	homeReset = false;
+
+	trackingStarted = false;
+
+	settingHome = false;
+
+	previousState = true;
+	homeButtonPreviousState = true;
+
+	currentState = true;
+	homeButtonCurrentState = true;
+
+	gotNewHeading = false;
+
+	menuState = 0;
+}
 
 void tracker_loop(void)
 {
@@ -741,15 +745,17 @@ void updateReadTelemetry(void){
 
 		evaluateOtherData(trackerSerial,c);
 
-		if(!PROTOCOL(TP_SERVOTEST)) encodeTargetData(c);
-
 		LED0_ON;
+
+		if(!PROTOCOL(TP_SERVOTEST) && !cliMode)
+			encodeTargetData(c);
 
 		if(!PROTOCOL(TP_SERVOTEST)) {
 			gotTelemetry = true;
 			lostTelemetry = false;
 			lostTelemetry_timer = 0;
 		}
+
 
 	} else {
 		LED0_OFF;
@@ -771,6 +777,7 @@ void updateTelemetryLost(void){
 
 	if(!gotTelemetry && (millis() - lostTelemetry_timer > 3000)){
 		lostTelemetry = true;
+		enableProtocolDetection();
 	}
 }
 
@@ -1467,15 +1474,22 @@ void updateEPSParams(){
 	EPS_FREQUENCY = masterConfig.eps_frequency;
 }
 
-void TelemetryPorotocolInit(uint16_t protocol){
+void updateTelemetryProtocol(uint16_t protocol){
 	if (protocol == 0)
 		return;
 
 	if(protocol != masterConfig.telemetry_protocol) {
 		masterConfig.telemetry_protocol = protocol;
+		protocolInit();
+		trackingInit();
 		updateDisplayProtocolTitle(protocol);
+		disableProtocolDetection();
+	}
+}
 
-		switch(masterConfig.telemetry_protocol)
+void protocolInit(void){
+	DISABLE_PROTOCOL(0b111111111111);
+	switch(masterConfig.telemetry_protocol)
 		{
 		  case TP_SERVOTEST:
 			ENABLE_PROTOCOL(TP_SERVOTEST);
@@ -1510,5 +1524,4 @@ void TelemetryPorotocolInit(uint16_t protocol){
 			ENABLE_PROTOCOL(TP_LTM_FRSKYD);
 			break;
 		}
-	}
 }
