@@ -102,6 +102,7 @@
 #include "tracker/servos.h"
 #include "tracker/gps_estimation.h"
 #include "tracker/interpolation.h"
+#include "tracker/protocol_detection.h"
 
 void calcTilt(void);
 void getError(void);
@@ -145,6 +146,9 @@ void updateCalibratePan();
 uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2);
 void setEpsMode(void);
 int16_t getOffset(int16_t offset_master,int8_t offset_trim);
+void updateTelemetryProtocol(uint16_t protocol);
+void protocolInit(void);
+void trackingInit(void);
 
 //EASING
 int16_t _lastTilt;
@@ -299,69 +303,10 @@ extern int32_t telemetry_lon;
 
 void tracker_setup(void)
 {
-  switch(masterConfig.telemetry_protocol)
-  {
-    case TP_SERVOTEST:
-    	ENABLE_PROTOCOL(TP_SERVOTEST);
-    	break;
-    case TP_MFD:
-    	ENABLE_PROTOCOL(TP_MFD);
-    	featureClear(FEATURE_EPS);
-    	featureClear(FEATURE_GPS);
-    	break;
-    case TP_GPS_TELEMETRY:
-    	ENABLE_PROTOCOL(TP_GPS_TELEMETRY);
-    	break;
-    case TP_MAVLINK:
-    	ENABLE_PROTOCOL(TP_MAVLINK);
-    	break;
-    case TP_RVOSD:
-    	ENABLE_PROTOCOL(TP_RVOSD);
-    	break;
-    case TP_FRSKY_D:
-    	ENABLE_PROTOCOL(TP_FRSKY_D);
-    	telemetry_diy_gps = masterConfig.telemetry_diy_gps;
-    	break;
-    case TP_FRSKY_X:
-    	ENABLE_PROTOCOL(TP_FRSKY_X);
-    	telemetry_diy_gps = masterConfig.telemetry_diy_gps;
-    	break;
-    case TP_LTM:
-    	ENABLE_PROTOCOL(TP_LTM);
-    	break;
-    case TP_LTM_FRSKYD:
-    	ENABLE_PROTOCOL(TP_LTM_FRSKYD);
-    	break;
-  }
 
-  setEpsMode();
-  updateEPSParams();
+  protocolInit();
 
-  OFFSET_TRIM = masterConfig.offset_trim;
-  OFFSET = getOffset(masterConfig.offset,masterConfig.offset_trim);
-
-  gotAlt = false;
-  gotFix = false;
-
-  homeSet = false;
-  homeReset = false;
-
-  trackingStarted = false;
-
-  settingHome = false;
-
-  previousState = true;
-  homeButtonPreviousState = true;
-
-  currentState = true;
-  homeButtonCurrentState = true;
-
-  gotNewHeading = false;
-
-  menuState = 0;
-
-  if(PROTOCOL(TP_MFD))
-    mfdTestMode = false;
+  trackingInit();
 
   trackerSerial = openSerialPort(masterConfig.serialConfig.portConfigs[0].identifier, FUNCTION_NONE, NULL, baudRates[masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex], MODE_RXTX, SERIAL_NOT_INVERTED);
   setPrintfSerialPort(trackerSerial);
@@ -398,7 +343,33 @@ void tracker_setup(void)
 
  }
 
+void trackingInit(void){
+	setEpsMode();
+	updateEPSParams();
 
+	OFFSET_TRIM = masterConfig.offset_trim;
+	OFFSET = getOffset(masterConfig.offset,masterConfig.offset_trim);
+
+	gotAlt = false;
+	gotFix = false;
+
+	homeSet = false;
+	homeReset = false;
+
+	trackingStarted = false;
+
+	settingHome = false;
+
+	previousState = true;
+	homeButtonPreviousState = true;
+
+	currentState = true;
+	homeButtonCurrentState = true;
+
+	gotNewHeading = false;
+
+	menuState = 0;
+}
 
 void tracker_loop(void)
 {
@@ -774,15 +745,17 @@ void updateReadTelemetry(void){
 
 		evaluateOtherData(trackerSerial,c);
 
-		if(!PROTOCOL(TP_SERVOTEST)) encodeTargetData(c);
-
 		LED0_ON;
+
+		if(!PROTOCOL(TP_SERVOTEST) && !cliMode)
+			encodeTargetData(c);
 
 		if(!PROTOCOL(TP_SERVOTEST)) {
 			gotTelemetry = true;
 			lostTelemetry = false;
 			lostTelemetry_timer = 0;
 		}
+
 
 	} else {
 		LED0_OFF;
@@ -804,6 +777,7 @@ void updateTelemetryLost(void){
 
 	if(!gotTelemetry && (millis() - lostTelemetry_timer > 3000)){
 		lostTelemetry = true;
+		enableProtocolDetection();
 	}
 }
 
@@ -1498,4 +1472,56 @@ void setEpsMode(void){
 void updateEPSParams(){
 	EPS_DISTANCE_GAIN = masterConfig.eps_gain.distance;
 	EPS_FREQUENCY = masterConfig.eps_frequency;
+}
+
+void updateTelemetryProtocol(uint16_t protocol){
+	if (protocol == 0)
+		return;
+
+	if(protocol != masterConfig.telemetry_protocol) {
+		masterConfig.telemetry_protocol = protocol;
+		protocolInit();
+		trackingInit();
+		updateDisplayProtocolTitle(protocol);
+		disableProtocolDetection();
+	}
+}
+
+void protocolInit(void){
+	DISABLE_PROTOCOL(0b111111111111);
+	switch(masterConfig.telemetry_protocol)
+		{
+		  case TP_SERVOTEST:
+			ENABLE_PROTOCOL(TP_SERVOTEST);
+			break;
+		  case TP_MFD:
+			ENABLE_PROTOCOL(TP_MFD);
+			featureClear(FEATURE_EPS);
+			featureClear(FEATURE_GPS);
+			mfdTestMode = false;
+			break;
+		  case TP_GPS_TELEMETRY:
+			ENABLE_PROTOCOL(TP_GPS_TELEMETRY);
+			break;
+		  case TP_MAVLINK:
+			ENABLE_PROTOCOL(TP_MAVLINK);
+			break;
+		  case TP_RVOSD:
+			ENABLE_PROTOCOL(TP_RVOSD);
+			break;
+		  case TP_FRSKY_D:
+			ENABLE_PROTOCOL(TP_FRSKY_D);
+			telemetry_diy_gps = masterConfig.telemetry_diy_gps;
+			break;
+		  case TP_FRSKY_X:
+			ENABLE_PROTOCOL(TP_FRSKY_X);
+			telemetry_diy_gps = masterConfig.telemetry_diy_gps;
+			break;
+		  case TP_LTM:
+			ENABLE_PROTOCOL(TP_LTM);
+			break;
+		  case TP_LTM_FRSKYD:
+			ENABLE_PROTOCOL(TP_LTM_FRSKYD);
+			break;
+		}
 }

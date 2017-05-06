@@ -26,6 +26,7 @@ This code is written by Samuel Brucksch, and improved by Raul Ortega
  it will decode the RVOSD telemetry protocol and will convert it into values the open360tracker can understand
  
  $1,1,00040291,00.000000,N,000.000000,W,+00000,+00000,000,0000,0000,000,+000,000,089,089,089,089,1160,0000,00004,0004,00,000,0026,*00
+ $1,1,00194723,41.572332,N,001.973692,E,+00312,+00312,254,0021,0000,005,+000,220,000,000,000,000,1156,0002,00050,0161,06,000,0033,0,*01
  
  It is sent 25 times/S, 115200, 8N1.
  
