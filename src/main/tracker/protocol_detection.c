@@ -35,6 +35,7 @@ enum protocolDetectionStates {
     DETECTION_STATE_START,
 	DETECTION_STATE_START_FRXKY,
 	DETECTION_STATE_START_MAVLINK,
+	DETECTION_STATE_START_MFD,
     DETECTION_STATE_DETECTED
   };
 
@@ -48,7 +49,10 @@ uint16_t protocolDetectionParser(uint8_t c){
 	switch(detectionState){
 		case DETECTION_STATE_IDLE:
 			protocolDetected = 0;
-			if (c == 0x7E)
+			if (c =='#') {
+				protocolDetected = TP_MFD;
+				detectionState = DETECTION_STATE_DETECTED;
+			} else if (c == 0x7E)
 				detectionState = DETECTION_STATE_START_FRXKY;
 			else if (c == 254 && detectionPacketIdex > 10) {
 				/*detectionState = DETECTION_STATE_START_MAVLINK;*/
