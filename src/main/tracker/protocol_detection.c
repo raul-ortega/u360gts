@@ -53,6 +53,10 @@ void disableProtocolDetection(void){
 	detectionIsEnabled = false;
 }
 
+bool isProtocolDetectionEnabled(void){
+	return detectionIsEnabled;
+}
+
 uint16_t getProtocol(void){
 	return protocolDetected;
 }

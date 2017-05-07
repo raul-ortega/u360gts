@@ -138,3 +138,4 @@ void displayDisablePageCycling(void);
 void displayResetPageCycling(void);
 void displaySetNextPageChangeAt(uint32_t futureMicros);
 void updateDisplayProtocolTitle(uint16_t protocol);
+void showAutodetectingTitle(uint16_t protocol);
