@@ -210,7 +210,6 @@ bool gotFix;
 bool settingHome;
 bool gotTelemetry=false;
 bool lostTelemetry=true;
-uint16_t currentProtocol;
 
 //TRACKER STATE VARS
 bool homeSet;
@@ -1486,20 +1485,24 @@ void updateEPSParams(){
 void updateProtocolDetection(void){
 	uint16_t protocol;
 
-	if(!feature(FEATURE_AUTODETECT) && !cliMode)
+	if(!feature(FEATURE_AUTODETECT) || cliMode)
 		return;
 
 	protocol = getProtocol();
 
-	if(protocol == masterConfig.telemetry_protocol && isProtocolDetectionEnabled() && !lostTelemetry)
+	if(protocol == masterConfig.telemetry_protocol && isProtocolDetectionEnabled() && !lostTelemetry){
 		showAutodetectingTitle(protocol);
+		if(PROTOCOL(TP_MFD))
+			settingHome = true;
+	}
 
 	if(protocol != masterConfig.telemetry_protocol) {
 		masterConfig.telemetry_protocol = protocol;
 		protocolInit();
 		trackingInit();
-		//updateDisplayProtocolTitle(protocol);
-		showAutodetectingTitle(protocol);
+		if(PROTOCOL(TP_MFD))
+			settingHome = true;
+		updateDisplayProtocolTitle(protocol);
 	}
 
 
@@ -1541,5 +1544,4 @@ void protocolInit(void){
 		ENABLE_PROTOCOL(TP_LTM_FRSKYD);
 		break;
 	}
-	currentProtocol = masterConfig.telemetry_protocol;
 }
