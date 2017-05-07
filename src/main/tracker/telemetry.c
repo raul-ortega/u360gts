@@ -23,6 +23,7 @@
 #include "config.h"
 #include "telemetry.h"
 #include "TinyGPS.h"
+#include "protocol_detection.h"
 
 int32_t telemetry_lat = 0;
 int32_t telemetry_lon = 0;
@@ -53,8 +54,6 @@ uint16_t chars = 0;
 
 uint8_t sentences = 0;
 
-bool detectionIsEnabled = false;
-
 int32_t getTargetLat() {
   return telemetry_lat;
 }
@@ -71,24 +70,12 @@ uint16_t getSats() {
   return telemetry_sats;
 }
 
-void enableProtocolDetection(void){
-	detectionIsEnabled = true;
-}
-
-void disableProtocolDetection(void){
-	detectionIsEnabled = false;
-}
-
 void encodeTargetData(uint8_t c) {
 
 	uint16_t chars = 0;
 	uint8_t sentences = 0;
-	uint16_t protocolDetected = 0;
 
-	if(detectionIsEnabled) {
-		protocolDetected = protocolDetectionParser(c);
-		updateTelemetryProtocol(protocolDetected);
-	}
+	protocolDetectionParser(c);
 
 	if(PROTOCOL(TP_MFD))
 		mfd_encodeTargetData(c);

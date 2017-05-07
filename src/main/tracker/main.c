@@ -146,7 +146,7 @@ void updateCalibratePan();
 uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2);
 void setEpsMode(void);
 int16_t getOffset(int16_t offset_master,int8_t offset_trim);
-void updateTelemetryProtocol(uint16_t protocol);
+void updateProtocolDetection(void);
 void protocolInit(void);
 void trackingInit(void);
 void telemetryPortInit(void);
@@ -306,6 +306,9 @@ void tracker_setup(void)
 
   protocolInit();
 
+  if(feature(FEATURE_AUTODETECT))
+	  enableProtocolDetection();
+
   trackingInit();
 
   telemetryPortInit();
@@ -406,6 +409,8 @@ void tracker_loop(void)
 		updateReadTelemetry();
 
 		updateTelemetryLost();
+
+		updateProtocolDetection();
 
 		updateTargetPosition();
 
@@ -782,7 +787,10 @@ void updateTelemetryLost(void){
 
 	if(!gotTelemetry && (millis() - lostTelemetry_timer > 3000)){
 		lostTelemetry = true;
-		enableProtocolDetection();
+		if(feature(FEATURE_AUTODETECT)){
+			showAutodetectingTitle(0);
+			enableProtocolDetection();
+		}
 	}
 }
 
@@ -1479,54 +1487,66 @@ void updateEPSParams(){
 	EPS_FREQUENCY = masterConfig.eps_frequency;
 }
 
-void updateTelemetryProtocol(uint16_t protocol){
-	if (protocol == 0)
+void updateProtocolDetection(void){
+	uint16_t protocol;
+
+	if(!feature(FEATURE_AUTODETECT) || cliMode)
 		return;
+
+	protocol = getProtocol();
+
+	if(protocol == masterConfig.telemetry_protocol && isProtocolDetectionEnabled() && !lostTelemetry){
+		showAutodetectingTitle(protocol);
+		if(PROTOCOL(TP_MFD))
+			settingHome = true;
+	}
 
 	if(protocol != masterConfig.telemetry_protocol) {
 		masterConfig.telemetry_protocol = protocol;
 		protocolInit();
 		trackingInit();
+		if(PROTOCOL(TP_MFD))
+			settingHome = true;
 		updateDisplayProtocolTitle(protocol);
-		disableProtocolDetection();
 	}
+
+
 }
 
 void protocolInit(void){
 	DISABLE_PROTOCOL(0b111111111111);
-	switch(masterConfig.telemetry_protocol)
-		{
-		  case TP_SERVOTEST:
-			ENABLE_PROTOCOL(TP_SERVOTEST);
-			break;
-		  case TP_MFD:
-			ENABLE_PROTOCOL(TP_MFD);
-			featureClear(FEATURE_EPS);
-			featureClear(FEATURE_GPS);
-			mfdTestMode = false;
-			break;
-		  case TP_GPS_TELEMETRY:
-			ENABLE_PROTOCOL(TP_GPS_TELEMETRY);
-			break;
-		  case TP_MAVLINK:
-			ENABLE_PROTOCOL(TP_MAVLINK);
-			break;
-		  case TP_RVOSD:
-			ENABLE_PROTOCOL(TP_RVOSD);
-			break;
-		  case TP_FRSKY_D:
-			ENABLE_PROTOCOL(TP_FRSKY_D);
-			telemetry_diy_gps = masterConfig.telemetry_diy_gps;
-			break;
-		  case TP_FRSKY_X:
-			ENABLE_PROTOCOL(TP_FRSKY_X);
-			telemetry_diy_gps = masterConfig.telemetry_diy_gps;
-			break;
-		  case TP_LTM:
-			ENABLE_PROTOCOL(TP_LTM);
-			break;
-		  case TP_LTM_FRSKYD:
-			ENABLE_PROTOCOL(TP_LTM_FRSKYD);
-			break;
-		}
+	switch(masterConfig.telemetry_protocol) {
+	  case TP_SERVOTEST:
+		ENABLE_PROTOCOL(TP_SERVOTEST);
+		break;
+	  case TP_MFD:
+		ENABLE_PROTOCOL(TP_MFD);
+		featureClear(FEATURE_EPS);
+		featureClear(FEATURE_GPS);
+		mfdTestMode = false;
+		break;
+	  case TP_GPS_TELEMETRY:
+		ENABLE_PROTOCOL(TP_GPS_TELEMETRY);
+		break;
+	  case TP_MAVLINK:
+		ENABLE_PROTOCOL(TP_MAVLINK);
+		break;
+	  case TP_RVOSD:
+		ENABLE_PROTOCOL(TP_RVOSD);
+		break;
+	  case TP_FRSKY_D:
+		ENABLE_PROTOCOL(TP_FRSKY_D);
+		telemetry_diy_gps = masterConfig.telemetry_diy_gps;
+		break;
+	  case TP_FRSKY_X:
+		ENABLE_PROTOCOL(TP_FRSKY_X);
+		telemetry_diy_gps = masterConfig.telemetry_diy_gps;
+		break;
+	  case TP_LTM:
+		ENABLE_PROTOCOL(TP_LTM);
+		break;
+	  case TP_LTM_FRSKYD:
+		ENABLE_PROTOCOL(TP_LTM_FRSKYD);
+		break;
+	}
 }

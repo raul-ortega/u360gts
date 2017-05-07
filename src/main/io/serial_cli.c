@@ -200,6 +200,7 @@ static const char * const featureNames[] = {
 	"DEBUG",
 	"EPS",
 	"RSSI_ADC",
+	"AUTODETECT",
 	NULL
 };
 

@@ -25,6 +25,8 @@
 */
 #include <stdint.h>
 
-uint16_t protocolDetectionParser(uint8_t c);
-
-
+void enableProtocolDetection(void);
+void disableProtocolDetection(void);
+void protocolDetectionParser(uint8_t c);
+uint16_t getProtocol(void);
+bool isPorotocolDetectionEnabled(void);

@@ -381,8 +381,7 @@ void showTitle()
 {
     i2c_OLED_set_line(0);
     //i2c_OLED_send_string(pageTitles[pageState.pageId]);
-
-    if(pageState.pageId==PAGE_TELEMETRY) {
+	if(pageState.pageId==PAGE_TELEMETRY) {
         int16_t i;
     	for(i=0;i<10;i++) {
     		if(master_telemetry_protocol & (1<<i)) {
@@ -396,6 +395,10 @@ void showTitle()
     			break;
     		}
     	}
+    	if(master_telemetry_protocol == 0 && feature(FEATURE_AUTODETECT)){
+			tfp_sprintf(lineBuffer, "Autodetecting");
+			i2c_OLED_send_string(lineBuffer);
+		}
     } else if(pageState.pageId==PAGE_MENU){
     	return;
     } else if(pageState.pageId==PAGE_BATTERY) {
@@ -951,6 +954,11 @@ void showDebugPage(void)
     }
 }
 #endif
+
+void showAutodetectingTitle(uint16_t protocol){
+	master_telemetry_protocol = protocol;
+	showTitle();
+}
 
 void updateDisplayProtocolTitle(uint16_t protocol){
 	master_telemetry_protocol = protocol;
