@@ -28,7 +28,7 @@
 #include <stdbool.h>
 #include "config/runtime_config.h"
 
-uint16_t protocolDetectionParser(uint8_t c);
+
 // machine states
 enum protocolDetectionStates {
     DETECTION_STATE_IDLE,
@@ -42,13 +42,27 @@ enum protocolDetectionStates {
 static uint8_t detectionState = DETECTION_STATE_IDLE;
 static uint8_t detectionPacketIdex=0;
 static uint16_t protocolDetected = 0;
-static uint16_t lastProtocolDetected = 0;
 
-uint16_t protocolDetectionParser(uint8_t c){
+bool detectionIsEnabled = false;
+
+void enableProtocolDetection(void){
+	detectionIsEnabled = true;
+}
+
+void disableProtocolDetection(void){
+	detectionIsEnabled = false;
+}
+
+uint16_t getProtocol(void){
+	return protocolDetected;
+}
+
+void protocolDetectionParser(uint8_t c){
+	if(!detectionIsEnabled)
+		return;
 
 	switch(detectionState){
 		case DETECTION_STATE_IDLE:
-			protocolDetected = 0;
 			if (c =='#' || c == 'X') {
 				detectionState = DETECTION_STATE_START_MFD;
 				detectionPacketIdex = 0;
@@ -63,9 +77,9 @@ uint16_t protocolDetectionParser(uint8_t c){
 			detectionPacketIdex ++;
 			break;
 		case DETECTION_STATE_START_MFD:
-			if ((c == '#' || c == 'X') && detectionPacketIdex < 3)
+			if ((c == '#' || c == 'X'))
 				detectionPacketIdex++;
-			else if (detectionPacketIdex > 5 && c == 'D'){
+			else if (detectionPacketIdex > 5){
 				protocolDetected = TP_MFD;
 				detectionState = DETECTION_STATE_DETECTED;
 			} else
@@ -113,8 +127,7 @@ uint16_t protocolDetectionParser(uint8_t c){
 		case DETECTION_STATE_DETECTED:
 			detectionState = DETECTION_STATE_IDLE;
 			detectionPacketIdex = 0;
+			disableProtocolDetection();
 			break;
 	}
-	return protocolDetected;
-
 }
