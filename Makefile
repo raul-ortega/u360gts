@@ -218,6 +218,7 @@ TRACKER_SRC = tracker/main.c \
 			tracker/TinyGPS.c \
 			tracker/ltm.c \
 			tracker/mfd.c \
+			tracker/pitlab.c \
 			tracker/compass.c \
 			tracker/telemetry.c \
 			tracker/mavlink.c \
@@ -613,9 +614,9 @@ VPATH		:= $(VPATH):$(STDPERIPH_DIR)/src
 #
 
 # Tool names
-CC		 = arm-none-eabi-gcc
-OBJCOPY		 = arm-none-eabi-objcopy
-SIZE		 = arm-none-eabi-size
+CC		 = /home/javi/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-gcc
+OBJCOPY		 = /home/javi/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-objcopy
+SIZE		 = /home/javi/gcc-arm-none-eabi-6-2017-q1-update/bin/arm-none-eabi-size
 
 #
 # Tool options.

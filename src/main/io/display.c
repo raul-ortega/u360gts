@@ -178,8 +178,9 @@ static const char* const telemetry_protocols_Titles[]={
 	"RVOSD",
 	"FRSKY_D",
 	"FRSKY_X",
-	"LTM"/*,
+	"LTM",/*,
 	"LTM_FRSKYD"*/
+  "PITLAB"
 };
 
 // Menu
@@ -221,6 +222,7 @@ static const char* const telemetryProtocolMenu[] = {
 	"FRSKY X      ",
 	"LTM          ",
 	/*"LTM_FRSKYD   ",*/
+  "PITLAB       ",
 	"EXIT         "
 };
 
