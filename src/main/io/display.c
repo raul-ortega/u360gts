@@ -652,18 +652,24 @@ void showTelemetryPage(void){
 
 		uint16_t lat_a = abs(targetPosition.lat / 1000000);
 		uint32_t lat_b = abs(targetPosition.lat % 1000000);
-		int8_t sgn_lat = (targetPosition.lat < 0)? -1 : 1;
 
-		tfp_sprintf(lineBuffer, "Lat: %d.%06d  ",sgn_lat*lat_a,lat_b);
+		tfp_sprintf(lineBuffer, "Lat: ");
+		if (targetPosition.lat < 0)
+			tfp_sprintf(lineBuffer, "Lat: -%d.%06d  ",lat_a,lat_b);
+		else
+			tfp_sprintf(lineBuffer, "Lat: %d.%06d  ",lat_a,lat_b);
 		padLineBuffer();
 		i2c_OLED_set_line(rowIndex++);
 		i2c_OLED_send_string(lineBuffer);
 
 		uint16_t lon_a = abs(targetPosition.lon / 1000000);
 		uint32_t lon_b = abs(targetPosition.lon % 1000000);
-		int8_t sgn_lon = (targetPosition.lon < 0) ? -1 : 1;
 
-		tfp_sprintf(lineBuffer, "Lon: %d.%06d  ",sgn_lon*lon_a,lon_b);
+		tfp_sprintf(lineBuffer, "Lon: ");
+		if(targetPosition.lon < 0)
+			tfp_sprintf(lineBuffer, "Lon: -%d.%06d  ",lon_a,lon_b);
+		else
+			tfp_sprintf(lineBuffer, "Lon: %d.%06d  ",lon_a,lon_b);
 		padLineBuffer();
 		i2c_OLED_set_line(rowIndex++);
 		i2c_OLED_send_string(lineBuffer);
