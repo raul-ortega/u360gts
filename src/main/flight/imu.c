@@ -210,7 +210,9 @@ void imuCalculateAcceleration(uint32_t deltaT)
 *
 * //TODO: Add explanation for how it uses the Z dimension.
 */
-int16_t imuCalculateHeading(t_fp_vector *vec)
+
+
+int16_t imuCalculateHeadingOld(t_fp_vector *vec)
 {
     int16_t head;
 
@@ -222,7 +224,8 @@ int16_t imuCalculateHeading(t_fp_vector *vec)
     float Yh = vec->A[Y] * cosineRoll - vec->A[Z] * sineRoll;
     //TODO: Replace this comment with an explanation of why Yh and Xh can never simultanoeusly be zero,
     // or handle the case in which they are and (atan2f(0, 0) is undefined.
-    float hd = (atan2f(Yh, Xh) * 1800.0f / M_PIf + magneticDeclination + (OFFSET * 10.0f)) / 1.0f; //10.0f;
+    //float hd = (atan2f(Yh, Xh) * 1800.0f / M_PIf + magneticDeclination + (OFFSET * 10.0f)) / 1.0f;
+    float hd = atan2f(Yh, Xh);
     head = lrintf(hd);
 
     // Arctan returns a value in the range -180 to 180 degrees. We 'normalize' negative angles to be positive.
@@ -242,7 +245,7 @@ int16_t imuCalculateHeading(t_fp_vector *vec)
 
 }
 
-int16_t imuCalculateHeading2(t_fp_vector *vec)
+int16_t imuCalculateHeading(t_fp_vector *vec)
 {
     int16_t head;
 
@@ -261,13 +264,12 @@ int16_t imuCalculateHeading2(t_fp_vector *vec)
     if (hd < 0)
     	hd += 2 * M_PIf;
 
-     if (hd > 2 * M_PIf)
-    	 hd -= 2 * M_PIf;
+    if (hd > 2 * M_PIf)
+    	hd -= 2 * M_PIf;
 
-
-
-    return (int) ((hd * 1800.0 / M_PIf) + magneticDeclination - 0*10.0f)%3600;
+    return (int16_t) ((hd * 1800.0 / M_PIf) + magneticDeclination + OFFSET * 10.0f)%3600;
 }
+
 static void imuCalculateEstimatedAttitude(void)
 {
     int32_t axis;
