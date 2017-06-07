@@ -10,13 +10,14 @@ This firmware has been developed for controllers based on STM32F series micropro
 
 # Features
 
-* 360 degrees continous rotation.
+* 360 degree continous rotation.
 * Multiprotocol.
+* Automatic protocol eetection.
 * Acceps up to 10 Hz of input telemetry frequency.
 * Protocol conversion and fordwarding.
-* Fully configurable from the [u360gts-configurator](https://github.com/raul-ortega/u360gts-configurator) (cross platform) and serial console (CLI mode).
+* Fully and easy configurable with [u360gts-configurator](https://github.com/raul-ortega/u360gts-configurator) (cross platform) and serial console (CLI mode).
 * Tilt easing.
-* Automatic home position.
+* Automatic home position (with local GPS).
 * Detailled status data on OLED display.
 * RSSI signal strength on OLED display.
 * Setup menu on OLED display.
@@ -29,14 +30,14 @@ This firmware has been developed for controllers based on STM32F series micropro
 
 With this firmware you can move your antenna continually in a range of 360 degrees, without the need of moving back. Using an slipring and 360 degree servos, or normal servos modified to be able of doing it, the firware will give the orders for reaching the target in an acurate and fast way.
 
-**MULTIPROTOCOL**
+**MULTIPROTOCOL AND AUTOMATIC PROTOCOL DETECTION**
 
-This firmware provides an **all in one antenna tracker controller system**, it is able to work with several telemetry protocols. When you are in the flying field, you only have to change the protocol and the baud rate through the setup menu on the display. Now you have one antenna tracker system for all your aircrafts.
+This firmware provides an **all in one antenna tracker controller system**, it is able to work with several telemetry protocols. You can configure your antenna tracker to detect automátically the telemetry protocol that your aircraft is streaming (if you configured the appropieated baud rate, otherwhise you have to select the apropiated baud rate in the setup menu on the OLED display once you are at the flying field). Now you have one antenna tracker system for all your aircrafts!
 
-These are the protocols that are supported:
+These are the protocols that are supported (and automatically detected):
 
 - **MFD** 
-- **DIRECT NMEA GPS Telemetry**
+- **GPS TELEMETRY (DIRECT NMEA from GPS)**
 - **MAVLINK**
 - **RVOSD**
 - **FRSKY D**
