@@ -70,6 +70,7 @@
 #include "io/ledstrip.h"
 #include "io/display.h"
 #include "io/serial_cli.h"
+#include "io/beeper.h"
 #include "sensors/sensors.h"
 #include "sensors/sonar.h"
 #include "sensors/barometer.h"
@@ -432,7 +433,7 @@ void tracker_loop(void)
 		}
 	}
 
-
+        beeperUpdate();
 
 
 	//update display
@@ -700,6 +701,7 @@ void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int1
 	  epsVectorLoad(&targetLast,lat,lon,0,0,0);
 	  epsVectorLoad(&targetCurrent,lat,lon,0,0,millis());
   }
+  beeper(BEEPER_ARMING_GPS_FIX);
 }
 
 void updateBatteryStatus(void){
