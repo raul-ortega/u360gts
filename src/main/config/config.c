@@ -745,6 +745,7 @@ static void resetConf(void)
    	featureClear(FEATURE_GPS);
    	masterConfig.gps_min_sats = 6;
    	masterConfig.update_home_by_local_gps = 0;
+    masterConfig.gpsConfig.homeBeeper = 1;
 
    	// Estimation Position System (EPS)
    	featureClear(FEATURE_EPS);

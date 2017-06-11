@@ -520,7 +520,8 @@ const clivalue_t valueTable[] = {
     { "gps_auto_config",            VAR_UINT8  | TRACKER_VALUE | MODE_LOOKUP,  &masterConfig.gpsConfig.autoConfig, .config.lookup = { TABLE_OFF_ON } },
     { "gps_auto_baud",              VAR_UINT8  | TRACKER_VALUE | MODE_LOOKUP,  &masterConfig.gpsConfig.autoBaud, .config.lookup = { TABLE_OFF_ON } },
     { "gps_min_sats",               VAR_UINT8  | TRACKER_VALUE, &masterConfig.gps_min_sats, .config.minmax = { 4,  20 } },
-/*
+    { "gps_home_beeper",            VAR_UINT8  | TRACKER_VALUE | MODE_LOOKUP,  &masterConfig.gpsConfig.homeBeeper, .config.lookup = { TABLE_OFF_ON } },
+	/*
     { "gps_pos_p",                  VAR_UINT8  | PROFILE_VALUE, &masterConfig.profile[0].pidProfile.P8[PIDPOS], .config.minmax = { 0,  200 } },
     { "gps_pos_i",                  VAR_UINT8  | PROFILE_VALUE, &masterConfig.profile[0].pidProfile.I8[PIDPOS], .config.minmax = { 0,  200 } },
     { "gps_pos_d",                  VAR_UINT8  | PROFILE_VALUE, &masterConfig.profile[0].pidProfile.D8[PIDPOS], .config.minmax = { 0,  200 } },
