@@ -19,10 +19,12 @@ This firmware has been developed for controllers based on STM32F series micropro
 * Tilt easing.
 * Automatic home position (with local GPS).
 * Detailled status data on OLED display.
+* Battery monitoring.
 * RSSI signal strength on OLED display.
 * Setup menu on OLED display.
 * Acurate PID control system.
 * Position estimation system.
+* Sound alarms through out a buzzer.
 * 4 Serial ports, with dynamic assignment.
 
 
