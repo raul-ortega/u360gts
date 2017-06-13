@@ -98,7 +98,7 @@ static const uint8_t beep_sos[] = {
 };
 // Arming when GPS is fixed
 static const uint8_t beep_armedGpsFix[] = {
-    5, 5, 15, 5, 5, 5, 15, 30, BEEPER_COMMAND_STOP
+    5, 5, 15, 5, 5, 5, 15, 30,5, 5, 15, 5, 5, 5, 15, 30,5, 5, 15, 5, 5, 5, 15, 30, BEEPER_COMMAND_STOP
 };
 // Ready beeps. When gps has fix and copter is ready to fly.
 static const uint8_t beep_readyBeep[] = {
