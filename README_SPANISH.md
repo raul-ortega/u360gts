@@ -13,17 +13,20 @@ Este firmware ha sido desarrollado para su utilización controladoras basadas mi
 # Características
 
 * 360 grados de rotación contínua.
-* Soporta múltiples protocolos de telemetría.
-* Acepta telemetra a una frecuencia de hasta 10 Hz.
+* Soporta múltiples sistemas de telemetría.
+* Autodetección de protocolo.
+* Acepta telemetríaa a frecuencias de hasta 10 Hz.
 * Realiza conversión de protocolo y reenvío a aplicaciones externas.
 * Completamente configurable desde [u360gts-configurator](https://github.com/raul-ortega/u360gts-configurator) (cross platform) y consola serie (modo CLI).
 * Efecto de amortiguación para servo tilt.
 * Establecimiento automático de la posición home con GPS local.
 * Información detallada del estado en display OLED.
+* Monitorización de batería.
 * Señal RSSI en display OLED.
 * Menú de configuración en display OLED.
 * Sistema de control PID para movimientos precisos del servo PAN.
 * Sistema de estimación de la posición.
+* Alarmas sonora mediante buzzer (batería baja y posición HOME con GPS local).
 * Hasta 4 puertos serie ( 2 en 8 bits), con asignación dinámica (32 bits). 
 
 **ROTACIÓN CONTÍUNA DE 360º**
