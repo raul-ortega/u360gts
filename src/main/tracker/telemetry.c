@@ -2,7 +2,7 @@
  * This file is part of u360gts, aka amv-open360tracker 32bits:
  * https://github.com/raul-ortega/amv-open360tracker-32bits
  *
- * The code below is an adaptation by Raï¿½l Ortega of the original code written by Samuel Brucksch:
+ * The code below is an adaptation by Raúl Ortega of the original code written by Samuel Brucksch:
  * https://github.com/SamuelBrucksch/open360tracker
  *
  * u360gts is free software: you can redistribute it and/or modify
@@ -93,9 +93,6 @@ void encodeTargetData(uint8_t c) {
 		ltm_encodeTargetData(c);
 	else if(PROTOCOL(TP_LTM_FRSKYD))
 		frskyd_encodeTargetData(c);
-  else if(PROTOCOL(TP_PITLAB))
-    pitlab_encodeTargetData(c);
-
 }
 
 void gps_encodeTargetData(uint8_t c) {
@@ -147,3 +144,5 @@ int32_t gpsToLong(int8_t neg, uint16_t bp, uint16_t ap) {
   // take sign into account
   return ((int32_t)(first + second) * (uint32_t)neg);
 }
+
+
