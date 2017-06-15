@@ -2,7 +2,7 @@
  * This file is part of u360gts, aka amv-open360tracker 32bits:
  * https://github.com/raul-ortega/amv-open360tracker-32bits
  *
- * The code below is an adaptation by Raúl Ortega of the original code of Ghettostation antenna tracker
+ * The code below is an adaptation by Raï¿½l Ortega of the original code of Ghettostation antenna tracker
  * https://github.com/KipK/Ghettostation
  *
  * u360gts is free software: you can redistribute it and/or modify
@@ -76,8 +76,10 @@ void protocolDetectionParser(uint8_t c){
 				/*detectionState = DETECTION_STATE_START_MAVLINK;*/
 				protocolDetected = TP_MAVLINK;
 				detectionState = DETECTION_STATE_DETECTED;
-			} else if (c == '$')
+			} else if (c == '$'){
 				detectionState = DETECTION_STATE_START;
+				detectionPacketIdex = 0;
+			}
 			detectionPacketIdex ++;
 			break;
 		case DETECTION_STATE_START_MFD:
@@ -110,22 +112,28 @@ void protocolDetectionParser(uint8_t c){
 				detectionState = DETECTION_STATE_IDLE;
 			break;
 		case DETECTION_STATE_START:
-			detectionState = DETECTION_STATE_DETECTED;
-			switch(c){
-				case 'T':
-					protocolDetected = TP_LTM;
-					break;
-				case 'G':
-					protocolDetected = TP_GPS_TELEMETRY;
-					break;
-				case '1':
-				case 'R':
-				case 'V':
-					protocolDetected = TP_RVOSD;
-					break;
-				default:
-					detectionState = DETECTION_STATE_IDLE;
-					break;
+			detectionPacketIdex++;
+			if(c == '$' && detectionPacketIdex == 10 ){
+				protocolDetected = TP_PITLAB;
+				detectionState = DETECTION_STATE_DETECTED;
+				break;
+			} else  {
+				switch(c){
+					case 'T':
+						protocolDetected = TP_LTM;
+						break;
+					case 'G':
+						protocolDetected = TP_GPS_TELEMETRY;
+						break;
+					case '1':
+					case 'R':
+					case 'V':
+						protocolDetected = TP_RVOSD;
+						break;
+					default:
+						detectionState = DETECTION_STATE_IDLE;
+						break;
+				}
 			}
 			break;
 		case DETECTION_STATE_DETECTED:

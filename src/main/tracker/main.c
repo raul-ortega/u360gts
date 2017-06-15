@@ -1555,7 +1555,6 @@ void protocolInit(void){
 		break;
 	  case TP_PITLAB:
 		ENABLE_PROTOCOL(TP_PITLAB);
-		disableProtocolDetection();
 		break;
 	}
 }
