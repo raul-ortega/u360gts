@@ -6,7 +6,7 @@
  * source code to be run on NAZE32 based boards for controlling a
  * DIY continuous 360 degree rotating antenna tracker system for FPV.
  *
- * Some functions are adaptations by Raúl Ortega of the original code written by Samuel Brucksch:
+ * Some functions are adaptations by Raï¿½l Ortega of the original code written by Samuel Brucksch:
  * https://github.com/SamuelBrucksch/open360tracker *
  *
  * u360gts is free software: you can redistribute it and/or modify
@@ -895,7 +895,7 @@ void updateMenuButton(void){
 		// When trim offset mode is disabled this button acts as menu browser
 		if(OFFSET_TRIM_STATE == TRIM_STATE_DISABLED || OFFSET_TRIM_STATE == TRIM_STATE_DISABLED_BY_USER) {
 			/*
-			 * 	SI EL OFFSET ESTÁ MODIFICADO, RESETEARLO
+			 * 	SI EL OFFSET ESTï¿½ MODIFICADO, RESETEARLO
 			 */
 			if(menuState && !cliMode) {
 				//MENU MODE
@@ -1451,7 +1451,7 @@ void updateCalibratePan()
 			// Enviar nuevo pulso
 			pwmPan += 10;
 			if(pwmPan > masterConfig.pan0 + 600) {
-				//Calcular máximo y finalizar
+				//Calcular mï¿½ximo y finalizar
 				masterConfig.max_pid_gain = maxPwmPan;
 				pwmWriteServo(panServo, masterConfig.pan0);
 				DISABLE_PROTOCOL(TP_CALIBRATING_MAXPAN);
@@ -1552,6 +1552,10 @@ void protocolInit(void){
 		break;
 	  case TP_LTM_FRSKYD:
 		ENABLE_PROTOCOL(TP_LTM_FRSKYD);
+		break;
+		case TP_PITLAB:
+		ENABLE_PROTOCOL(TP_PITLAB);
+		disableProtocolDetection();
 		break;
 	}
 }
