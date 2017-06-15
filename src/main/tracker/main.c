@@ -1553,9 +1553,10 @@ void protocolInit(void){
 	  case TP_LTM_FRSKYD:
 		ENABLE_PROTOCOL(TP_LTM_FRSKYD);
 		break;
-		case TP_PITLAB:
+	  case TP_PITLAB:
 		ENABLE_PROTOCOL(TP_PITLAB);
 		disableProtocolDetection();
 		break;
 	}
 }
+

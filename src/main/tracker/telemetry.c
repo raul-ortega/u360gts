@@ -93,8 +93,8 @@ void encodeTargetData(uint8_t c) {
 		ltm_encodeTargetData(c);
 	else if(PROTOCOL(TP_LTM_FRSKYD))
 		frskyd_encodeTargetData(c);
-  else if(PROTOCOL(TP_PITLAB))
-    pitlab_encodeTargetData(c);
+	else if(PROTOCOL(TP_PITLAB))
+		pitlab_encodeTargetData(c);
 
 }
 
