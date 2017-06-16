@@ -1519,7 +1519,7 @@ void updateProtocolDetection(void){
 }
 
 void protocolInit(void){
-	DISABLE_PROTOCOL(0b111111111111);
+	DISABLE_PROTOCOL(0b1111111111111);
 	switch(masterConfig.telemetry_protocol) {
 	  case TP_SERVOTEST:
 		ENABLE_PROTOCOL(TP_SERVOTEST);
