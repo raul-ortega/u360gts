@@ -170,17 +170,17 @@ typedef struct pageState_s {
 static pageState_t pageState;
 
 static const char* const telemetry_protocols_Titles[]={
-	"SERVOTEST",
+	"SERVOTEST    ",
 	"CALIBRATING_MAG",
-	"MFD",
+	"MFD          ",
 	"GPS_TELEMETRY",
-	"MAVLINK",
-	"RVOSD",
-	"FRSKY_D",
-	"FRSKY_X",
-	"LTM",
-	"LTM_FRSKYD",
-	"PITLAB"
+	"MAVLINK      ",
+	"RVOSD        ",
+	"FRSKY_D      ",
+	"FRSKY_X      ",
+	"LTM          ",
+	"LTM_FRSKYD   ",
+	"PITLAB       "
 };
 
 // Menu
