@@ -36,6 +36,7 @@ enum protocolDetectionStates {
 	DETECTION_STATE_START_FRXKY,
 	DETECTION_STATE_START_MAVLINK,
 	DETECTION_STATE_START_MFD,
+	DETECTION_STATE_START_PITLAB,
     DETECTION_STATE_DETECTED
   };
 
@@ -77,8 +78,9 @@ void protocolDetectionParser(uint8_t c){
 				protocolDetected = TP_MAVLINK;
 				detectionState = DETECTION_STATE_DETECTED;
 			} else if (c == '$'){
-				detectionState = DETECTION_STATE_START;
+				detectionState = DETECTION_STATE_START_PITLAB;
 				detectionPacketIdex = 0;
+				return;
 			}
 			detectionPacketIdex ++;
 			break;
@@ -111,29 +113,30 @@ void protocolDetectionParser(uint8_t c){
 			} else
 				detectionState = DETECTION_STATE_IDLE;
 			break;
-		case DETECTION_STATE_START:
-			detectionPacketIdex++;
-			if(c == '$' && detectionPacketIdex == 10 ){
+		case DETECTION_STATE_START_PITLAB:
+			if(c == '$' && detectionPacketIdex == 9 ){
 				protocolDetected = TP_PITLAB;
 				detectionState = DETECTION_STATE_DETECTED;
-				break;
-			} else  {
-				switch(c){
-					case 'T':
-						protocolDetected = TP_LTM;
-						break;
-					case 'G':
-						protocolDetected = TP_GPS_TELEMETRY;
-						break;
-					case '1':
-					case 'R':
-					case 'V':
-						protocolDetected = TP_RVOSD;
-						break;
-					default:
-						detectionState = DETECTION_STATE_IDLE;
-						break;
-				}
+			} else if(c == '$' && detectionPacketIdex > 9)
+				detectionState = DETECTION_STATE_START;
+			detectionPacketIdex++;
+			break;
+		case DETECTION_STATE_START:
+			switch(c){
+				case 'T':
+					protocolDetected = TP_LTM;
+					break;
+				case 'G':
+					protocolDetected = TP_GPS_TELEMETRY;
+					break;
+				case '1':
+				case 'R':
+				case 'V':
+					protocolDetected = TP_RVOSD;
+					break;
+				default:
+					detectionState = DETECTION_STATE_IDLE;
+					break;
 			}
 			break;
 		case DETECTION_STATE_DETECTED:
