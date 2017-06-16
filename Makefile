@@ -229,9 +229,6 @@ TRACKER_SRC = tracker/main.c \
 			tracker/interpolation.c \
 			tracker/protocol_detection.c \
 			tracker/pitlab.c
-			 
-
-			  
 
 COMMON_SRC = $(TRACKER_SRC)\
 		   build_config.c \
