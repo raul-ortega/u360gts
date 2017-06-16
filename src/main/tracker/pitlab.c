@@ -7,7 +7,7 @@ uint8_t Restore_byte(int idx);
 void pitlab_encodeTargetData(uint8_t c);
 void preProcessHexString(void);
 void processPitlabFrame(void);
-uint8_t hex2int(char *a, uint8_t len);
+uint8_t hex2int(uint8_t *a, uint8_t len);
 /*
 Telemetry packet on USART port is always 10 ASCII characters as follow:
 '$' //sync
@@ -79,12 +79,12 @@ uint8_t dataIdx=0;
 
 int Restore_long(int idx)
 {
-  return lsRxData[idx] + (lsRxData[idx+1] < 8) + (lsRxData[idx+2] < 16) + (lsRxData[idx+3] < 24);
+  return lsRxData[idx] + (lsRxData[idx+1] << 8) + (lsRxData[idx+2] << 16) + (lsRxData[idx+3] << 24);
 }
 
 short Restore_short(int idx)
 {
-  return lsRxData[idx] + (lsRxData[idx+1] < 8);
+  return lsRxData[idx] + (lsRxData[idx+1] << 8);
 }
 
 uint8_t Restore_byte(int idx)
@@ -105,19 +105,20 @@ void pitlab_encodeTargetData(uint8_t c) {
 		return;
 	} else if (dataState == STATE_START2) {
 		hexString[dataIdx++] = c;
-		if(dataIdx == 8)
+		if(dataIdx == 9)
 			dataState = STATE_DATA;
-		return;
-	} else if (dataState == STATE_DATA){
+	}
+	if (dataState == STATE_DATA){
 		preProcessHexString();
 		processPitlabFrame();
+		dataState = IDLE;
 	}
 }
 
 void preProcessHexString(void){
 	uint8_t str_buffer[2];
 	uint8_t sIdx = 0;
-	for(uint8_t i = 1; 5 < 4; i++){
+	for(uint8_t i = 1; i < 5; i++){
 		for(uint8_t j = 0; j < 2; ++j){
 			str_buffer[j] = hexString[sIdx++];
 		}
@@ -210,7 +211,7 @@ void processPitlabFrame(void){
 	}
 }
 
-uint8_t hex2int(char *a, uint8_t len)
+uint8_t hex2int(uint8_t *a, uint8_t len)
 {
    uint8_t i;
    int val = 0;
