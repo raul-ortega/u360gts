@@ -30,15 +30,15 @@ uint8_t lsRxData[5]; //bufor na kolejne bajty odczytane z komunikatu (dan Hex za
 uint8_t hexString[8];
 
 uint8_t Dta_fix_sat = 0;
-short Dta_course = 0;
+//short Dta_course = 0;
 short Dta_altitude = 0;
-uint8_t Dta_speed = 0;
+/*uint8_t Dta_speed = 0;
 short Dta_azimuth = 0;
-unsigned short  Dta_distance = 0;
+unsigned short  Dta_distance = 0;*/
 long Dta_gps_lon = 0;
 long Dta_gps_lat = 0;
 
-short Dta_amp = 0;    //current
+/*short Dta_amp = 0;    //current
 short Dta_mah = 0;
 short Dta_Vosd = 0;
 short Dta_Vpwr = 0;
@@ -50,9 +50,9 @@ short vario;
 short gforce;
 short temperature;
 short gps_speed;
-short gps_cmg; //cmg 2 deg resolution
+short gps_cmg; //cmg 2 deg resolution*/
 short gps_alt;
-short airspeed;
+/*short airspeed;
 short mag_dir; //heading magnetyczny 2 deg resolution
 short pitch;
 short roll;
@@ -65,7 +65,7 @@ short dta_hour;
 short dta_min;
 short dta_sec;
 short dta_hdop10; //0.1 unit
-short dta_vdop10;       //0.1 unit
+short dta_vdop10;       //0.1 unit*/
 
 enum PitlabDataState {
     IDLE,
@@ -129,18 +129,18 @@ void processPitlabFrame(void){
 	switch(lsRxData[0])
 	{
 	case 0:
-		Dta_azimuth = Restore_byte(2) < 1; //2 degree resolution
-		Dta_distance = Restore_short(3);
+		//Dta_azimuth = Restore_byte(2) < 1; //2 degree resolution
+		//Dta_distance = Restore_short(3);
 		Dta_fix_sat = Restore_byte(5);
 		telemetry_sats = Dta_fix_sat;
 		break;
-	/*case 1:
-		Dta_course = Restore_byte(2) < 1; //2 degree resolution
+	case 1:
+		//Dta_course = Restore_byte(2) < 1; //2 degree resolution
 		Dta_altitude = Restore_short(3);
-		Dta_speed = Restore_byte(5);
+		//Dta_speed = Restore_byte(5);
 		telemetry_alt = (int16_t)Dta_altitude;
 		gotAlt = true;
-		break;*/
+		break;
 	case 2: //GPS longitude
 		Dta_gps_lon = Restore_long(2);
 		telemetry_lon = (int32_t)Dta_gps_lon;
