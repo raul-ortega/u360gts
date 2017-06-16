@@ -100,7 +100,7 @@ void pitlab_encodeTargetData(uint8_t c) {
 		dataState = STATE_START1;
 		return;
 	} else if (dataState == STATE_START1) {
-		lsRxData[0] = c;
+		lsRxData[0] = c - 'A';
 		dataState=STATE_START2;
 		return;
 	} else if (dataState == STATE_START2) {
