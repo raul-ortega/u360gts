@@ -105,7 +105,7 @@ void pitlab_encodeTargetData(uint8_t c) {
 		return;
 	} else if (dataState == STATE_START2) {
 		hexString[dataIdx++] = c;
-		if(dataIdx == 9)
+		if(dataIdx == 8)
 			dataState = STATE_DATA;
 	}
 	if (dataState == STATE_DATA){
