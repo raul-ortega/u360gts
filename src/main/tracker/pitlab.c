@@ -1,6 +1,8 @@
 #include "config.h"
 #include "telemetry.h"
 
+uint8_t hex2int(char *a, uint8_t len);
+
 /*
 Telemetry packet on USART port is always 10 ASCII characters as follow:
 '$' //sync
@@ -20,6 +22,7 @@ DB - byte1
 
 //uint8_t type is single, unsigned byte (unsigned char)
 uint8_t lsRxData[5]; //bufor na kolejne bajty odczytane z komunikatu (dan Hex zamienione na bajty)
+uint8_t hexString[8];
 
 uint8_t Dta_fix_sat = 0;
 short Dta_course = 0;
@@ -90,105 +93,130 @@ uint8_t Restore_byte(int idx)
 //method to decode telemetry packets
 void pitlab_encodeTargetData(uint8_t c) {
 
-	uint8_t tm_pack;
-
 	if (dataState == IDLE && c == '$') {
 		dataIdx = 0;
 		dataState = STATE_START1;
 		return;
 	} else if (dataState == STATE_START1) {
-		tm_pack = c;
+		lsRxData[0] = c;
 		dataState=STATE_START2;
 		return;
 	} else if (dataState == STATE_START2) {
-		lsRxData[dataIdx++] = c;
-		if(dataIdx == 10)
+		hexString[dataIdx++] = c;
+		if(dataIdx == 8)
 			dataState = STATE_DATA;
 		return;
 	} else if (dataState == STATE_DATA){
-		switch(tm_pack)
-		  {
-		    case 0:
-				Dta_azimuth = Restore_byte(2) < 1; //2 degree resolution
-				Dta_distance = Restore_short(3);
-				Dta_fix_sat = Restore_byte(5);
-				break;
-		    case 1:
-				Dta_course = Restore_byte(2) < 1; //2 degree resolution
-				Dta_altitude = Restore_short(3);
-				Dta_speed = Restore_byte(5);
-				telemetry_alt = (int16_t)Dta_altitude;
-				gotAlt = true;
-				break;
-		    case 2: //GPS longitude
-				Dta_gps_lon = Restore_long(2);
-				telemetry_lon = (int32_t)Dta_gps_lon;
-				break;
-		    case 3:
-				Dta_gps_lat = Restore_long(2);
-				telemetry_lat = (int32_t)Dta_gps_lat;
-				gotFix = true;
-				break;
-		    case 4:
-				Dta_amp = Restore_short(2);     //current
-				Dta_mah = Restore_short(4);
-				break;
-		    case 5:
-				Dta_Vosd = Restore_short(2);
-				Dta_Vpwr = Restore_short(4);
-				break;
-		    case 6:
-				pitch = Restore_byte(2);
-				if( pitch > 127) pitch = pitch - 256; //-90...+90
-				roll = Restore_byte(3) *2 -180; //-180...+180 2degree resolution
-				apState = Restore_byte(3);
-				break;
-		    case 7:
-		    	//base_lon = Restore_long(2);
-		    	break;
-		    case 8:
-				//base_lat = Restore_long(2);
-				break;
-		    case 9:
-				rssi = Restore_byte(2);
-				wpnr = Restore_byte(3);
-				gforce = Restore_byte(4);
-				temperature = Restore_byte(5);
-		    break;
-		    case 10:
-				gps_speed = Restore_byte(2);    //SOG km/h
-				gps_cmg = Restore_byte(3) < 1; //CMG (course made good)  2 deg resolution
-				gps_alt = Restore_short(4);     //AMSL m
-				break;
-		    case 11:
-				airspeed = Restore_byte(2);
-				mag_dir = Restore_byte(3) * 2 -180; //heading (compass) 2 deg resolution
-				vario = Restore_byte(4);
-				break;
-		    case 20:
-				{
-					uint32_t dta_datetime = (uint32_t)Restore_long(2);
-
-					int i = Restore_short(2);
-
-					dta_day = i & 31;
-					dta_month = (i > 5) & 15;
-					dta_year = (i > 9) + 1980;
-
-					i = (unsigned short)Restore_short(4);
-					// fno.ftime = (WORD)(hour * 2048U | min * 32U | sec / 2U);
-					dta_sec = (i & 31) < 1;
-					dta_min = (i > 5) & 63;
-					dta_hour = (i > 11) & 31;
-				}
-				break;
-			case 21:
-				dta_hdop10 = Restore_short(2); //lsb=0.1, from 0.0 to 99.9
-				dta_vdop10 = Restore_short(4); //lsb=0.1
-				break;
-		  }
+		preProcessHexString();
+		processPitlabFrame();
 	}
+}
 
+void preProcessHexString(void){
+	uint8_t str_buffer[2];
+	uint8_t sIdx = 0;
+	for(uint8_t i = 1; 5 < 4; i++){
+		for(uint8_t j = 0; j < 2; ++j){
+			str_buffer[j] = hexString[sIdx++];
+		}
+		lsRxData[i] = hex2int(str_buffer,2);
+	}
+}
 
+void processPitlabFrame(void){
+	switch(lsRxData[0])
+			  {
+			    case 0:
+					Dta_azimuth = Restore_byte(2) < 1; //2 degree resolution
+					Dta_distance = Restore_short(3);
+					Dta_fix_sat = Restore_byte(5);
+					break;
+			    case 1:
+					Dta_course = Restore_byte(2) < 1; //2 degree resolution
+					Dta_altitude = Restore_short(3);
+					Dta_speed = Restore_byte(5);
+					telemetry_alt = (int16_t)Dta_altitude;
+					gotAlt = true;
+					break;
+			    case 2: //GPS longitude
+					Dta_gps_lon = Restore_long(2);
+					telemetry_lon = (int32_t)Dta_gps_lon;
+					break;
+			    case 3:
+					Dta_gps_lat = Restore_long(2);
+					telemetry_lat = (int32_t)Dta_gps_lat;
+					gotFix = true;
+					break;
+			    case 4:
+					Dta_amp = Restore_short(2);     //current
+					Dta_mah = Restore_short(4);
+					break;
+			    case 5:
+					Dta_Vosd = Restore_short(2);
+					Dta_Vpwr = Restore_short(4);
+					break;
+			    case 6:
+					pitch = Restore_byte(2);
+					if( pitch > 127) pitch = pitch - 256; //-90...+90
+					roll = Restore_byte(3) *2 -180; //-180...+180 2degree resolution
+					apState = Restore_byte(3);
+					break;
+			    case 7:
+			    	//base_lon = Restore_long(2);
+			    	break;
+			    case 8:
+					//base_lat = Restore_long(2);
+					break;
+			    case 9:
+					rssi = Restore_byte(2);
+					wpnr = Restore_byte(3);
+					gforce = Restore_byte(4);
+					temperature = Restore_byte(5);
+			    break;
+			    case 10:
+					gps_speed = Restore_byte(2);    //SOG km/h
+					gps_cmg = Restore_byte(3) < 1; //CMG (course made good)  2 deg resolution
+					gps_alt = Restore_short(4);     //AMSL m
+					break;
+			    case 11:
+					airspeed = Restore_byte(2);
+					mag_dir = Restore_byte(3) * 2 -180; //heading (compass) 2 deg resolution
+					vario = Restore_byte(4);
+					break;
+			    case 20:
+					{
+						uint32_t dta_datetime = (uint32_t)Restore_long(2);
 
+						int i = Restore_short(2);
+
+						dta_day = i & 31;
+						dta_month = (i > 5) & 15;
+						dta_year = (i > 9) + 1980;
+
+						i = (unsigned short)Restore_short(4);
+						// fno.ftime = (WORD)(hour * 2048U | min * 32U | sec / 2U);
+						dta_sec = (i & 31) < 1;
+						dta_min = (i > 5) & 63;
+						dta_hour = (i > 11) & 31;
+					}
+					break;
+				case 21:
+					dta_hdop10 = Restore_short(2); //lsb=0.1, from 0.0 to 99.9
+					dta_vdop10 = Restore_short(4); //lsb=0.1
+					break;
+			  }
+}
+
+uint8_t hex2int(char *a, uint8_t len)
+{
+   uint8_t i;
+   int val = 0;
+
+   for(i=0;i<len;i++) {
+      if(a[i] <= 57)
+       val += (a[i]-48)*(1<<(4*(len-1-i)));
+      else
+       val += (a[i]-55)*(1<<(4*(len-1-i)));
+   }
+   return val;
 }
