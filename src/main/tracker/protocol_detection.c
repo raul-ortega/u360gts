@@ -47,6 +47,7 @@ static uint16_t protocolDetected = 0;
 bool detectionIsEnabled = false;
 
 void enableProtocolDetection(void){
+	protocolDetected = 0;
 	detectionIsEnabled = true;
 }
 

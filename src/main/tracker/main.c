@@ -1504,6 +1504,7 @@ void updateProtocolDetection(void){
 		showAutodetectingTitle(protocol);
 		if(PROTOCOL(TP_MFD))
 			settingHome = true;
+		return;
 	}
 
 	if(protocol != masterConfig.telemetry_protocol) {
