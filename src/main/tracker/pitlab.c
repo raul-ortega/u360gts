@@ -93,23 +93,17 @@ void processPitlabFrame(void){
 	{
 	case 0:
 		telemetry_sats = (uint16_t)Restore_byte(4);
-		gotFix = true;
-		gotAlt = true;
 		break;
 	case 1:
 		telemetry_alt = (int16_t)Restore_short(2);
-		gotFix = true;
 		gotAlt = true;
 		break;
 	case 2:
-		telemetry_lon = (int32_t)Restore_long(1);
-		gotFix = true;
-		gotAlt = true;
+		telemetry_lon = (int32_t)Restore_long(1)/100;
 		break;
 	case 3:
-		telemetry_lat = (int32_t)Restore_long(1);
-		gotFix = true;
-		gotAlt = true;
+		telemetry_lat = (int32_t)Restore_long(1)/100;
+		if(telemetry_sats >= 5) gotFix = true;
 		break;
 	}
 }
