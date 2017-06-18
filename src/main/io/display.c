@@ -170,16 +170,17 @@ typedef struct pageState_s {
 static pageState_t pageState;
 
 static const char* const telemetry_protocols_Titles[]={
-	"SERVOTEST",
+	"SERVOTEST    ",
 	"CALIBRATING_MAG",
-	"MFD",
+	"MFD          ",
 	"GPS_TELEMETRY",
-	"MAVLINK",
-	"RVOSD",
-	"FRSKY_D",
-	"FRSKY_X",
-	"LTM"/*,
-	"LTM_FRSKYD"*/
+	"MAVLINK      ",
+	"RVOSD        ",
+	"FRSKY_D      ",
+	"FRSKY_X      ",
+	"LTM          ",
+	"LTM_FRSKYD   ",
+	"PITLAB       "
 };
 
 // Menu
@@ -220,6 +221,7 @@ static const char* const telemetryProtocolMenu[] = {
 	"FRSKY D      ",
 	"FRSKY X      ",
 	"LTM          ",
+	"PITLAB       ",
 	/*"LTM_FRSKYD   ",*/
 	"EXIT         "
 };
@@ -383,7 +385,7 @@ void showTitle()
     //i2c_OLED_send_string(pageTitles[pageState.pageId]);
 	if(pageState.pageId==PAGE_TELEMETRY) {
         int16_t i;
-    	for(i=0;i<10;i++) {
+    	for(i=0;i<11;i++) {
     		if(master_telemetry_protocol & (1<<i)) {
     			i2c_OLED_send_string(telemetry_protocols_Titles[i]);
     			if(feature(FEATURE_EPS) && !PROTOCOL(TP_MFD)){

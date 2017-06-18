@@ -2,7 +2,7 @@
  * This file is part of u360gts, aka amv-open360tracker 32bits:
  * https://github.com/raul-ortega/amv-open360tracker-32bits
  *
- * The code below is an adaptation by Raúl Ortega of the original code of Ghettostation antenna tracker
+ * The code below is an adaptation by Raï¿½l Ortega of the original code of Ghettostation antenna tracker
  * https://github.com/KipK/Ghettostation
  *
  * u360gts is free software: you can redistribute it and/or modify
@@ -36,6 +36,7 @@ enum protocolDetectionStates {
 	DETECTION_STATE_START_FRXKY,
 	DETECTION_STATE_START_MAVLINK,
 	DETECTION_STATE_START_MFD,
+	DETECTION_STATE_START_PITLAB,
     DETECTION_STATE_DETECTED
   };
 
@@ -46,6 +47,7 @@ static uint16_t protocolDetected = 0;
 bool detectionIsEnabled = false;
 
 void enableProtocolDetection(void){
+	protocolDetected = 0;
 	detectionIsEnabled = true;
 }
 
@@ -76,8 +78,11 @@ void protocolDetectionParser(uint8_t c){
 				/*detectionState = DETECTION_STATE_START_MAVLINK;*/
 				protocolDetected = TP_MAVLINK;
 				detectionState = DETECTION_STATE_DETECTED;
-			} else if (c == '$')
-				detectionState = DETECTION_STATE_START;
+			} else if (c == '$'){
+				detectionState = DETECTION_STATE_START_PITLAB;
+				detectionPacketIdex = 0;
+				return;
+			}
 			detectionPacketIdex ++;
 			break;
 		case DETECTION_STATE_START_MFD:
@@ -109,19 +114,36 @@ void protocolDetectionParser(uint8_t c){
 			} else
 				detectionState = DETECTION_STATE_IDLE;
 			break;
+		case DETECTION_STATE_START_PITLAB:
+			if(c == 'T' && detectionPacketIdex == 0 ){ //This is not PITLAB, it is LTM
+				protocolDetected = TP_LTM;
+				detectionState = DETECTION_STATE_DETECTED;
+				break;
+			} else if(c == '$' && detectionPacketIdex == 9 ){
+				protocolDetected = TP_PITLAB;
+				detectionState = DETECTION_STATE_DETECTED;
+				break;
+			} else if(c == '$' && detectionPacketIdex > 9){
+				detectionState = DETECTION_STATE_START;
+				break;
+			}
+			detectionPacketIdex++;
+			break;
 		case DETECTION_STATE_START:
-			detectionState = DETECTION_STATE_DETECTED;
 			switch(c){
 				case 'T':
 					protocolDetected = TP_LTM;
+					detectionState = DETECTION_STATE_DETECTED;
 					break;
 				case 'G':
 					protocolDetected = TP_GPS_TELEMETRY;
+					detectionState = DETECTION_STATE_DETECTED;
 					break;
 				case '1':
 				case 'R':
 				case 'V':
 					protocolDetected = TP_RVOSD;
+					detectionState = DETECTION_STATE_DETECTED;
 					break;
 				default:
 					detectionState = DETECTION_STATE_IDLE;

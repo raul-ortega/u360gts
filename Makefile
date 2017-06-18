@@ -227,10 +227,8 @@ TRACKER_SRC = tracker/main.c \
 			tracker/frskyx.c \
 			tracker/gps_estimation.c \
 			tracker/interpolation.c \
-			tracker/protocol_detection.c
-			 
-
-			  
+			tracker/protocol_detection.c \
+			tracker/pitlab.c
 
 COMMON_SRC = $(TRACKER_SRC)\
 		   build_config.c \
