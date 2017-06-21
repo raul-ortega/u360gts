@@ -1,8 +1,8 @@
 #include "config.h"
 #include "telemetry.h"
 
-int Restore_long(int idx);
-short Restore_short(int idx);
+int32_t Restore_long(int idx);
+int16_t Restore_short(int idx);
 uint8_t Restore_byte(int idx);
 void pitlab_encodeTargetData(uint8_t c);
 void preProcessHexString(void);
@@ -24,6 +24,9 @@ DB - byte1
 15 - byte0
 */
 
+int32_t gps_lat;
+int32_t gps_lon;
+
 
 //uint8_t type is single, unsigned byte (unsigned char)
 uint8_t lsRxData[5]; //bufor na kolejne bajty odczytane z komunikatu (dan Hex zamienione na bajty)
@@ -39,14 +42,14 @@ enum PitlabDataState {
 static uint8_t dataState = IDLE;
 uint8_t dataIdx=0;
 
-int Restore_long(int idx)
+int32_t Restore_long(int idx)
 {
-  return lsRxData[idx] + (lsRxData[idx+1] << 8) + (lsRxData[idx+2] << 16) + (lsRxData[idx+3] << 24);
+  return ((int32_t)lsRxData[idx] << 24) + ((int32_t)lsRxData[idx+1] << 16) + ((int32_t)lsRxData[idx+2] << 8) + ((int32_t)lsRxData[idx+3]);
 }
 
-short Restore_short(int idx)
+int16_t Restore_short(int idx)
 {
-  return lsRxData[idx] + (lsRxData[idx+1] << 8);
+  return ((int16_t)lsRxData[idx] << 8) + (int16_t)lsRxData[idx+1];
 }
 
 uint8_t Restore_byte(int idx)
@@ -99,10 +102,12 @@ void processPitlabFrame(void){
 		gotAlt = true;
 		break;
 	case 2:
-		telemetry_lon = (int32_t)Restore_long(1)/100;
+		gps_lon = Restore_long(1);
+		telemetry_lon = (int32_t)(round(((double)gps_lon * 100.0)/60.0));
 		break;
 	case 3:
-		telemetry_lat = (int32_t)Restore_long(1)/100;
+		gps_lat = Restore_long(1);
+		telemetry_lat = (int32_t)(round(((double)gps_lat * 100.0)/60.0));
 		if(telemetry_sats >= 5) gotFix = true;
 		break;
 	}
