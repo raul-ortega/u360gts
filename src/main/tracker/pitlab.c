@@ -44,12 +44,12 @@ uint8_t dataIdx=0;
 
 int32_t Restore_long(int idx)
 {
-  return ((int32_t)lsRxData[idx] << 24) + ((int32_t)lsRxData[idx+1] << 16) + ((int32_t)lsRxData[idx+2] << 8) + ((int32_t)lsRxData[idx+3]);
+  return (int32_t)lsRxData[idx] + ((int32_t)lsRxData[idx+1] << 8) + ((int32_t)lsRxData[idx+2] << 16) + ((int32_t)lsRxData[idx+3] << 24);
 }
 
 int16_t Restore_short(int idx)
 {
-  return ((int16_t)lsRxData[idx] << 8) + (int16_t)lsRxData[idx+1];
+  return (int16_t)lsRxData[idx] + ((int16_t)lsRxData[idx+1]  << 8);
 }
 
 uint8_t Restore_byte(int idx)
@@ -87,7 +87,7 @@ void preProcessHexString(void){
 		for(uint8_t j = 0; j < 2; ++j){
 			str_buffer[j] = hexString[sIdx++];
 		}
-		lsRxData[i] = hex2int(str_buffer,2);
+		lsRxData[4-i] = hex2int(str_buffer,2);
 	}
 }
 
