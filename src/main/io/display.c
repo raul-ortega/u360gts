@@ -179,7 +179,6 @@ static const char* const telemetry_protocols_Titles[]={
 	"FRSKY_D       ",
 	"FRSKY_X       ",
 	"LTM           ",
-	/*"LTM_FRSKYD    ",*/
 	"PITLAB        "
 };
 
@@ -221,8 +220,8 @@ static const char* const telemetryProtocolMenu[] = {
 	"FRSKY D      ",
 	"FRSKY X      ",
 	"LTM          ",
-	"LTM_FRSKYD   ",
 	"PITLAB       ",
+	/*"LTM_FRSKYD   ",*/
 	"AUTODETECT   ",
 	"EXIT         "
 };
@@ -386,7 +385,7 @@ void showTitle()
     //i2c_OLED_send_string(pageTitles[pageState.pageId]);
 	if(pageState.pageId==PAGE_TELEMETRY) {
         int16_t i;
-    	for(i=0;i<10;i++) {
+    	for(i=0;i < OP_PITLAB + 3;i++) {
     		if(master_telemetry_protocol & (1<<i)) {
     			i2c_OLED_send_string(telemetry_protocols_Titles[i]);
     			if(feature(FEATURE_EPS) && !PROTOCOL(TP_MFD)){
