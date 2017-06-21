@@ -1253,8 +1253,12 @@ void processMenuTelemetryProtocol(void){
 	menuOption = indexMenuOption % (OP_TELEMETRY_PROTOCOL_EXIT+1);
 	if(menuOption == OP_TELEMETRY_PROTOCOL_EXIT)
 		menuState = MENU_TELEMETRY;
-	else {
-		masterConfig.telemetry_protocol = (1 << (2+menuOption));
+	else if(menuOption == OP_AUTODETECT){
+		featureSet(FEATURE_AUTODETECT);
+		menuState = MENU_TELEMETRY;
+	} else {
+		featureClear(FEATURE_AUTODETECT);
+		masterConfig.telemetry_protocol = (1 << ( 2 + menuOption));
 		menuState = MENU_TELEMETRY;
 	}
 	indexMenuOption = OP_TELMETRY_SAVE;

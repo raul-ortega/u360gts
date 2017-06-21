@@ -88,10 +88,11 @@ typedef enum {
 	TP_FRSKY_D			= (1 << 6),
 	TP_FRSKY_X 			= (1 << 7),
 	TP_LTM				= (1 << 8),
-	TP_LTM_FRSKYD		= (1 << 9),
-	TP_PITLAB			= (1 << 10),
+	TP_PITLAB			= (1 << 9),
+	TP_LTM_FRSKYD		= (1 << 10),
 	TP_CALIBRATING_PAN0	= (1 << 11),
-	TP_CALIBRATING_MAXPAN	= (1 << 12)
+	TP_CALIBRATING_MAXPAN	= (1 << 12),
+
 } trackerProtocolFlags_t;
 
 extern uint16_t trackerProtocolFlags;
