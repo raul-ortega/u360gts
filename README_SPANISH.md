@@ -46,6 +46,7 @@ Protocolos soportados:
 - **FRSKY D**
 - **FRSKY X (Smartport)**
 - **LTM (Light Telemetry)**
+- **PITLAB**
 
 ** TELEMETRÍA A ALTA FRECUENCIA **
 
