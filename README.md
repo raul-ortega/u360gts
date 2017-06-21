@@ -45,6 +45,7 @@ These are the protocols that are supported (and automatically detected):
 - **FRSKY D**
 - **FRSKY X (Smartport)**
 - **LTM (Light Telemetry)**
+- **PITLAB
 
 **INPUT TELEMETRY AT HIGH FREQUENCY**
 
