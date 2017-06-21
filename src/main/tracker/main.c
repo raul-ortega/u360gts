@@ -243,6 +243,7 @@ uint8_t displayPageIndex=0;
 extern uint8_t menuState;
 extern uint8_t indexMenuOption;
 uint8_t menuOption;
+bool detection_title_updated = false;
 
 //COMMON VARS
 serialPort_t *trackerSerial;
@@ -1504,6 +1505,13 @@ void updateProtocolDetection(void){
 
 	protocol = getProtocol();
 
+	if(protocol == 0 && !detection_title_updated ){
+		detection_title_updated = true;
+		updateDisplayProtocolTitle(protocol);
+		return;
+	}
+
+
 	if(protocol == masterConfig.telemetry_protocol && isProtocolDetectionEnabled() && !lostTelemetry){
 		showAutodetectingTitle(protocol);
 		if(PROTOCOL(TP_MFD))
@@ -1511,13 +1519,14 @@ void updateProtocolDetection(void){
 		return;
 	}
 
-	if(protocol != masterConfig.telemetry_protocol) {
+	if(protocol != masterConfig.telemetry_protocol && protocol > 0) {
 		masterConfig.telemetry_protocol = protocol;
 		protocolInit();
 		trackingInit();
 		if(PROTOCOL(TP_MFD))
 			settingHome = true;
 		updateDisplayProtocolTitle(protocol);
+		detection_title_updated = false;
 	}
 
 
