@@ -87,7 +87,7 @@ void preProcessHexString(void){
 		for(uint8_t j = 0; j < 2; ++j){
 			str_buffer[j] = hexString[sIdx++];
 		}
-		lsRxData[4-i] = hex2int(str_buffer,2);
+		lsRxData[5-i] = hex2int(str_buffer,2);
 	}
 }
 
