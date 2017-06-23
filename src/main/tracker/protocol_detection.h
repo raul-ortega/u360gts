@@ -29,4 +29,4 @@ void enableProtocolDetection(void);
 void disableProtocolDetection(void);
 void protocolDetectionParser(uint8_t c);
 uint16_t getProtocol(void);
-bool isPorotocolDetectionEnabled(void);
+bool isProtocolDetectionEnabled(void);

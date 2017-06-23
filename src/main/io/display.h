@@ -87,9 +87,11 @@ typedef enum {
 	OP_RVOSD,
 	OP_FRSKY_D,
 	OP_FRSKY_X,
-	OP_LTM,/*
-	OP_LTM_FRSKYD,*/
-	OP_TELEMETRY_PROTOCOL_EXIT,
+	OP_LTM,
+	OP_PITLAB,
+    OP_AUTODETECT,
+	OP_TELEMETRY_PROTOCOL_EXIT
+	/*OP_LTM_FRSKYD*/
 } telemetryProtocolMenu_e;
 
 typedef enum {

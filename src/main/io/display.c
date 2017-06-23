@@ -170,17 +170,16 @@ typedef struct pageState_s {
 static pageState_t pageState;
 
 static const char* const telemetry_protocols_Titles[]={
-	"SERVOTEST    ",
+	"SERVOTEST     ",
 	"CALIBRATING_MAG",
-	"MFD          ",
-	"GPS_TELEMETRY",
-	"MAVLINK      ",
-	"RVOSD        ",
-	"FRSKY_D      ",
-	"FRSKY_X      ",
-	"LTM          ",
-	"LTM_FRSKYD   ",
-	"PITLAB       "
+	"MFD           ",
+	"GPS_TELEMETRY ",
+	"MAVLINK       ",
+	"RVOSD         ",
+	"FRSKY_D       ",
+	"FRSKY_X       ",
+	"LTM           ",
+	"PITLAB        "
 };
 
 // Menu
@@ -223,6 +222,7 @@ static const char* const telemetryProtocolMenu[] = {
 	"LTM          ",
 	"PITLAB       ",
 	/*"LTM_FRSKYD   ",*/
+	"AUTODETECT   ",
 	"EXIT         "
 };
 
@@ -385,7 +385,7 @@ void showTitle()
     //i2c_OLED_send_string(pageTitles[pageState.pageId]);
 	if(pageState.pageId==PAGE_TELEMETRY) {
         int16_t i;
-    	for(i=0;i<11;i++) {
+    	for(i=0;i < OP_PITLAB + 3;i++) {
     		if(master_telemetry_protocol & (1<<i)) {
     			i2c_OLED_send_string(telemetry_protocols_Titles[i]);
     			if(feature(FEATURE_EPS) && !PROTOCOL(TP_MFD)){
@@ -398,7 +398,7 @@ void showTitle()
     		}
     	}
     	if(master_telemetry_protocol == 0 && feature(FEATURE_AUTODETECT)){
-			tfp_sprintf(lineBuffer, "Autodetecting");
+			tfp_sprintf(lineBuffer, "Auto detecting");
 			i2c_OLED_send_string(lineBuffer);
 		}
     } else if(pageState.pageId==PAGE_MENU){

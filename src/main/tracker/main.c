@@ -243,6 +243,7 @@ uint8_t displayPageIndex=0;
 extern uint8_t menuState;
 extern uint8_t indexMenuOption;
 uint8_t menuOption;
+bool detection_title_updated = false;
 
 //COMMON VARS
 serialPort_t *trackerSerial;
@@ -1253,8 +1254,12 @@ void processMenuTelemetryProtocol(void){
 	menuOption = indexMenuOption % (OP_TELEMETRY_PROTOCOL_EXIT+1);
 	if(menuOption == OP_TELEMETRY_PROTOCOL_EXIT)
 		menuState = MENU_TELEMETRY;
-	else {
-		masterConfig.telemetry_protocol = (1 << (2+menuOption));
+	else if(menuOption == OP_AUTODETECT){
+		featureSet(FEATURE_AUTODETECT);
+		menuState = MENU_TELEMETRY;
+	} else {
+		featureClear(FEATURE_AUTODETECT);
+		masterConfig.telemetry_protocol = (1 << ( 2 + menuOption));
 		menuState = MENU_TELEMETRY;
 	}
 	indexMenuOption = OP_TELMETRY_SAVE;
@@ -1500,6 +1505,13 @@ void updateProtocolDetection(void){
 
 	protocol = getProtocol();
 
+	if(protocol == 0 && !detection_title_updated ){
+		detection_title_updated = true;
+		updateDisplayProtocolTitle(protocol);
+		return;
+	}
+
+
 	if(protocol == masterConfig.telemetry_protocol && isProtocolDetectionEnabled() && !lostTelemetry){
 		showAutodetectingTitle(protocol);
 		if(PROTOCOL(TP_MFD))
@@ -1507,13 +1519,14 @@ void updateProtocolDetection(void){
 		return;
 	}
 
-	if(protocol != masterConfig.telemetry_protocol) {
+	if(protocol != masterConfig.telemetry_protocol && protocol > 0) {
 		masterConfig.telemetry_protocol = protocol;
 		protocolInit();
 		trackingInit();
 		if(PROTOCOL(TP_MFD))
 			settingHome = true;
 		updateDisplayProtocolTitle(protocol);
+		detection_title_updated = false;
 	}
 
 
