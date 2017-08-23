@@ -125,6 +125,7 @@ void updateHeading(void);
 void updateFixedPages(void);
 void updateSetHomeByGPS(void);
 void updateMFD(void);
+void updatePWM360(void);
 void enterMenuMode(void);
 void exitMenuMode(void);
 void updateSetHomeButton(void);
@@ -139,7 +140,6 @@ void processMenuTelemetryBaudrate(void);
 void processMenuFeature(uint16_t featureIndex);
 void offsetTrimIncrease(void);
 void offsetTrimDecrease(void);
-float map(long x, long in_min, long in_max, long out_min, long out_max);
 void calcEstimatedPosition();
 bool couldLolcalGpsSetHome(bool setByUser);
 bool couldTelemetrySetHome();
@@ -427,6 +427,8 @@ void tracker_loop(void)
 
 		updateMFD();
 
+		updatePWM360();
+
 		updateTracking();
 
 		//update RSSI every 50Hz
@@ -485,8 +487,10 @@ void calcTilt(void) {
     //e.g. in 100m height and dist 1 the angle is 89.4° which is actually accurate enough
     targetPosition.distance = 1;
   }
-
-  tiltTarget = toDeg(atan((float)(targetPosition.alt - trackerPosition.alt) / targetPosition.distance));
+  if(PROTOCOL(TP_PWM360))
+	  tiltTarget = pw360_getTilt();
+  else
+	  tiltTarget = toDeg(atan((float)(targetPosition.alt - trackerPosition.alt) / targetPosition.distance));
 
   if (tiltTarget < 0)
     tiltTarget = 0;
@@ -717,7 +721,7 @@ void updateBatteryStatus(void){
 void updateFixedPages(void){
 
 	displayPageIndex =
-			PAGE_GPS * (displayPageIndex == PAGE_TELEMETRY && feature(FEATURE_GPS) && !PROTOCOL(TP_MFD)) + \
+			PAGE_GPS * (displayPageIndex == PAGE_TELEMETRY && feature(FEATURE_GPS) && !PROTOCOL(TP_MFD) && !PROTOCOL(TP_PWM360)) + \
 			PAGE_BATTERY * ((displayPageIndex == PAGE_TELEMETRY && !feature(FEATURE_GPS) && (feature(FEATURE_VBAT) || feature(FEATURE_RSSI_ADC) || (masterConfig.rxConfig.rssi_channel > 0))) || (displayPageIndex == PAGE_GPS && (feature(FEATURE_VBAT) || feature(FEATURE_RSSI_ADC) || (masterConfig.rxConfig.rssi_channel > 0)))) + \
 			PAGE_TELEMETRY * (displayPageIndex == 0);
 	if(displayPageIndex !=0 ){
@@ -814,7 +818,7 @@ void updateTargetPosition(void){
 			gotAlt = false;
 		}
 
-		if(!PROTOCOL(TP_MFD)){
+		if(!PROTOCOL(TP_MFD) && !PROTOCOL(TP_PWM360)){
 			if (gotFix) {
 				targetPosition.lat = getTargetLat();
 				targetPosition.lon = getTargetLon();
@@ -976,7 +980,7 @@ void updateSetHomeButton(void){
 				if (!homeButtonCurrentState && home_timer == 0) {
 					home_timer = millis();
 				// SET HOME
-				} else if (homeButtonCurrentState && (millis() - home_timer < 1000) && !PROTOCOL(TP_MFD)) {
+				} else if (homeButtonCurrentState && (millis() - home_timer < 1000) && !PROTOCOL(TP_MFD) && !PROTOCOL(TP_PWM360)) {
 					home_timer = 0;
 					// By telemetry if has enought sats
 					if(!homeSet && telemetry_sats >= masterConfig.telemetry_min_sats)
@@ -986,7 +990,7 @@ void updateSetHomeButton(void){
 						setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude,false,true);
 					}
 				// RESET HOME
-				} else if (homeButtonCurrentState && (millis() - home_timer > 2000) && !PROTOCOL(TP_MFD)) {
+				} else if (homeButtonCurrentState && (millis() - home_timer > 2000) && !PROTOCOL(TP_MFD) && !PROTOCOL(TP_PWM360)) {
 					if(homeSet && !homeReset && !trackingStarted){
 						homeSet = false;
 						homeReset = true;
@@ -1072,10 +1076,30 @@ void updateMFD(void){
 		}
 	}
 }
+void updatePWM360(void){
+	if(PROTOCOL(TP_PWM360)){
+		if (settingHome) {
+			homeSet = true;
+			settingHome = 0;
+		}
 
+		if (homeSet && gotFix) {
+			targetPosition.heading = pw360_getheading() * 10;
+			gotFix = false;
+		}
+
+		if (homeSet && gotNewHeading) {
+			getError();
+			calculatePID();
+			pwmWritePanServo(pwmPan);
+			calcTilt();
+			gotNewHeading = false;
+		}
+	}
+}
 void updateTracking(void){
-	if(!PROTOCOL(TP_MFD) && !PROTOCOL(TP_CALIBRATING_MAG) && !PROTOCOL(TP_CALIBRATING_PAN0) && !PROTOCOL(TP_CALIBRATING_MAXPAN) && masterConfig.pan0_calibrated==1) {
-		if(PROTOCOL(TP_SERVOTEST)) {
+	if(!PROTOCOL(TP_MFD) && !PROTOCOL(TP_PWM360) && !PROTOCOL(TP_CALIBRATING_MAG) && !PROTOCOL(TP_CALIBRATING_PAN0) && !PROTOCOL(TP_CALIBRATING_MAXPAN) && masterConfig.pan0_calibrated==1) {
+		if(PROTOCOL(TP_SERVOTEST) || PROTOCOL(TP_PWM360)) {
 			homeSet = true;
 			trackingStarted = true;
 		} else {
@@ -1084,7 +1108,7 @@ void updateTracking(void){
 		}
 
 		if(trackingStarted)  {
-			if(lostTelemetry == true && !cliMode){
+			if(lostTelemetry == true && !cliMode && !PROTOCOL(TP_PWM360)){
 				pwmWritePanServo(masterConfig.pan0);
 				return;
 			}
@@ -1316,11 +1340,6 @@ void proccessMenu(uint8_t menuButton) {
 
 }
 
-float map(long x, long in_min, long in_max, long out_min, long out_max)
-{
-  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
-
 void saveLastTilt(bool writteEeprom){
 	if(feature(FEATURE_EASING)) {
 		masterConfig.easing_last_tilt = _lastTilt;
@@ -1533,7 +1552,7 @@ void updateProtocolDetection(void){
 }
 
 void protocolInit(void){
-	DISABLE_PROTOCOL(0b1111111111111);
+	DISABLE_PROTOCOL(0b11111111111111);
 	switch(masterConfig.telemetry_protocol) {
 	  case TP_SERVOTEST:
 		ENABLE_PROTOCOL(TP_SERVOTEST);
@@ -1570,6 +1589,10 @@ void protocolInit(void){
 	  case TP_PITLAB:
 		ENABLE_PROTOCOL(TP_PITLAB);
 		break;
+	  case TP_PWM360:
+	  	ENABLE_PROTOCOL(TP_PWM360);
+	  	pwm360_setMasterPulses(masterConfig.pwm_pan0,masterConfig.pwm_pan90,masterConfig.pwm_pan180,masterConfig.pwm_pan270,masterConfig.pwm_pan360,masterConfig.tilt0,masterConfig.tilt90);
+	  	break;
 	}
 }
 

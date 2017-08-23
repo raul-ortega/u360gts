@@ -95,6 +95,8 @@ void encodeTargetData(uint8_t c) {
 		frskyd_encodeTargetData(c);
 	else if(PROTOCOL(TP_PITLAB))
 		pitlab_encodeTargetData(c);
+	else if(PROTOCOL(TP_PWM360))
+		pwm360_encodeTargetData(c);
 
 }
 

@@ -37,6 +37,7 @@ enum protocolDetectionStates {
 	DETECTION_STATE_START_MAVLINK,
 	DETECTION_STATE_START_MFD,
 	DETECTION_STATE_START_PITLAB,
+	DETECTION_STATE_START_PWM360,
     DETECTION_STATE_DETECTED
   };
 
@@ -72,6 +73,9 @@ void protocolDetectionParser(uint8_t c){
 			if (c =='#' || c == 'X') {
 				detectionState = DETECTION_STATE_START_MFD;
 				detectionPacketIdex = 0;
+			} else if(c=='K') {
+				detectionState = DETECTION_STATE_START_PWM360;
+				detectionPacketIdex = 0;
 			} else if (c == 0x7E)
 				detectionState = DETECTION_STATE_START_FRXKY;
 			else if (c == 254 && detectionPacketIdex > 10) {
@@ -90,6 +94,15 @@ void protocolDetectionParser(uint8_t c){
 				detectionPacketIdex++;
 			else if (detectionPacketIdex > 5){
 				protocolDetected = TP_MFD;
+				detectionState = DETECTION_STATE_DETECTED;
+			} else
+				detectionState = DETECTION_STATE_IDLE;
+			break;
+		case DETECTION_STATE_START_PWM360:
+			if (c == 'K')
+				detectionPacketIdex++;
+			else if (detectionPacketIdex > 5){
+				protocolDetected = TP_PWM360;
 				detectionState = DETECTION_STATE_DETECTED;
 			} else
 				detectionState = DETECTION_STATE_IDLE;

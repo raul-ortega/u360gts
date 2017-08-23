@@ -743,7 +743,14 @@ const clivalue_t valueTable[] = {
     { "eps_interpolation",   	    VAR_UINT8 | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.eps_interpolation, .config.lookup = { TABLE_OFF_ON } },
 	{ "eps_interpolation_points",   VAR_UINT8 | TRACKER_VALUE, &masterConfig.eps_interpolation_points, .config.minmax = { 2,  10 } },
     { "update_home_by_local_gps",   VAR_UINT8 | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.update_home_by_local_gps, .config.lookup = { TABLE_OFF_ON } },
-	{ "max_speed_filter",   	    VAR_UINT8 | TRACKER_VALUE, &masterConfig.max_speed_filter, .config.minmax = { 0,  255 } }
+	{ "max_speed_filter",   	    VAR_UINT8 | TRACKER_VALUE, &masterConfig.max_speed_filter, .config.minmax = { 0,  255 } },
+	{ "pwm_pan0",     			VAR_UINT16 | TRACKER_VALUE, &masterConfig.pwm_pan0, .config.minmax = { 1000,  2000 } },
+	{ "pwm_pan90",     			VAR_UINT16 | TRACKER_VALUE, &masterConfig.pwm_pan90, .config.minmax = { 1000,  2000 } },
+	{ "pwm_pan180",     			VAR_UINT16 | TRACKER_VALUE, &masterConfig.pwm_pan180, .config.minmax = { 1000,  2000 } },
+	{ "pwm_pan270",     		VAR_UINT16 | TRACKER_VALUE, &masterConfig.pwm_pan270, .config.minmax = { 1000,  2000 } },
+	{ "pwm_pan360",     		VAR_UINT16 | TRACKER_VALUE, &masterConfig.pwm_pan360, .config.minmax = { 1000,  2000 } }
+
+
 };
 
 #define VALUE_COUNT (sizeof(valueTable) / sizeof(clivalue_t))

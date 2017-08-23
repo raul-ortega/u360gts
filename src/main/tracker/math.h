@@ -15,4 +15,5 @@ float easeOutQuart(float t, float b, float c, float d);
 float easeOutCirc(float t, float b, float c, float d);
 float easeOutExpo(float t, float b, float c, float d);
 float easeOutCubic(float t, float b, float c, float d);
+float map(long x, long in_min, long in_max, long out_min, long out_max);
 #endif

@@ -179,7 +179,8 @@ static const char* const telemetry_protocols_Titles[]={
 	"FRSKY_D       ",
 	"FRSKY_X       ",
 	"LTM           ",
-	"PITLAB        "
+	"PITLAB        ",
+	"PWM360        "
 };
 
 // Menu
@@ -221,6 +222,7 @@ static const char* const telemetryProtocolMenu[] = {
 	"FRSKY X      ",
 	"LTM          ",
 	"PITLAB       ",
+	"PWM360       ",
 	/*"LTM_FRSKYD   ",*/
 	"AUTODETECT   ",
 	"EXIT         "
@@ -385,10 +387,10 @@ void showTitle()
     //i2c_OLED_send_string(pageTitles[pageState.pageId]);
 	if(pageState.pageId==PAGE_TELEMETRY) {
         int16_t i;
-    	for(i=0;i < OP_PITLAB + 3;i++) {
+    	for(i=0;i < OP_PWM360 + 3;i++) {
     		if(master_telemetry_protocol & (1<<i)) {
     			i2c_OLED_send_string(telemetry_protocols_Titles[i]);
-    			if(feature(FEATURE_EPS) && !PROTOCOL(TP_MFD)){
+    			if(feature(FEATURE_EPS) && !PROTOCOL(TP_MFD) && !PROTOCOL(TP_PWM360)){
     				tfp_sprintf(lineBuffer, " EPS%d",EPS_MODE);
     				i2c_OLED_send_string(lineBuffer);
     			}
@@ -641,7 +643,7 @@ void showCliModePage(void)
 void showTelemetryPage(void){
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
 	i2c_OLED_set_line(rowIndex++);
-    if(!PROTOCOL(TP_MFD)) {
+    if(!PROTOCOL(TP_MFD) && !PROTOCOL(TP_PWM360)) {
     	if(telemetry_sats>99)
     		telemetry_sats = 99;
     	//if(PROTOCOL(TP_GPS_TELEMETRY))
@@ -678,10 +680,14 @@ void showTelemetryPage(void){
     } else {
     	//
     }
-    tfp_sprintf(lineBuffer, "Alt: %u Dis: %u  ", targetPosition.alt,targetPosition.distance);
-    padLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+
+    if(!PROTOCOL(TP_PWM360)){
+		tfp_sprintf(lineBuffer, "Alt: %u Dis: %u  ", targetPosition.alt,targetPosition.distance);
+		padLineBuffer();
+		i2c_OLED_set_line(rowIndex++);
+		i2c_OLED_send_string(lineBuffer);
+    }
+
     if(OFFSET_TRIM_STATE)
     	tfp_sprintf(lineBuffer, "H: %03d A:%03d Of: %d  ", trackerPosition.heading/10,targetPosition.heading/10,OFFSET_TRIM);
     else
@@ -691,7 +697,7 @@ void showTelemetryPage(void){
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
 
-    if(!PROTOCOL(TP_MFD)) {
+    if(!PROTOCOL(TP_MFD) && !PROTOCOL(TP_PWM360)) {
     	if(homeSet_BY_GPS && homeSet)
     		tfp_sprintf(lineBuffer, "HOME SET <GPS>");
     	else if(!homeSet_BY_GPS && homeSet)
@@ -1064,7 +1070,7 @@ void updateDisplay(void)
             break;
 #ifdef GPS
         case PAGE_GPS:
-            if (feature(FEATURE_GPS) && !PROTOCOL(TP_MFD)) {
+            if (feature(FEATURE_GPS) && !PROTOCOL(TP_MFD) && !PROTOCOL(TP_PWM360)) {
                 showGpsPage();
             } else {
                 pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;

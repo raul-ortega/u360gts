@@ -145,6 +145,11 @@ typedef struct master_t {
 	uint8_t update_home_by_local_gps;
 	uint16_t pan_calibration_pulse;
 	uint8_t max_speed_filter;
+	uint16_t pwm_pan0;
+	uint16_t pwm_pan90;
+	uint16_t pwm_pan180;
+	uint16_t pwm_pan270;
+	uint16_t pwm_pan360;
 } master_t;
 
 extern master_t masterConfig;

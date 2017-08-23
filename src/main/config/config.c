@@ -772,6 +772,14 @@ static void resetConf(void)
    	masterConfig.rxConfig.rssi_scale = RSSI_SCALE_DEFAULT;
    	masterConfig.rxConfig.rssi_zoom = 35;
 
+   	//PWM360 PROTOCOL
+   	masterConfig.pwm_pan0 = 1000;
+   	masterConfig.pwm_pan90 = 1250;
+   	masterConfig.pwm_pan180 = 1500;
+   	masterConfig.pwm_pan270 = 1750;
+   	masterConfig.pwm_pan360 = 2000;
+
+
 /////////////////////////////
 
     // copy first profile into remaining profile
