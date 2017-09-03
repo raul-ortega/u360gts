@@ -23,7 +23,7 @@
 #include "config.h"
 #include "telemetry.h"
 #include "math.h"
-
+#include "pwm360.h"
 
 uint16_t pwm360_pan;
 uint16_t pwm360_tilt;
@@ -50,30 +50,33 @@ void pwm360_setMasterPulses(uint16_t pan0,uint16_t pan90,uint16_t pan180,uint16_
 	master_pwm_tilt90 = tilt90;
 }
 
-uint16_t pw360_getTilt() {
+uint16_t pwm360_getTilt(void) {
   return map(pwm360_tilt, master_pwm_tilt0, master_pwm_tilt90,0, 90);
 }
 
-uint16_t pw360_getheading() {
+uint16_t pwm360_getheading(void) {
   uint16_t pwm1;
   uint16_t pwm2;
-  if(pwm360_pan >= master_pwm_pan0 && (master_pwm_pan270)){
-  if(pwm360_pan >= master_pwm_pan0 && pwm360_pan < master_pwm_pan90) {
-	  pwm1 = master_pwm_pan0;
-	  pwm2 = master_pwm_pan90 - 1;
-  } else if(pwm360_pan >= master_pwm_pan90 && pwm360_pan < master_pwm_pan180) {
-	  pwm1 = master_pwm_pan90;
-	  pwm2 = master_pwm_pan180 - 1;
-  } else if(pwm360_pan >= master_pwm_pan180 && pwm360_pan < master_pwm_pan270) {
-  	  pwm1 = master_pwm_pan180;
-  	  pwm2 = master_pwm_pan270 - 1;
-  } else if(pwm360_pan >= master_pwm_pan270 && pwm360_pan <= master_pwm_pan360) {
-  	  pwm1 = master_pwm_pan270;
-  	  pwm2 = master_pwm_pan360;
+  if(pwm360_pan >= master_pwm_pan0 && pwm360_pan <= master_pwm_pan360) {
+	  if(pwm360_pan >= master_pwm_pan0 && pwm360_pan < master_pwm_pan90) {
+		  pwm1 = master_pwm_pan0;
+		  pwm2 = master_pwm_pan90 - 1;
+		  return (uint16_t)map(pwm360_pan, pwm1, pwm2,0, 89);
+	  } else if(pwm360_pan >= master_pwm_pan90 && pwm360_pan < master_pwm_pan180) {
+		  pwm1 = master_pwm_pan90;
+		  pwm2 = master_pwm_pan180 - 1;
+		  return (uint16_t)map(pwm360_pan, pwm1, pwm2,90, 179);
+	  } else if(pwm360_pan >= master_pwm_pan180 && pwm360_pan < master_pwm_pan270) {
+		  pwm1 = master_pwm_pan180;
+		  pwm2 = master_pwm_pan270 - 1;
+		return (uint16_t)map(pwm360_pan, pwm1, pwm2,180,269);
+	  } else if(pwm360_pan >= master_pwm_pan270 && pwm360_pan <= master_pwm_pan360) {
+		  pwm1 = master_pwm_pan270;
+		  pwm2 = master_pwm_pan360;
+		return (uint16_t)map(pwm360_pan, pwm1, pwm2,270, 360);
+	  }
   } else
 	  return 0;
-  }
-  return map(pwm360_pan, pwm1, pwm2,0, 90);
 }
 
 uint8_t pwm360_state = 0;
@@ -84,6 +87,7 @@ void pwm360_encodeTargetData(uint8_t c) {
 #endif
   if (c == 'P') {
     //PAN
+	pwm360_pan = 0;
     pwm360_state = 1;
     pwm360_read_checksum = 0;
     pwm360_calc_checksum = c;
