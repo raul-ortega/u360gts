@@ -464,12 +464,6 @@ void tracker_loop(void)
 	}
 #endif
 
-	/*if(feature(FEATURE_DEBUG) && !cliMode) {
-		if(millis()-debugTimer>1000){
-			printf("c: %d H: %d\r\n",(BUTTON(MENU_BUTTON)>0),(BUTTON(HOME_BUTTON)>0));
-			debugTimer=millis();
-		}
-	}*/
 }
 
 //Tilt angle tiltTarget = atan(alt/dist)
@@ -488,7 +482,7 @@ void calcTilt(void) {
     targetPosition.distance = 1;
   }
   if(PROTOCOL(TP_PWM360))
-	  tiltTarget = pw360_getTilt();
+	  tiltTarget = pwm_360getTilt();
   else
 	  tiltTarget = toDeg(atan((float)(targetPosition.alt - trackerPosition.alt) / targetPosition.distance));
 
@@ -1084,7 +1078,7 @@ void updatePWM360(void){
 		}
 
 		if (homeSet && gotFix) {
-			targetPosition.heading = pw360_getheading() * 10;
+			targetPosition.heading = pwm_360getheading() * 10;
 			gotFix = false;
 		}
 
