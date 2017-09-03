@@ -1,6 +1,6 @@
 /*
  * This file is part of u360gts, aka amv-open360tracker 32bits:
- * https://github.com/raul-ortega/amv-open360tracker-32bits
+ * https://github.com/raul-ortega/u360gts
  *
  * The code below is an adaptation by Raúl Ortega of the original code written by Samuel Brucksch:
  * https://github.com/SamuelBrucksch/open360tracker
