@@ -1,9 +1,6 @@
 /*
  * This file is part of u360gts, aka amv-open360tracker 32bits:
- * https://github.com/raul-ortega/amv-open360tracker-32bits
- *
- * The code below is an adaptation by Ra�l Ortega of the original code of Ghettostation antenna tracker
- * https://github.com/KipK/Ghettostation
+ * https://github.com/raul-ortega/u360gts
  *
  * u360gts is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +17,6 @@
  *
  */
 
-/*
-
-*/
 #include "config.h"
 #include <stdint.h>
 #include <stdbool.h>
