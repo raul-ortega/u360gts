@@ -482,7 +482,7 @@ void calcTilt(void) {
     targetPosition.distance = 1;
   }
   if(PROTOCOL(TP_PWM360))
-	  tiltTarget = pwm_360getTilt();
+	  tiltTarget = pwm360_getTilt();
   else
 	  tiltTarget = toDeg(atan((float)(targetPosition.alt - trackerPosition.alt) / targetPosition.distance));
 
@@ -1078,7 +1078,7 @@ void updatePWM360(void){
 		}
 
 		if (homeSet && gotFix) {
-			targetPosition.heading = pwm_360getheading() * 10;
+			targetPosition.heading = pwm360_getheading() * 10;
 			gotFix = false;
 		}
 
