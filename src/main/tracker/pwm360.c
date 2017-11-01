@@ -69,11 +69,11 @@ uint16_t pwm360_getheading(void) {
 	  } else if(pwm360_pan >= master_pwm_pan180 && pwm360_pan < master_pwm_pan270) {
 		  pwm1 = master_pwm_pan180;
 		  pwm2 = master_pwm_pan270 - 1;
-		return (uint16_t)map(pwm360_pan, pwm1, pwm2,180,269);
+		  return (uint16_t)map(pwm360_pan, pwm1, pwm2,180,269);
 	  } else if(pwm360_pan >= master_pwm_pan270 && pwm360_pan <= master_pwm_pan360) {
 		  pwm1 = master_pwm_pan270;
 		  pwm2 = master_pwm_pan360;
-		return (uint16_t)map(pwm360_pan, pwm1, pwm2,270, 360);
+		  return (uint16_t)map(pwm360_pan, pwm1, pwm2,270, 360);
 	  }
   } else
 	  return 0;
