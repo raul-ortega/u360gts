@@ -229,9 +229,12 @@ void processSportPacket(uint8_t *packet)
             break;
         }
         if ((NS == 'N' || NS == 'S') && (EW == 'E' || EW == 'W')) {
+          telemetry_lat = frskyx_setLat();
+          telemetry_lon = frskyx_setLon();
+          telemetry_sats = sats;
           gotFix = true;
-        } else
-        	telemetry_failed_cs++;
+        }
+
       }
       break;
   }
