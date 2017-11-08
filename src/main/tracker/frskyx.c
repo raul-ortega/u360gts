@@ -181,14 +181,13 @@ void processSportPacket(uint8_t *packet)
         processHubPacket(id, value);
       }
       else if (appId >= T2_FIRST_ID && appId <= T2_LAST_ID) {
-#ifdef DIY_GPS
-        sats = SPORT_DATA_S32(packet) / 10;
-        fix = SPORT_DATA_S32(packet) % 10;
-#endif
-#ifndef DIY_GPS
-        //we assume that other systems just send the sats over temp2 and fix over temp1
-        sats = SPORT_DATA_S32(packet);
-#endif
+		if(telemetry_diy_gps==1){
+			sats = SPORT_DATA_S32(packet) / 10;
+			fix = SPORT_DATA_S32(packet) % 10;
+		} else {
+			//we assume that other systems just send the sats over temp2 and fix over temp1
+			sats = SPORT_DATA_S32(packet);
+		}
       }
       else if (appId >= GPS_SPEED_FIRST_ID && appId <= GPS_SPEED_LAST_ID) {
         //frskyData.hub.gpsSpeed_bp = (uint16_t) (SPORT_DATA_U32(packet) / 1000);
