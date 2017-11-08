@@ -66,7 +66,7 @@ void parseTelemHubByte(uint8_t c);
 #define TELEMETRY_OK      1
 #define TELEMETRY_KO      2
 
-#define FRSKY_RX_PACKET_SIZE 9 //19
+#define FRSKY_RX_PACKET_SIZE 9
 
 #define FRSKYX_LATLON_DIVIDER 100000
 
