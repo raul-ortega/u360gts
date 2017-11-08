@@ -166,8 +166,10 @@ void processSportPacket(uint8_t *packet)
   uint8_t  prim   = packet[1];
   uint16_t appId  = *((uint16_t *)(packet + 2));
 
-  if (!checkSportPacket(packet))
-    return;
+  if (!checkSportPacket(packet)){
+	  telemetry_failed_cs++;
+	  return;
+  }
 
   switch (prim)
   {
