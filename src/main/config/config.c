@@ -736,7 +736,7 @@ static void resetConf(void)
     masterConfig.start_tracking_distance = 10;
     masterConfig.start_tracking_altitude = 4;
    	masterConfig.telemetry_min_sats = 6;
-   	masterConfig.telemetry_diy_gps = 0;
+   	masterConfig.telemetry_provider = 0;
 
     //Display
    	featureSet(FEATURE_DISPLAY);

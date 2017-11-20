@@ -130,7 +130,7 @@ typedef struct master_t {
 	uint8_t start_tracking_altitude;
 	uint8_t init_servos;
 	uint8_t telemetry_min_sats;
-	uint8_t telemetry_diy_gps;
+	uint8_t telemetry_provider;
 	uint8_t gps_min_sats;
 	uint8_t min_logic_level;
 	// NO PID CONTROL SYSTEM
