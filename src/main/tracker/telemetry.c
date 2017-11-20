@@ -44,7 +44,7 @@ float telemetry_pitch = 0.0f;
 float telemetry_roll = 0.0f;
 float telemetry_yaw = 0.0f;
 
-uint8_t telemetry_diy_gps = 0;
+uint8_t telemetry_provider = 0;
 
 uint8_t a;
 

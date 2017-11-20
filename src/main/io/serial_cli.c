@@ -350,6 +350,10 @@ static const char * const lookupTableAlignment[] = {
     "CW270FLIP"
 };
 
+static const char * const lookupTabletelemetryProvider[] = {
+    "NONE", "DIY_GPS","INAV", NULL
+};
+
 #ifdef GPS
 static const char * const lookupTableGPSProvider[] = {
     "NMEA", "UBLOX"
@@ -396,6 +400,7 @@ typedef enum {
     TABLE_OFF_ON = 0,
     TABLE_UNIT,
     TABLE_ALIGNMENT,
+	TABLE_TELEMETRY_PROVIDER,
 #ifdef GPS
     TABLE_GPS_PROVIDER,
     TABLE_GPS_SBAS_MODE,
@@ -413,6 +418,7 @@ static const lookupTableEntry_t lookupTables[] = {
     { lookupTableOffOn, sizeof(lookupTableOffOn) / sizeof(char *) },
     { lookupTableUnit, sizeof(lookupTableUnit) / sizeof(char *) },
     { lookupTableAlignment, sizeof(lookupTableAlignment) / sizeof(char *) },
+	{ lookupTabletelemetryProvider, sizeof(lookupTabletelemetryProvider) / sizeof(char *) },
 #ifdef GPS
     { lookupTableGPSProvider, sizeof(lookupTableGPSProvider) / sizeof(char *) },
     { lookupTableGPSSBASMode, sizeof(lookupTableGPSSBASMode) / sizeof(char *) },
@@ -725,7 +731,7 @@ const clivalue_t valueTable[] = {
 	{ "telemetry_baud",           	VAR_UINT8 |  TRACKER_VALUE, &masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex, .config.minmax = { BAUD_1200,  BAUD_250000 } },
 	{ "telemetry_protocol",        	VAR_UINT16 | TRACKER_VALUE, &masterConfig.telemetry_protocol, .config.minmax = { TP_SERVOTEST,  TP_PITLAB } },
     { "telemetry_min_sats",         VAR_UINT8  | TRACKER_VALUE, &masterConfig.telemetry_min_sats, .config.minmax = { 0,  20 } },
-	{ "telemetry_diy_gps",          VAR_UINT8  | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.telemetry_diy_gps, .config.lookup = { TABLE_OFF_ON } },
+	{ "telemetry_provider",			VAR_UINT8  | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.telemetry_provider, .config.lookup = {TABLE_TELEMETRY_PROVIDER} },
 	//{ "gps_port",      		   	VAR_UINT8  | TRACKER_VALUE, &masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex, .config.minmax = { 0,  4 } },
 	{ "start_tracking_distance",   	VAR_UINT8  | TRACKER_VALUE, &masterConfig.start_tracking_distance, .config.minmax = { 0,  100 } },
 	{ "start_tracking_altitude",   	VAR_UINT8  | TRACKER_VALUE, &masterConfig.start_tracking_altitude, .config.minmax = { 0,  100 } },

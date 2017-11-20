@@ -260,9 +260,11 @@ void parseTelemHubByte(uint8_t c) {
     NS = byte0;
     break;
   case TEMP2:
-	if(telemetry_diy_gps==1){
+	if(telemetry_provider==1){
 		sats = byte0 / 10;
 		fix = byte0 % 10;
+	} else if(telemetry_provider==2){
+		sats = byte0 % 100;
 	} else
 		sats = byte0;
     break;

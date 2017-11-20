@@ -300,7 +300,7 @@ extern int16_t telemetry_sats;
 int _contador=0;
 
 extern const uint32_t baudRates[];
-extern uint8_t telemetry_diy_gps;
+extern uint8_t telemetry_provider;
 extern int32_t telemetry_lat;
 extern int32_t telemetry_lon;
 
@@ -1555,11 +1555,11 @@ void protocolInit(void){
 		break;
 	  case TP_FRSKY_D:
 		ENABLE_PROTOCOL(TP_FRSKY_D);
-		telemetry_diy_gps = masterConfig.telemetry_diy_gps;
+		telemetry_provider = masterConfig.telemetry_provider;
 		break;
 	  case TP_FRSKY_X:
 		ENABLE_PROTOCOL(TP_FRSKY_X);
-		telemetry_diy_gps = masterConfig.telemetry_diy_gps;
+		telemetry_provider = masterConfig.telemetry_provider;
 		break;
 	  case TP_LTM:
 		ENABLE_PROTOCOL(TP_LTM);

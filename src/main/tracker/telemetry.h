@@ -45,8 +45,8 @@ extern float telemetry_hdop;
 extern float telemetry_pitch;
 extern float telemetry_roll;
 extern float telemetry_yaw;
-extern uint8_t telemetry_diy_gps;
 extern uint8_t telemetry_failed_cs;
+extern uint8_t telemetry_provider;
 
 int16_t getTargetAlt();
 void encodeTargetData(uint8_t c);

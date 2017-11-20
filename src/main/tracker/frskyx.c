@@ -128,10 +128,12 @@ void processHubPacket(uint8_t id, uint16_t value)
       NS = value;
       break;
     case TEMP2:
-	  if(telemetry_diy_gps==1){
+	  if(telemetry_provider==1){
 			sats = value / 10;
 			fix = value % 10;
-	} else
+	  } else if (telemetry_provider==2){
+			sats = value % 100;
+	  } else
 			sats = value;
       break;
   }
@@ -181,9 +183,11 @@ void processSportPacket(uint8_t *packet)
         processHubPacket(id, value);
       }
       else if (appId >= T2_FIRST_ID && appId <= T2_LAST_ID) {
-		if(telemetry_diy_gps==1){
+		if(telemetry_provider==1){
 			sats = SPORT_DATA_S32(packet) / 10;
-			fix = SPORT_DATA_S32(packet) % 10;
+			//fix = SPORT_DATA_S32(packet) % 10;
+		} else if (telemetry_provider==2){
+			sats = SPORT_DATA_S32(packet) % 100;
 		} else {
 			//we assume that other systems just send the sats over temp2 and fix over temp1
 			sats = SPORT_DATA_S32(packet);
