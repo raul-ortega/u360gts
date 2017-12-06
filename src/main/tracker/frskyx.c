@@ -25,6 +25,7 @@
 
 void processFrskyPacket(uint8_t *packet);
 void parseTelemHubByte(uint8_t c);
+int32_t coordToLong(int8_t neg, uint16_t bp, uint16_t ap);
 
 #define START_STOP         0x7e
 #define BYTESTUFF          0x7d
@@ -68,7 +69,7 @@ void parseTelemHubByte(uint8_t c);
 
 #define FRSKY_RX_PACKET_SIZE 9
 
-#define FRSKYX_LATLON_DIVIDER 100000
+#define FRSKYX_LATLON_DIVIDER 1000000
 
 uint8_t frskyx_RxBuffer[FRSKY_RX_PACKET_SIZE];
 uint8_t telemetryState = TELEMETRY_INIT;
@@ -88,15 +89,21 @@ uint16_t lat_ap;
 uint16_t lon_ap;
 
 int32_t frskyx_setLat() {
-  int32_t value = gpsToLong(NS == 'N' ? 1 : -1, lat_bp, lat_ap)*10;
+  int32_t value = coordToLong(NS == 'N' ? 1 : -1, lat_bp, lat_ap);
   NS = 0;
   return value;
 }
 
 int32_t frskyx_setLon() {
-  int32_t value = gpsToLong(EW == 'E' ? 1 : -1, lon_bp, lon_ap)*10;
+  int32_t value = coordToLong(EW == 'E' ? 1 : -1, lon_bp, lon_ap);
   EW = 0;
   return value;
+}
+
+int32_t coordToLong(int8_t neg, uint16_t bp, uint16_t ap) {
+  uint32_t first = ((uint32_t)bp / 100) * FRSKYX_LATLON_DIVIDER;
+  uint32_t second = ((((uint32_t)bp % 100) * FRSKYX_LATLON_DIVIDER) + ((uint32_t)ap * 100)) / 60;
+  return ((int32_t)(first + second) * (uint32_t)neg);
 }
 
 void processHubPacket(uint8_t id, uint16_t value)
