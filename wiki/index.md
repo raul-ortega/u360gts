@@ -1,5 +1,7 @@
-# u360gts The Universal 360º Continous Rotation Tracker System for Drones.
+## u360gts - The Universal 360º Continous Rotation Tracker System for Drones.
 ### Introduction
+First of all we would like you to understand the big effort spent to create such a tool for the RC community. This is a open source project, and people involved on it have their own responsabilities in their lifes (a job, a family, ..., definitely a lif). We do this because we love our hobby and would like to share it whith you, please, if something is not clear, or some information is missing, try to contact us I we would try to help you (you can also write in english in the spanish community forum).
+### About u360gts
 - [What is u360gts?](https://github.com/raul-ortega/u360gts/wiki/What-is-u360gts.md)
 - [What is NOT u360gts?](https://github.com/raul-ortega/u360gts/wiki/What-is-not-u360gts.md)
 ### Installation
