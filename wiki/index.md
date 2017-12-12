@@ -1,24 +1,32 @@
 ## u360gts - The Universal 360º Continous Rotation Tracker System for Drones.
-### Introduction
-First of all we would like you to understand the big effort spent to create such a tool for the RC community. This is a open source project, and people involved on it have their own responsabilities in their lifes (a job, a family, ..., definitely a lif). We do this because we love our hobby and would like to share it whith you, please, if something is not clear, or some information is missing, try to contact us I we would try to help you (you can also write in english in the spanish community forum).
-### About u360gts
-- [What is u360gts?](https://github.com/raul-ortega/u360gts/wiki/What-is-u360gts.md)
-- [What is NOT u360gts?](https://github.com/raul-ortega/u360gts/wiki/What-is-not-u360gts.md)
-### Installation
-- [Assembling the frame](https://github.com/raul-ortega/u360gts/blob/master/docs/Manual-de-Montaje-del-Kit-aleman.pdf)
-- [Wiring schematics](https://github.com/raul-ortega/u360gts/wiki/Instalaci%C3%B3n:-esquema-de-conexiones)
-- [Preparation](https://github.com/raul-ortega/u360gts/wiki/Instalaci%C3%B3n:-preparaci%C3%B3n)
-- [Settings](https://github.com/raul-ortega/u360gts/wiki/Instalaci%C3%B3n:-par%C3%A1metros-de-configuraci%C3%B3n)
-- [Loading the firmware](https://github.com/raul-ortega/u360gts/wiki/Instalaci%C3%B3n:-carga-del-firmware)
-- [Boot sequence](https://github.com/raul-ortega/u360gts/wiki/Secuencia-de-inicio)
+### How to get help?
+First of all we would like you to understand the big effort spent to create such a tool for the RC community. This is a open source project, and people involved on it have their own responsabilities in their lifes (a job, a family, ..., definitely a lif). We do this because we love our hobby and would like to share it whith you, please, if something is not clear, or some information is missing, try to contact us by
 
-## Settings
-- [Entering CLI mode](https://github.com/raul-ortega/u360gts/wiki/Configuraci%C3%B3n:-intrar-en-modo-CLI)
-- [pan0 setting](https://github.com/raul-ortega/u360gts/wiki/Configuraci%C3%B3n:-ajustar-pan0)
-- [Callibrating](https://github.com/raul-ortega/u360gts/wiki/Configuraci%C3%B3n:-calibraci%C3%B3n-del-magnet%C3%B3metro)
-- [OFFSET setting](https://github.com/raul-ortega/u360gts/wiki/Configuraci%C3%B3n:-ajustar-OFFSET)
-- [Setting the PID](https://github.com/raul-ortega/u360gts/wiki/Configuraci%C3%B3n:-ajustar-PID)
-- [NOPID controll system](https://github.com/raul-ortega/u360gts/wiki/Configuraic%C3%B3n:-Sistema-de-control-NOPID)
+- [submitting a new issue](https://github.com/raul-ortega/u360gts/issues)
+- [posting in the spanish community in english and/or spanish](http://www.forodrones.com/threads/antena-tracker-360%C2%BA.34530/)
+- [posting in Jelle737's Build Log u360gts: 360° antenna tracker on rcgropus](https://www.rcgroups.com/forums/showthread.php?2964122-u360gts-360%C2%B0-antenna-tracker)
+### About u360gts
+- [What is u360gts?](https://github.com/raul-ortega/u360gts/wiki/about-what-is-u360gts.md)
+- [What is NOT u360gts?](https://github.com/raul-ortega/u360gts/wiki/about-what-is-not-u360gts.md)
+
+### Hardware
+- [Frame](https://github.com/raul-ortega/u360gts/wiki/hardware-frame.md)
+- [List of components](https://github.com/raul-ortega/u360gts/wiki/hardware-components.md)
+- [Wiring schematics](https://github.com/raul-ortega/u360gts/wiki/hardware-wiring-schematics.md)
+- [Servos](https://github.com/raul-ortega/u360gts/wiki/hardware-servos.md)
+- [Local GPS](https://github.com/raul-ortega/u360gts/wiki/hardware-local-gps.md)
+- [Display](https://github.com/raul-ortega/u360gts/wiki/hardware-display.md)
+
+## Configuration
+- [Loading the firmware](https://github.com/raul-ortega/u360gts/wiki/configuration-loading-firmware.md)
+- [Boot sequence](https://github.com/raul-ortega/u360gts/wiki/configuration-boot-sequence.md)
+- [Configurator](https://github.com/raul-ortega/u360gts/wiki/configuration-configurator.md)
+- [Magnetometer](https://github.com/raul-ortega/u360gts/wiki/configuration-configurator.md)
+- [Pan servo](https://github.com/raul-ortega/u360gts/wiki/configuration-configurator.md)
+- [Tilt servo](https://github.com/raul-ortega/u360gts/wiki/configuration-configurator.md)
+- [OFFSET setting](https://github.com/raul-ortega/u360gts/wiki/configuration-offset.md)
+- [PID Controller](https://github.com/raul-ortega/u360gts/wiki/configuraiton-pid.md)
+- [NOPID controll system](https://github.com/raul-ortega/u360gts/wiki/configuration-nopid.md)
 
 ## Telemetry input
 - [Supported protocols](https://github.com/raul-ortega/u360gts/wiki/Telemetr%C3%ADa-de-entrada:-protocolos-soportados)
@@ -26,20 +34,15 @@ First of all we would like you to understand the big effort spent to create such
 - [Protocol selection](https://github.com/raul-ortega/u360gts/wiki/Telemetr%C3%ADa-de-entrada:-selecci%C3%B3n-del-protocolo)
 
 ##  CLI mode
-- [Enter CLI mode](https://github.com/raul-ortega/u360gts/wiki/Modo-CLI:-entrar-en-modo-CLI)
-- [Parameter settings](https://github.com/raul-ortega/u360gts/wiki/Modo-CLI:-modificar-par%C3%A1metros)
-- [Save settings](https://github.com/raul-ortega/u360gts/wiki/Modo-CLI:-salvar-los-cambios)
-- [Default settings](https://github.com/raul-ortega/u360gts/wiki/Modo-CLI:-configuraci%C3%B3n-por-defecto)
-- [Enable/Disable features](https://github.com/raul-ortega/u360gts/wiki/Modo-CLI:-comando-feature)
-- [Help](https://github.com/raul-ortega/u360gts/wiki/Modo-CLI:-ayuda)
-- [Full list of parameters](https://github.com/raul-ortega/u360gts/wiki/Modo-CLI:-Lista-de-par%C3%A1metros-set)
+- [Enter CLI mode](https://github.com/raul-ortega/u360gts/wiki/cli-mode-enter.md)
+- [Save settings](https://github.com/raul-ortega/u360gts/wiki/cli-mode-save-settings.md)
+- [Default settings](https://github.com/raul-ortega/u360gts/wiki/cli-mode-deault.md)
+- [Enable/Disable features](https://github.com/raul-ortega/u360gts/wiki/cli-mode-features.md)
+- [Help](https://github.com/raul-ortega/u360gts/wiki/cli-mode-help.md)
+- [Full list of parameters](https://github.com/raul-ortega/u360gts/wiki/cli-mode-parametters.md)
 
-## EASING effect on tilt servo
-- [Configuración](https://github.com/raul-ortega/u360gts/wiki/Efecto-EASING-en-servo-Tilt)
-
-## OLED display
+## Display
 - [Description and operation](https://github.com/raul-ortega/u360gts/wiki/Display-OLED:-Descripci%C3%B3n-y-funcionamiento)
-- [Supported hardware](https://github.com/raul-ortega/u360gts/wiki/Display-OLED:-hardware-soportado)
 - [Enable/Disable display](https://github.com/raul-ortega/u360gts/wiki/Display-OLED:-Activar-desactivar-el-display)
 
 ## Local GPS
