@@ -680,6 +680,9 @@ void setHomeByTelemetry(positionVector_t *tracker, positionVector_t *target) {
 	  tracker->lat = 47403583; tracker->lon = 8535850; tracker->alt = 474;
   }
 
+  tracker->alt = 0;
+  tracker->home_alt = target->alt;
+
   homeSet = true;
   homeSet_BY_GPS = false;
   homeReset = false;
@@ -692,9 +695,18 @@ void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int1
   tracker->lat = lat;
   tracker->lon = lon;
   tracker->alt = alt;
+
   if(feature(FEATURE_DEBUG)) {
 	  tracker->lat = 47403583; tracker->lon = 8535850; tracker->alt = 474;
   }
+
+  if(home_updated) {
+	  tracker->alt = alt - tracker->home_alt;
+  } else {
+	  tracker->alt = 0;
+	  tracker->home_alt = alt;
+  }
+
   homeSet = true;
   homeSet_BY_GPS = true;
   homeReset = false;
@@ -801,7 +813,7 @@ void updateTargetPosition(void){
 	if(!PROTOCOL(TP_SERVOTEST)){
 		if (gotAlt) {
 
-			targetPosition.alt = getTargetAlt();
+			targetPosition.alt = getTargetAlt(targetPosition.home_alt);
 
 			if(PROTOCOL(TP_MFD)){
 				distance = getDistance();
@@ -1058,7 +1070,7 @@ void updateMFD(void){
 
 		if (mfdTestMode || (homeSet && gotFix)) {
 			targetPosition.distance = getDistance();
-			targetPosition.alt = getTargetAlt();
+			targetPosition.alt = getTargetAlt(targetPosition.home_alt);
 			targetPosition.heading = getAzimuth() * 10;
 			gotFix = false;
 		}

@@ -62,8 +62,8 @@ int32_t getTargetLon() {
   return telemetry_lon;
 }
 
-int16_t getTargetAlt() {
-  return telemetry_alt;
+int16_t getTargetAlt(int16_t home_alt) {
+  return telemetry_alt - home_alt;
 }
 
 uint16_t getSats() {

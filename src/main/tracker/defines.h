@@ -40,6 +40,7 @@ typedef struct {
   int16_t alt;
   uint16_t heading;
   uint32_t distance;
+  int16_t home_alt;
 }
 positionVector_t;
 
