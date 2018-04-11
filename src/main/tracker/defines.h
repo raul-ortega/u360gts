@@ -38,6 +38,7 @@ typedef struct {
   int32_t lat;
   int32_t lon;
   int16_t alt;
+  int16_t home_alt;
   uint16_t heading;
   uint32_t distance;
 }

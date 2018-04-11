@@ -151,7 +151,8 @@ void updateProtocolDetection(void);
 void protocolInit(void);
 void trackingInit(void);
 void telemetryPortInit(void);
-void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int16_t alt, bool home_updated, bool beep);
+void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int16_t alt, bool home_updated);
+void setHomePossition(positionVector_t *tracker,bool byGPS,int32_t lat,int32_t lon,int16_t alt, bool home_updated);
 //EASING
 int16_t _lastTilt;
 int16_t tilt;
@@ -672,37 +673,46 @@ void updateDigitalButtons(void) {
 }
 
 void setHomeByTelemetry(positionVector_t *tracker, positionVector_t *target) {
-  tracker->lat = target->lat;
-  tracker->lon = target->lon;
-  tracker->alt = target->alt;
-
-  if(feature(FEATURE_DEBUG)){
-	  tracker->lat = 47403583; tracker->lon = 8535850; tracker->alt = 474;
-  }
-
-  homeSet = true;
-  homeSet_BY_GPS = false;
-  homeReset = false;
-  home_timer_reset = 0;
-  epsVectorLoad(&targetLast,target->lat,target->lon,0,0,0);
-  epsVectorLoad(&targetCurrent,target->lat,target->lon,0,0,millis());
+  setHomePossition(&tracker,false, target->lat, target->lon, target->alt,false);
+  setInitialEPSVector(target->lat,target->lon);
+  target->home_alt = target->alt;
 }
 
-void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int16_t alt, bool home_updated, bool beep) {
-  tracker->lat = lat;
-  tracker->lon = lon;
-  tracker->alt = alt;
-  if(feature(FEATURE_DEBUG)) {
-	  tracker->lat = 47403583; tracker->lon = 8535850; tracker->alt = 474;
-  }
-  homeSet = true;
-  homeSet_BY_GPS = true;
-  homeReset = false;
-  home_timer_reset = 0;
+void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int16_t alt, bool home_updated) {
+  setHomePossition(&tracker,true, lat, lon, alt, home_updated);
   if(!home_updated) {
-	  epsVectorLoad(&targetLast,lat,lon,0,0,0);
-	  epsVectorLoad(&targetCurrent,lat,lon,0,0,millis());
+	  setInitialEPSVector(lat,lon);
   }
+}
+
+void setHomePossition(positionVector_t *tracker,bool byGPS,int32_t lat,int32_t lon,int16_t alt, bool home_updated){
+
+	tracker->lat = lat;
+	tracker->lon = lon;
+
+	if(home_updated)
+		tracker->alt = alt - tracker->home_alt;
+	else
+		{
+			tracker->alt = 0;
+			tracker->home_alt = alt;
+		}
+
+	if(feature(FEATURE_DEBUG)){
+		  tracker->lat = 47403583; tracker->lon = 8535850; tracker->alt = 474;
+	}
+
+	homeSet = true;
+	homeSet = true;
+	homeSet_BY_GPS = byGPS;
+	homeReset = false;
+	home_timer_reset = 0;
+
+}
+
+void setInitialEPSVector(int32_t lat,int32_t lon){
+	epsVectorLoad(&targetLast,lat,lon,0,0,0);
+	epsVectorLoad(&targetCurrent,lat,lon,0,0,millis());
 }
 
 void updateBatteryStatus(void){
@@ -801,7 +811,7 @@ void updateTargetPosition(void){
 	if(!PROTOCOL(TP_SERVOTEST)){
 		if (gotAlt) {
 
-			targetPosition.alt = getTargetAlt();
+			targetPosition.alt = getTargetAlt(targetPosition.home_alt);
 
 			if(PROTOCOL(TP_MFD)){
 				distance = getDistance();
@@ -983,7 +993,7 @@ void updateSetHomeButton(void){
 						setHomeByTelemetry(&trackerPosition, &targetPosition);
 					// By local GPS because telemetry hasn't got enought sats and we don't want wait more time.
 					else if(!homeSet && couldLolcalGpsSetHome(true)){
-						setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude,false,true);
+						setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude,false);
 					}
 				// RESET HOME
 				} else if (homeButtonCurrentState && (millis() - home_timer > 2000) && !PROTOCOL(TP_MFD)) {
@@ -1031,14 +1041,14 @@ void updateSetHomeByGPS(void){
 		homeReset = false;
 		home_timer_reset = 0;
 		//if((!homeSet || (homeSet && homeSet_BY_GPS)) && feature(FEATURE_GPS) && STATE(GPS_FIX) && (GPS_numSat >= masterConfig.home_min_sats)) // || GPS_numSat>3))
-		setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude,false,true);
+		setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude,false);
 		if(masterConfig.gpsConfig.homeBeeper)
 			  beeper(BEEPER_ARMING_GPS_FIX);
 	} else if(!homeSet && couldLolcalGpsSetHome(false)) {
 		homeReset = true;
 		home_timer_reset = 0;
 	} else if(masterConfig.update_home_by_local_gps == 1 && homeSet && couldLolcalGpsSetHome(false)){
-		setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude,true,false);
+		setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude,true);
 	}
 }
 
@@ -1058,7 +1068,7 @@ void updateMFD(void){
 
 		if (mfdTestMode || (homeSet && gotFix)) {
 			targetPosition.distance = getDistance();
-			targetPosition.alt = getTargetAlt();
+			targetPosition.alt = getTargetAlt(targetPosition.home_alt);
 			targetPosition.heading = getAzimuth() * 10;
 			gotFix = false;
 		}
