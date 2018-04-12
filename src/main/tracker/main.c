@@ -380,6 +380,8 @@ void trackingInit(void){
 	gotNewHeading = false;
 
 	menuState = 0;
+
+	targetPosition.home_alt = -32768;
 }
 
 void tracker_loop(void)
@@ -707,6 +709,9 @@ void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int1
 	  tracker->home_alt = alt;
   }
 
+  if(targetPosition.home_alt == -32768)
+	  targetPosition.alt = 0;
+
   homeSet = true;
   homeSet_BY_GPS = true;
   homeReset = false;
@@ -812,6 +817,9 @@ void updateTelemetryLost(void){
 void updateTargetPosition(void){
 	if(!PROTOCOL(TP_SERVOTEST)){
 		if (gotAlt) {
+
+			if(telemetry_sats >= masterConfig.telemetry_min_sats && targetPosition.home_alt == -32768)
+				targetPosition.home_alt = getTargetAlt(0);
 
 			targetPosition.alt = getTargetAlt(targetPosition.home_alt);
 
@@ -1584,4 +1592,3 @@ void protocolInit(void){
 		break;
 	}
 }
-
