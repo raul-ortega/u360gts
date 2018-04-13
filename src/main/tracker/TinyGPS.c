@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define COMBINE(sentence_type, term_number) (((unsigned)(sentence_type) << 5) | term_number)
 
 
-bool TinyGPS_encode(char c);
+
 int from_hex(char a);
 unsigned long parse_decimal();
 unsigned long parse_degrees();

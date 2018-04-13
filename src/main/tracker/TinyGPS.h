@@ -125,7 +125,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
   enum {_GPS_SENTENCE_GPGGA, _GPS_SENTENCE_GNGGA, _GPS_SENTENCE_GPRMC, _GPS_SENTENCE_OTHER};
 
-
+  bool TinyGPS_encode(char c);
 
   // internal utilities
   /*int from_hex(char a);

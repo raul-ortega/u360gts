@@ -156,3 +156,5 @@ void suspendRxSignal(void);
 void resumeRxSignal(void);
 
 void initRxRefreshRate(uint16_t *rxRefreshRatePtr);
+
+uint8_t calculateRssiPercentage(void);
