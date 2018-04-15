@@ -120,6 +120,7 @@ typedef struct master_t {
     int8_t offset_trim;
 	uint16_t tilt0;
 	uint16_t tilt90;
+	uint8_t tilt_max_angle;
 	uint8_t easing;
 	uint8_t easing_steps;
 	uint8_t easing_min_angle;

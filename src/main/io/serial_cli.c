@@ -723,6 +723,7 @@ const clivalue_t valueTable[] = {
 	{ "init_servos",    			VAR_UINT8  | TRACKER_VALUE, &masterConfig.init_servos, .config.minmax = { 0,  1 } },
 	{ "tilt0",           			VAR_UINT16  | TRACKER_VALUE, &masterConfig.tilt0, .config.minmax = { 0,  3000 } },
 	{ "tilt90",           			VAR_UINT16  | TRACKER_VALUE, &masterConfig.tilt90, .config.minmax = { 0,  3000 } },
+	{ "tilt_max_angle",         	VAR_UINT8  | TRACKER_VALUE, &masterConfig.tilt_max_angle, .config.minmax = { 0,  90 } },
 	{ "easing",           			VAR_UINT8  | TRACKER_VALUE, &masterConfig.easing, .config.minmax = { 1,  4 } }, //0: no easing, 1: out-quart function, 2: out-circ function
 	{ "easing_steps",           	VAR_UINT8  | TRACKER_VALUE, &masterConfig.easing_steps, .config.minmax = { 0,  100 } },
 	{ "easing_min_angle",           VAR_UINT8  | TRACKER_VALUE, &masterConfig.easing_min_angle, .config.minmax = { 1,  10 } },

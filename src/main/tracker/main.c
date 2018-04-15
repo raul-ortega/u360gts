@@ -152,6 +152,7 @@ void protocolInit(void);
 void trackingInit(void);
 void telemetryPortInit(void);
 void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int16_t alt, bool home_updated, bool beep);
+uint8_t filterTiltAngle(uint8_t target);
 //EASING
 int16_t _lastTilt;
 int16_t tilt;
@@ -495,6 +496,8 @@ void calcTilt(void) {
   else if (tiltTarget > 90)
     tiltTarget = 90;
 
+  tiltTarget = filterTiltAngle(tiltTarget);
+
   if(feature(FEATURE_EASING)) {
 	if(_servo_tilt_has_arrived){
 		_servo_tilt_must_move = tiltTarget;
@@ -755,6 +758,7 @@ void updateServoTest(void){
 		 }
 
 		 if(SERVO(SERVOTILT_MOVE)) {
+			SERVOTEST_TILT = filterTiltAngle(SERVOTEST_TILT);
 			if(feature(FEATURE_EASING) && masterConfig.easing > 0) {//#ifdef TILT_EASING
 				  _servo_tilt_must_move = SERVOTEST_TILT;
 				  _servo_tilt_has_arrived = false;
@@ -1591,4 +1595,8 @@ void protocolInit(void){
 		ENABLE_PROTOCOL(TP_PITLAB);
 		break;
 	}
+}
+
+uint8_t filterTiltAngle(uint8_t target){
+	return (masterConfig.tilt_max_angle > 0 && target > masterConfig.tilt_max_angle)?masterConfig.tilt_max_angle:target;
 }

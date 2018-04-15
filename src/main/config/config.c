@@ -717,6 +717,7 @@ static void resetConf(void)
     //TILT
     masterConfig.tilt0 = 500;
     masterConfig.tilt90 = 1400;
+    masterConfig.tilt_max_angle = 0;
 
     //EASING
     featureSet(FEATURE_EASING);
