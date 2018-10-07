@@ -47,6 +47,7 @@ extern float telemetry_roll;
 extern float telemetry_yaw;
 extern uint8_t telemetry_failed_cs;
 extern uint8_t telemetry_provider;
+extern uint8_t telemetry_fixtype;
 
 int16_t getTargetAlt(int16_t home_alt);
 void encodeTargetData(uint8_t c);

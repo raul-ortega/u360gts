@@ -71,6 +71,7 @@ extern int32_t telemetry_lon;
 extern int16_t telemetry_alt;
 extern int16_t telemetry_sats;
 extern uint8_t telemetry_failed_cs;
+extern uint8_t telemetry_fixtype;
 extern positionVector_t targetPosition;
 extern positionVector_t trackerPosition;
 extern bool gotFix;
@@ -262,6 +263,18 @@ static const char* const epsParamIncreaseDecrease[] = {
 	"+10          ",
 	"-10          ",
 	"EXIT         "
+};
+
+static const char* const telemetryFixType[] = {
+	"none ",
+	"nofix",
+	"2d   ",
+	"3d   ",
+	"dgps ",
+	"float",
+	"fixed",
+	"stati",
+	"ppp  "
 };
 
 uint8_t indexMenuOption = 0;
@@ -644,10 +657,8 @@ void showTelemetryPage(void){
     if(!PROTOCOL(TP_MFD)) {
     	if(telemetry_sats>99)
     		telemetry_sats = 99;
-    	//if(PROTOCOL(TP_GPS_TELEMETRY))
-    	tfp_sprintf(lineBuffer, "Sats: %02d     FCS:%d", telemetry_sats,telemetry_failed_cs);
-    	//else
-    		//tfp_sprintf(lineBuffer, "Sats: %02d  ", telemetry_sats);
+
+    	tfp_sprintf(lineBuffer, "Sat: %02d %s FCS:%d", telemetry_sats, telemetryFixType[telemetry_fixtype], telemetry_failed_cs);
 		padLineBuffer();
 		i2c_OLED_set_line(rowIndex++);
 		i2c_OLED_send_string(lineBuffer);
@@ -768,12 +779,12 @@ void showGpsPage() {
 
 
     char fixChar = STATE(GPS_FIX) ? 'Y' : 'N';
-    tfp_sprintf(lineBuffer, "Sats: %d Fix: %c", GPS_numSat, fixChar);
+    tfp_sprintf(lineBuffer, "Sat: %d Fix: %c", GPS_numSat, fixChar);
     padLineBuffer();
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
 
-    tfp_sprintf(lineBuffer, "La/Lo: %d/%d", GPS_coord[LAT] / GPS_DEGREES_DIVIDER, GPS_coord[LON] / GPS_DEGREES_DIVIDER);
+    tfp_sprintf(lineBuffer, "La/Lo: %d/%d Hdop:%d", GPS_coord[LAT] / GPS_DEGREES_DIVIDER, GPS_coord[LON] / GPS_DEGREES_DIVIDER, GPS_hdop);
     padLineBuffer();
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);

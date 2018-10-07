@@ -569,8 +569,8 @@ const clivalue_t valueTable[] = {
 /*
     { "align_gyro",                 VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.sensorAlignmentConfig.gyro_align, .config.lookup = { TABLE_ALIGNMENT } },
     { "align_acc",                  VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.sensorAlignmentConfig.acc_align, .config.lookup = { TABLE_ALIGNMENT } },
-    { "align_mag",                  VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.sensorAlignmentConfig.mag_align, .config.lookup = { TABLE_ALIGNMENT } },
-
+*/  { "align_mag",                  VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.sensorAlignmentConfig.mag_align, .config.lookup = { TABLE_ALIGNMENT } },
+/*
     { "align_board_roll",           VAR_INT16  | MASTER_VALUE,  &masterConfig.boardAlignment.rollDegrees, .config.minmax = { -180,  360 } },
     { "align_board_pitch",          VAR_INT16  | MASTER_VALUE,  &masterConfig.boardAlignment.pitchDegrees, .config.minmax = { -180,  360 } },
     { "align_board_yaw",            VAR_INT16  | MASTER_VALUE,  &masterConfig.boardAlignment.yawDegrees, .config.minmax = { -180,  360 } },
@@ -723,6 +723,7 @@ const clivalue_t valueTable[] = {
 	{ "init_servos",    			VAR_UINT8  | TRACKER_VALUE, &masterConfig.init_servos, .config.minmax = { 0,  1 } },
 	{ "tilt0",           			VAR_UINT16  | TRACKER_VALUE, &masterConfig.tilt0, .config.minmax = { 0,  3000 } },
 	{ "tilt90",           			VAR_UINT16  | TRACKER_VALUE, &masterConfig.tilt90, .config.minmax = { 0,  3000 } },
+	{ "tilt_max_angle",         	VAR_UINT8  | TRACKER_VALUE, &masterConfig.tilt_max_angle, .config.minmax = { 0,  90 } },
 	{ "easing",           			VAR_UINT8  | TRACKER_VALUE, &masterConfig.easing, .config.minmax = { 1,  4 } }, //0: no easing, 1: out-quart function, 2: out-circ function
 	{ "easing_steps",           	VAR_UINT8  | TRACKER_VALUE, &masterConfig.easing_steps, .config.minmax = { 0,  100 } },
 	{ "easing_min_angle",           VAR_UINT8  | TRACKER_VALUE, &masterConfig.easing_min_angle, .config.minmax = { 1,  10 } },
@@ -2480,7 +2481,7 @@ static void cliMovePanServo(char *cmdline)
     } else {
     	degrees=atoi(cmdline);
     	if(degrees>=0 && degrees<=360 ) {
-			printf("Moving pan servo to %u บ\r\n", degrees);
+			printf("Moving pan servo to %u ยบ\r\n", degrees);
 			SERVOTEST_HEADING=degrees;
 			ENABLE_SERVO(SERVOPAN_MOVE);
     	}
@@ -2499,7 +2500,7 @@ static void cliMoveTiltServo(char *cmdline)
     } else {
     	degrees=atoi(cmdline);
     	if(degrees >=0 && degrees <= 90 ) {
-			printf("Moving tilt servo to %u บ\r\n", degrees);
+			printf("Moving tilt servo to %u ยบ\r\n", degrees);
 			SERVOTEST_TILT = degrees;
 			ENABLE_SERVO(SERVOTILT_MOVE);
     	}

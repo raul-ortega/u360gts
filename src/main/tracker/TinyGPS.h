@@ -49,6 +49,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   unsigned long _date, _new_date;
   long _latitude, _new_latitude;
   long _longitude, _new_longitude;
+  unsigned short _fixtype, _new_fixtype;
   long _altitude, _new_altitude;
   unsigned long  _speed, _new_speed;
   unsigned long  _course, _new_course;
@@ -66,6 +67,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   uint8_t _term_number;
   uint8_t _term_offset;
   bool _gps_data_good;
+  uint8_t _fix_type;
 
 #ifndef _GPS_NO_STATS
   // statistics
@@ -104,13 +106,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   void f_get_position(float *latitude, float *longitude, unsigned long *fix_age);
   void crack_datetime(int *year, uint8_t *month, uint8_t *day,
     uint8_t *hour, uint8_t *minute, uint8_t *second, uint8_t *hundredths, unsigned long *fix_age);
-  float f_altitude();
-  float f_course();
-  float f_speed_knots();
-  float f_speed_mph();
-  float f_speed_mps();
-  float f_speed_kmph();
-  float f_hdop();
+  float f_altitude(void);
+  float f_course(void);
+  float f_speed_knots(void);
+  float f_speed_mph(void);
+  float f_speed_mps(void);
+  float f_speed_kmph(void);
+  float f_hdop(void);
+  uint8_t f_fixtype(void);
 
   uint8_t get_sentence_type(void);
   //static int library_version() { return _GPS_VERSION; }

@@ -33,6 +33,7 @@ int32_t telemetry_time = 0;
 int32_t telemetry_date = 0;
 int16_t telemetry_age = 0;
 
+
 uint8_t telemetry_failed_cs = 0;
 
 float telemetry_course = 0.0f;
@@ -45,6 +46,8 @@ float telemetry_roll = 0.0f;
 float telemetry_yaw = 0.0f;
 
 uint8_t telemetry_provider = 0;
+
+uint8_t telemetry_fixtype = 0;
 
 uint8_t a;
 
@@ -124,6 +127,8 @@ void gps_encodeTargetData(uint8_t c) {
       telemetry_speed = f_speed_knots();
       //hdop
       telemetry_hdop = f_hdop();
+
+      telemetry_fixtype = f_fixtype();
 
       if(!LOCAL_GPS){
         if (satellites() != GPS_INVALID_SATELLITES) {

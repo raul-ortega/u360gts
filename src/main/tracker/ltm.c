@@ -159,7 +159,7 @@ void parseLTM_GFRAME(void) {
     telemetry_alt = (int16_t)(temp_alt/100);
     satsfix = ltmread_u8();
     telemetry_sats = (int16_t)((satsfix >> 2) & 0xFF);
-    fix_type = satsfix & 0b00000011;
+    telemetry_fixtype = satsfix & 0b00000011;
     if(telemetry_sats>=5) gotFix = 1;
     gotAlt = true;
   }

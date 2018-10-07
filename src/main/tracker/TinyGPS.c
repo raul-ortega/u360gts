@@ -197,6 +197,7 @@ bool term_complete()
           _time      = _new_time;
           _latitude  = _new_latitude;
           _longitude = _new_longitude;
+          _fixtype = _new_fixtype;
           _numsats   = _new_numsats;
           _hdop      = _new_hdop;
           break;
@@ -274,6 +275,7 @@ bool term_complete()
     case COMBINE(_GPS_SENTENCE_GPGGA, 6): // Fix data (GPGGA)
     case COMBINE(_GPS_SENTENCE_GNGGA, 6):
       _gps_data_good = _term[0] > '0';
+      _new_fixtype = (unsigned char)atoi(_term);
       break;
     case COMBINE(_GPS_SENTENCE_GPGGA, 7): // Satellites used (GPGGA)
     case COMBINE(_GPS_SENTENCE_GNGGA, 7):
@@ -388,6 +390,10 @@ void f_get_position(float *latitude, float *longitude, unsigned long *fix_age)
   *longitude = lat == GPS_INVALID_ANGLE ? GPS_INVALID_F_ANGLE : (lon / 1000000.0);
 }
 
+uint8_t f_fixtype(void){
+	return _fixtype;
+}
+
 void crack_datetime(int *year, uint8_t *month, uint8_t *day,
   uint8_t *hour, uint8_t *minute, uint8_t *second, uint8_t *hundredths, unsigned long *age)
 {
@@ -406,42 +412,42 @@ void crack_datetime(int *year, uint8_t *month, uint8_t *day,
   if (hundredths) *hundredths = time % 100;
 }
 
-float f_altitude()
+float f_altitude(void)
 {
   return _altitude == GPS_INVALID_ALTITUDE ? GPS_INVALID_F_ALTITUDE : _altitude / 100.0;
 }
 
-float f_course()
+float f_course(void)
 {
   return _course == GPS_INVALID_ANGLE ? GPS_INVALID_F_ANGLE : _course / 100.0;
 }
 
-float f_speed_knots()
+float f_speed_knots(void)
 {
   return _speed == GPS_INVALID_SPEED ? GPS_INVALID_F_SPEED : _speed / 100.0;
 }
 
-float f_speed_mph()
+float f_speed_mph(void)
 {
   float sk = f_speed_knots();
   return sk == GPS_INVALID_F_SPEED ? GPS_INVALID_F_SPEED : _GPS_MPH_PER_KNOT * sk;
 }
 
-float f_speed_mps()
+float f_speed_mps(void)
 {
   float sk = f_speed_knots();
   return sk == GPS_INVALID_F_SPEED ? GPS_INVALID_F_SPEED : _GPS_MPS_PER_KNOT * sk;
 }
 
-float f_speed_kmph()
+float f_speed_kmph(void)
 {
   float sk = f_speed_knots();
   return sk == GPS_INVALID_F_SPEED ? GPS_INVALID_F_SPEED : _GPS_KMPH_PER_KNOT * sk;
 }
 
-float f_hdop()
+float f_hdop(void)
 {
-	_speed == GPS_INVALID_HDOP ? GPS_INVALID_HDOP : _hdop / 100.0;
+	_hdop == GPS_INVALID_HDOP ? GPS_INVALID_HDOP : _hdop / 100.0;
 }
 
 bool gpsisdigit(char c) {

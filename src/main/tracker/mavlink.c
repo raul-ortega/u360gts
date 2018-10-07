@@ -33,10 +33,11 @@ void mavlink_handleMessage(mavlink_message_t* msg) {
       telemetry_lon = mavlink_msg_gps_raw_int_get_lon(msg) / 10;
       telemetry_sats = mavlink_msg_gps_raw_int_get_satellites_visible(msg);
       telemetry_alt = (int16_t)(mavlink_msg_gps_raw_int_get_alt(msg) / 1000);
+      telemetry_fixtype = mavlink_msg_gps_raw_int_get_fix_type(msg);
       gotAlt = true;
 
       // fix_type: GPS lock 0-1=no fix, 2=2D, 3=3D
-      if (mavlink_msg_gps_raw_int_get_fix_type(msg) > 1) {
+      if (telemetry_fixtype > 1) {
         gotFix = true;
       } else {
         gotFix = false;
