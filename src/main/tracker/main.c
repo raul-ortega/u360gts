@@ -1070,7 +1070,7 @@ bool couldLolcalGpsSetHome(bool setByUser){
 	if(feature(FEATURE_DEBUG)){
 		  return true;
 	}
-	return ((setByUser && GPS_numSat >= 4) || (!setByUser && GPS_numSat >= masterConfig.gps_min_sats)) && feature(FEATURE_GPS) && STATE(GPS_FIX);
+	return ((setByUser && GPS_numSat >= 4) || (!setByUser && GPS_numSat >= masterConfig.gps_min_sats)) && (feature(FEATURE_GPS) && STATE(GPS_FIX) || (masterConfig.telemetry_home == 1 && telemetry_sats >= masterConfig.telemetry_min_sats));
 }
 
 void updateMFD(void){

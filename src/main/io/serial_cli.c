@@ -351,7 +351,11 @@ static const char * const lookupTableAlignment[] = {
 };
 
 static const char * const lookupTabletelemetryProvider[] = {
-    "NONE", "DIY_GPS","INAV", NULL
+    "NONE", "DIY_GPS","INAV"
+};
+
+static const char * const lookupTabletelemetryHome[] = {
+    "DEFAULT", "AUTO"
 };
 
 #ifdef GPS
@@ -401,6 +405,7 @@ typedef enum {
     TABLE_UNIT,
     TABLE_ALIGNMENT,
 	TABLE_TELEMETRY_PROVIDER,
+	TABLE_TELEMETRY_HOME,
 #ifdef GPS
     TABLE_GPS_PROVIDER,
     TABLE_GPS_SBAS_MODE,
@@ -419,6 +424,7 @@ static const lookupTableEntry_t lookupTables[] = {
     { lookupTableUnit, sizeof(lookupTableUnit) / sizeof(char *) },
     { lookupTableAlignment, sizeof(lookupTableAlignment) / sizeof(char *) },
 	{ lookupTabletelemetryProvider, sizeof(lookupTabletelemetryProvider) / sizeof(char *) },
+	{ lookupTabletelemetryHome, sizeof(lookupTabletelemetryHome) / sizeof(char *) },
 #ifdef GPS
     { lookupTableGPSProvider, sizeof(lookupTableGPSProvider) / sizeof(char *) },
     { lookupTableGPSSBASMode, sizeof(lookupTableGPSSBASMode) / sizeof(char *) },
@@ -733,6 +739,7 @@ const clivalue_t valueTable[] = {
 	{ "telemetry_protocol",        	VAR_UINT16 | TRACKER_VALUE, &masterConfig.telemetry_protocol, .config.minmax = { TP_SERVOTEST,  TP_PITLAB } },
     { "telemetry_min_sats",         VAR_UINT8  | TRACKER_VALUE, &masterConfig.telemetry_min_sats, .config.minmax = { 0,  20 } },
 	{ "telemetry_provider",			VAR_UINT8  | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.telemetry_provider, .config.lookup = {TABLE_TELEMETRY_PROVIDER} },
+	{ "telemetry_home"	,			VAR_UINT8  | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.telemetry_home, .config.lookup = {TABLE_TELEMETRY_HOME} },
 	//{ "gps_port",      		   	VAR_UINT8  | TRACKER_VALUE, &masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex, .config.minmax = { 0,  4 } },
 	{ "start_tracking_distance",   	VAR_UINT8  | TRACKER_VALUE, &masterConfig.start_tracking_distance, .config.minmax = { 0,  100 } },
 	{ "start_tracking_altitude",   	VAR_UINT8  | TRACKER_VALUE, &masterConfig.start_tracking_altitude, .config.minmax = { 0,  100 } },
