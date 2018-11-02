@@ -2,7 +2,7 @@
  * This file is part of u360gts, aka amv-open360tracker 32bits:
  * https://github.com/raul-ortega/amv-open360tracker-32bits
  *
- * The code below is an adaptation by Raúl Ortega of the original code written by Samuel Brucksch:
+ * The code below is an adaptation by RaÃºl Ortega of the original code written by Samuel Brucksch:
  * https://github.com/SamuelBrucksch/open360tracker
  *
  * u360gts is free software: you can redistribute it and/or modify
@@ -241,6 +241,10 @@ void parseTelemHubByte(uint8_t c) {
     alt = (int16_t)((c << 8) + byte0);
     gotAlt = true;
     break;
+  case BARO_ALT_BP_ID:
+    alt = (int16_t)((c << 8) + byte0);
+    gotAlt = true;
+    break;	
   case GPS_LON_BP_ID:
     lon_bp = (c << 8) + byte0;
     break;
