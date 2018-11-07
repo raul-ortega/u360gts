@@ -49,6 +49,11 @@ int32_t coordToLong(int8_t neg, uint16_t bp, uint16_t ap);
 //used for sats and fix type
 #define TEMP2              0x05
 
+// FrSky Passthrough DATA IDs from APM
+#define GPS_STATUS				0x5002
+#define AIRCRAFT_HOME			0X5004
+#define bitmask(X,Y) (((1 << X) -1) << Y)
+
 // FrSky new DATA IDs (2 bytes)
 #define ALT_FIRST_ID       0x0100
 #define ALT_LAST_ID        0x010f
@@ -246,6 +251,20 @@ void processSportPacket(uint8_t *packet)
           gotFix = true;
         }
 
+      }
+      else if(appId == GPS_STATUS && telemetry_provider==4){
+    	  sats = (uint8_t) (SPORT_DATA_U32(packet) & bitmask(4,0));
+    	  alt = (int16_t) ((SPORT_DATA_U32(packet) & bitmask(8,24)) >> 24)/10;
+    	  gotAlt = true;
+      }
+      else if(appId == AIRCRAFT_HOME && telemetry_provider==4){
+    	  uint16_t msl_dc, msl_x, msl_sgn;
+    	  msl_dc = (SPORT_DATA_U32(packet) & bitmask(7,24)) >> 24;
+    	  msl_x = (SPORT_DATA_U32(packet) & bitmask(2,22)) >> 22;
+    	  msl_sgn = (SPORT_DATA_U32(packet) & bitmask(1,31)) >> 31;
+    	  //homeAlt = bit32.extract(VALUE,14,10) * (10^bit32.extract(VALUE,12,2)) * 0.1 * (bit32.extract(VALUE,24,1) == 1 and -1 or 1) --m
+    	  alt = ((int16_t) (msl_dc * msl_x * 0.1 * msl_sgn == 1?-1:1));
+    	  gotAlt = true;
       }
       break;
   }

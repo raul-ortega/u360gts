@@ -351,7 +351,7 @@ static const char * const lookupTableAlignment[] = {
 };
 
 static const char * const lookupTabletelemetryProvider[] = {
-    "NONE", "DIY_GPS","INAV"
+    "NONE", "DIY_GPS","INAV","APM10"
 };
 
 static const char * const lookupTabletelemetryHome[] = {
