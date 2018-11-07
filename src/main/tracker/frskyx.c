@@ -254,8 +254,6 @@ void processSportPacket(uint8_t *packet)
       }
       else if(appId == GPS_STATUS && telemetry_provider==4){
     	  sats = (uint8_t) (SPORT_DATA_U32(packet) & bitmask(4,0));
-    	  alt = (int16_t) ((SPORT_DATA_U32(packet) & bitmask(8,24)) >> 24)/10;
-    	  gotAlt = true;
       }
       else if(appId == AIRCRAFT_HOME && telemetry_provider==4){
     	  uint16_t msl_dc, msl_x, msl_sgn;
