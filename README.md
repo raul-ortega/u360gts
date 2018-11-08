@@ -1,6 +1,6 @@
 # u360gts (amv-open360tracker 32bits)
 
-This is the 32 bits version of the "continuous 360 degree rotating antenna tracker system" for FPV. This project has been developed and maintained by users of the [FPV spanish community](http://www.aeromodelismovirtual.com/showthread.php?t=34530).
+u360gts is a complete DIY software and hardware antenna tracker solution for Drones (UAVs, RPAs proffesionals and FPV hobbyiests). We try to make it as unniversal as possible in terms of being compatible with the most popular flight controller, radio and video systems. It is the perfect option if you need to track differenet aircrafts with different telemetry protocol systems. Firmware and hardware desing have been developed by bembers of the spanigh FPV community and it is FREE for you.
 
 Please, we encourage you to read all the documentation before using this firmware in your devices, otherwhise they could be dammaged. In the wiki you'll find detailled information about how to install and configure it with success.
 
