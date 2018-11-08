@@ -17,7 +17,7 @@ This firmware has been developed for controllers based on STM32F series micropro
 * Protocol conversion and fordwarding.
 * Fully and easy configurable with [u360gts-configurator](https://github.com/raul-ortega/u360gts-configurator) (cross platform) and serial console (CLI mode).
 * Tilt easing.
-* Automatic home position (with local GPS).
+* Automatic home position and movable (with local GPS).
 * Detailled status data on OLED display.
 * Battery monitoring.
 * RSSI signal strength on OLED display.
@@ -77,9 +77,11 @@ Yo also can configure and interact with the antenna tracker through a Command Li
 
 The tilt  movement has been improved by adding easing effects at the beginning and smoothing at the end. This will avoid damaging the tilt servo and other mechanisms when using heavy and larger antennas. This feature doesn't affect the accuracy and speed in the movements of the pan servo.
 
-**AUTOMATIC HOME POSITION**
+**AUTOMATIC HOME POSITION AND MOVABLE**
 
 You can connect a NMEA or UBLOX GPS device to the controller to automatically set the home position before starting the tracking. Nonetheless, the user has full control and can reject the home position to get a more accurate one.
+
+With continuous updating home position enabled, you may change the placement of your antenna tracker during flight without the risk of losing the tracking your aircraft. You could use it on mobile platforms, like a vehicle, a ship, etc ...
 
 **OLED DISPLAY**
 
