@@ -1,23 +1,5 @@
 # Features
 
-* 360 degree continous rotation.
-* Multiprotocol.
-* Automatic protocol detection.
-* Acceps up to 10 Hz of input telemetry frequency.
-* Protocol conversion and fordwarding.
-* Fully and easy configurable with [u360gts-configurator](https://github.com/raul-ortega/u360gts-configurator) (cross platform) and serial console (CLI mode).
-* Tilt easing.
-* Automatic home position (with local GPS).
-* Detailled status data on OLED display.
-* Battery monitoring.
-* RSSI signal strength on OLED display.
-* Setup menu on OLED display.
-* Acurate PID control system.
-* Position estimation system.
-* Sound alarms through out a buzzer.
-* 4 Serial ports, with dynamic assignment.
-
-
 **360 DEGREE CONTINOUS ROTATION**
 
 With this firmware you can move your antenna continually in a range of 360 degrees, without the need of moving back. Using an slipring and 360 degree servos, or normal servos modified to be able of doing it, the firware will give the orders for reaching the target in an acurate and fast way.
