@@ -6,4 +6,4 @@ Users were requesting more and more funtions, protocols ... the code was growing
 
 Later on Raúl Ortega decided to create a graphical user interface to configure the tracker and thought that would be good to uniffy both projects under the name ... **u360gts**... (u360gts for the firmware and u360gts-configurator for the configuration tool), and created a website as showcase and starting point for new users: [http://www.u360gts.com](http://www.u360gts.com).
 
-[Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
+[<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
