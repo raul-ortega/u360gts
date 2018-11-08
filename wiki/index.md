@@ -8,7 +8,7 @@ First of all we would like you to understand the big effort spent to create such
 ### About u360gts
 - [What is u360gts?](https://github.com/raul-ortega/u360gts/blob/master/wiki/history.md)
 - [History](https://github.com/raul-ortega/u360gts/blob/master/wiki/history.md)
-- [Overview](https://github.com/raul-ortega/u360gts/blob/master/wiki/Overview.md)
+- [Overview](https://github.com/raul-ortega/u360gts/blob/master/wiki/overview.md)
 
 ### Hardware
 - [Frame](https://github.com/raul-ortega/u360gts/wiki/hardware-frame.md)
