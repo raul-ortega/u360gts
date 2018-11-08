@@ -7,8 +7,8 @@ First of all we would like you to understand the big effort spent to create such
 - [posting in Jelle737's Build Log u360gts: 360° antenna tracker on rcgropus](https://www.rcgroups.com/forums/showthread.php?2964122-u360gts-360%C2%B0-antenna-tracker)
 ### About u360gts
 - [What is u360gts?](https://github.com/raul-ortega/u360gts/blob/master/wiki/history.md)
-- [What is NOT u360gts?](https://github.com/raul-ortega/u360gts/blob/master/wiki/what-is-not-u360gts.md)
 - [History](https://github.com/raul-ortega/u360gts/blob/master/wiki/history.md)
+- [Overview](https://github.com/raul-ortega/u360gts/blob/master/wiki/Overview.md)
 
 ### Hardware
 - [Frame](https://github.com/raul-ortega/u360gts/wiki/hardware-frame.md)
