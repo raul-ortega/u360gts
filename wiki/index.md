@@ -11,7 +11,7 @@ First of all we would like you to understand the big effort spent to create such
 - [Overview](https://github.com/raul-ortega/u360gts/blob/master/wiki/overview.md)
 
 ### Hardware
-- [Frame](https://github.com/raul-ortega/u360gts/wiki/hardware-frame.md)
+- [Frame](https://github.com/raul-ortega/u360gts/wiki/frame.md)
 - [List of components](https://github.com/raul-ortega/u360gts/wiki/hardware-components.md)
 - [Wiring schematics](https://github.com/raul-ortega/u360gts/wiki/hardware-wiring-schematics.md)
 - [Servos](https://github.com/raul-ortega/u360gts/wiki/hardware-servos.md)
