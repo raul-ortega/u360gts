@@ -12,5 +12,11 @@ All information regarding parts, components, and how to assemble it will be foun
 
 [![Audi R8](https://i.ytimg.com/vi/xCPg7soJWS4/hqdefault.jpg)](https://www.youtube.com/watch?v=xCPg7soJWS4 "u360gts 3D Printed")
 
-#Other frames
-- 
+# Other frames
+
+Other alternatives are available for this project:
+
+- [3d antenna tracker by Ivan_Cillo](https://www.thingiverse.com/thing:1367337)
+- [open360tracker v2 by Chriss_SI ](https://www.thingiverse.com/thing:1351489)
+- [open360tracker v2 by 3d4uandme](https://www.thingiverse.com/thing:2568906)
+- [Mecánica de seguimiento de giro continuo V2 by JuanTrillo](https://www.thingiverse.com/thing:2495035)
