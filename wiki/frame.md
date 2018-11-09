@@ -8,9 +8,9 @@ It is still a work in progress because it is being continuously improved, but it
 
 All information regarding parts, components, and how to assemble it will be found in the summary of the design.
 
+- [Download](https://www.thingiverse.com/thing:3203850/zip) 
+
 [![Audi R8](https://i.ytimg.com/vi/xCPg7soJWS4/hqdefault.jpg)](https://www.youtube.com/watch?v=xCPg7soJWS4 "u360gts 3D Printed")
-
-
 
 #Other frames
 - 
