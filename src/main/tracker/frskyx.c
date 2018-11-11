@@ -252,11 +252,10 @@ void processSportPacket(uint8_t *packet)
         }
 
       }
-      else if(appId == GPS_STATUS && telemetry_provider==4){
+      else if(appId == GPS_STATUS && telemetry_provider==3){
     	  sats = (uint8_t) (SPORT_DATA_U32(packet) & bitmask(4,0));
-    	  telemetry_sats = sats;
       }
-      else if(appId == AIRCRAFT_HOME && telemetry_provider==4){
+      else if(appId == AIRCRAFT_HOME && telemetry_provider==3){
     	  uint16_t msl_dc, msl_x, msl_sgn;
     	  msl_dc = (SPORT_DATA_U32(packet) & bitmask(7,24)) >> 24;
     	  msl_x = (SPORT_DATA_U32(packet) & bitmask(2,22)) >> 22;
