@@ -2,10 +2,10 @@
 
 ## Mandatory parts:
 
-- Naze32 (rev5 acro if used with external magnetometer), Naze32 rev5 full, or Flip32 10dof
-- OLED screen 0.96" IIC Serial 128X64 OLED Display Module For Arduino Low Power Consumption
-- One regular servo
-- One 360° Degree Continuous Rotation, or a regular servor converted to 360º
+- CONTROLLER: Naze32 (rev5 acro if used with external magnetometer), Naze32 rev5 full, or Flip32 10dof
+- I2C 2.42" 128x64 Graphic OLED Yellow Display SSD1309(Arduino/PIC/Multi-wii).
+- TILT SERVO: Regular servo
+- PAN SERVO: One 360° Degree Continuous Rotation, or a regular servor converted to 360º
 - Two buttons
 - 5V BEC
     
