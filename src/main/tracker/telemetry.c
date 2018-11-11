@@ -49,6 +49,10 @@ uint8_t telemetry_provider = 0;
 
 uint8_t telemetry_fixtype = 0;
 
+uint8_t telemetry_fixes = 0;
+uint8_t telemetry_frequency = 0;
+uint32_t telemetry_millis = 0;
+
 uint8_t a;
 
 uint8_t LOCAL_GPS;

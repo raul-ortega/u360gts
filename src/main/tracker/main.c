@@ -152,6 +152,7 @@ void protocolInit(void);
 void trackingInit(void);
 void telemetryPortInit(void);
 void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int16_t alt, bool home_updated, bool beep);
+void calcTelemetryFrequency(void);
 uint8_t filterTiltAngle(uint8_t target);
 //EASING
 int16_t _lastTilt;
@@ -305,6 +306,10 @@ extern uint8_t telemetry_provider;
 extern int32_t telemetry_lat;
 extern int32_t telemetry_lon;
 
+extern uint8_t telemetry_frequency;
+uint8_t telemetry_fixes;
+uint32_t telemetry_millis;
+
 void tracker_setup(void)
 {
 
@@ -383,6 +388,9 @@ void trackingInit(void){
 	menuState = 0;
 
 	targetPosition.home_alt = -32768;
+
+	telemetry_frequency = 0;
+	telemetry_millis = millis();
 }
 
 void tracker_loop(void)
@@ -801,6 +809,8 @@ void updateTelemetryLost(void){
 	if(lostTelemetry) {
 		gotFix = false;
 		gotAlt = false;
+		telemetry_frequency = 0;
+		telemetry_fixes = 0;
 		return;
 	}
 
@@ -840,6 +850,9 @@ void updateTargetPosition(void){
 
 		if(!PROTOCOL(TP_MFD)){
 			if (gotFix) {
+
+				calcTelemetryFrequency();
+
 				targetPosition.lat = getTargetLat();
 				targetPosition.lon = getTargetLon();
 				currentDistance = distance_between(targetLast.lat / TELEMETRY_LATLON_DIVIDER_F,targetLast.lon / TELEMETRY_LATLON_DIVIDER_F,targetPosition.lat / TELEMETRY_LATLON_DIVIDER_F,targetPosition.lon / TELEMETRY_LATLON_DIVIDER_F);
@@ -1600,3 +1613,15 @@ void protocolInit(void){
 uint8_t filterTiltAngle(uint8_t target){
 	return (masterConfig.tilt_max_angle > 0 && target > masterConfig.tilt_max_angle)?masterConfig.tilt_max_angle:target;
 }
+
+void calcTelemetryFrequency(void){
+
+	telemetry_fixes++;
+
+	if(millis() - telemetry_millis >= 5000){
+		telemetry_frequency = (uint8_t) (telemetry_fixes / 5.0);
+		telemetry_fixes = 0;
+		telemetry_millis = millis();
+	}
+}
+
