@@ -142,7 +142,7 @@ void offsetTrimDecrease(void);
 float map(long x, long in_min, long in_max, long out_min, long out_max);
 void calcEstimatedPosition();
 bool couldLolcalGpsSetHome(bool setByUser);
-bool couldTelemetrySetHome();
+bool couldTelemetrySetHome(void);
 void updateCalibratePan();
 uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2);
 void setEpsMode(void);
@@ -1076,14 +1076,19 @@ void updateSetHomeByGPS(void){
 		home_timer_reset = 0;
 	} else if(masterConfig.update_home_by_local_gps == 1 && homeSet && couldLolcalGpsSetHome(false)){
 		setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude,true,false);
-	}
+	} else if(!homeSet && couldTelemetrySetHome())
+		setHomeByTelemetry(&trackerPosition, &targetPosition);
 }
 
 bool couldLolcalGpsSetHome(bool setByUser){
 	if(feature(FEATURE_DEBUG)){
 		  return true;
 	}
-	return ((setByUser && GPS_numSat >= 4) || (!setByUser && GPS_numSat >= masterConfig.gps_min_sats)) && (feature(FEATURE_GPS) && STATE(GPS_FIX) || (masterConfig.telemetry_home == 1 && telemetry_sats >= masterConfig.telemetry_min_sats));
+	return ((setByUser && GPS_numSat >= 4) || (!setByUser && GPS_numSat >= masterConfig.gps_min_sats)) && (feature(FEATURE_GPS) && STATE(GPS_FIX));
+}
+
+bool couldTelemetrySetHome(void){
+	return (!feature(FEATURE_GPS) && masterConfig.telemetry_home == 1 && telemetry_sats >= masterConfig.telemetry_min_sats);
 }
 
 void updateMFD(void){
