@@ -6,6 +6,6 @@
 
 ## FLIP32
 
-<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/flip32_wiring.png" width="470" />
+<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/flip32_wiring.png" width="520" />
 
 [<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
