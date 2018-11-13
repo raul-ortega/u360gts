@@ -1076,8 +1076,10 @@ void updateSetHomeByGPS(void){
 		home_timer_reset = 0;
 	} else if(masterConfig.update_home_by_local_gps == 1 && homeSet && couldLolcalGpsSetHome(false)){
 		setHomeByLocalGps(&trackerPosition,GPS_coord[LAT]/10,GPS_coord[LON]/10,GPS_altitude,true,false);
-	} else if(!homeSet && couldTelemetrySetHome())
+	} else if(!homeSet && couldTelemetrySetHome()){
 		setHomeByTelemetry(&trackerPosition, &targetPosition);
+		if(masterConfig.gpsConfig.homeBeeper)
+					  beeper(BEEPER_ARMING_GPS_FIX);
 }
 
 bool couldLolcalGpsSetHome(bool setByUser){
