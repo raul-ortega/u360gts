@@ -8,12 +8,12 @@
 - PAN SERVO: One 360° Degree Continuous Rotation, or a regular servor converted to 360º
 - Two buttons
 - 5V BEC
+- Bluetooth module
     
 ## Optional parts are:
 
 - GPS ublox/nmea compatible (with compass when using a Naze32 acro).
 - Buzzer
 - Slip ring
-- Bluetooth module
 
 [<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
