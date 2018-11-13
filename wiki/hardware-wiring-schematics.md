@@ -2,7 +2,7 @@
 
 ## NAZE32
 
-<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/Naze32_wiring.jpg" width="600" />
+<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/Naze32_wiring.png" width="600" />
 
 ## FLIP32
 
