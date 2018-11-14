@@ -1080,6 +1080,7 @@ void updateSetHomeByGPS(void){
 		setHomeByTelemetry(&trackerPosition, &targetPosition);
 		if(masterConfig.gpsConfig.homeBeeper)
 					  beeper(BEEPER_ARMING_GPS_FIX);
+	}
 }
 
 bool couldLolcalGpsSetHome(bool setByUser){
