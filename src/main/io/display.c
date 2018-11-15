@@ -72,6 +72,7 @@ extern int16_t telemetry_alt;
 extern int16_t telemetry_sats;
 extern uint8_t telemetry_failed_cs;
 extern uint8_t telemetry_fixtype;
+extern uint8_t telemetry_frequency;
 extern positionVector_t targetPosition;
 extern positionVector_t trackerPosition;
 extern bool gotFix;
@@ -653,10 +654,15 @@ void showCliModePage(void)
 
 void showTelemetryPage(void){
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
-	i2c_OLED_set_line(rowIndex++);
+	//i2c_OLED_set_line(rowIndex++);
     if(!PROTOCOL(TP_MFD)) {
     	if(telemetry_sats>99)
     		telemetry_sats = 99;
+
+    	tfp_sprintf(lineBuffer, "Hz : %d",telemetry_frequency);
+    	padLineBuffer();
+    	i2c_OLED_set_line(rowIndex++);
+    	i2c_OLED_send_string(lineBuffer);
 
     	tfp_sprintf(lineBuffer, "Sat: %02d %s FCS:%d", telemetry_sats, telemetryFixType[telemetry_fixtype], telemetry_failed_cs);
 		padLineBuffer();
