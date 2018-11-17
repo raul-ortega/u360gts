@@ -17,7 +17,7 @@ This firmware has been developed for controllers based on STM32F series micropro
 * Protocol conversion and fordwarding.
 * Fully and easy configurable with [u360gts-configurator](https://github.com/raul-ortega/u360gts-configurator) (cross platform) and serial console (CLI mode).
 * Tilt easing.
-* Automatic home position (with local GPS).
+* Automatic home position.
 * Detailled status data on OLED display.
 * Battery monitoring.
 * RSSI signal strength on OLED display.
