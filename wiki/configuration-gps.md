@@ -170,3 +170,4 @@ Module | Comments
 -------|--------
 MTK 3329 | Tested on hardware serial at 115200 baud (default) and on softserial at 19200 baud. The baudrate and refresh rate can be adjusted using the MiniGPS software (recommended if you lower the baudrate). The software will estimate the percentage of UART bandwidth used for your chosen baudrate and update rate.
 
+[<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
