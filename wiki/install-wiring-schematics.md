@@ -12,11 +12,11 @@
 
 ## SPRACING F3
 
-Home button: PWM5.
-Menu button: PWM6.
-OLED: I2C port
-Bluetooth: UART1
-Local GPS: UART2
+- Home button: PWM5
+- Menu button: PWM6
+- OLED: I2C port
+- Bluetooth: UART1
+- Local GPS: UART2
 
 [User Manual](http://seriouslypro.com/files/SPRacingF3-Manual-latest.pdf)
 
