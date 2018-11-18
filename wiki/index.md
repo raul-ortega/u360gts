@@ -13,10 +13,9 @@ First of all we would like you to understand the big effort spent to create such
 ### Hardware
 - [Frame](https://github.com/raul-ortega/u360gts/blob/master/wiki/hardware-frame.md)
 - [List of components](https://github.com/raul-ortega/u360gts/blob/master/wiki/hardware-list-of-components.md)
-- [Wiring schematics](https://github.com/raul-ortega/u360gts/blob/master/wiki/hardware-wiring-schematics.md)
-- [Servos](https://github.com/raul-ortega/u360gts/blob/master/wiki/hardware-servos.md)
-- [Local GPS](https://github.com/raul-ortega/u360gts/blob/master/wiki/hardware-local-gps.md)
-- [Display](https://github.com/raul-ortega/u360gts/blob/master/wiki/hardware-oled-display.md)
+
+### Installation
+- [Wiring schematics](https://github.com/raul-ortega/u360gts/blob/master/wiki/install-wiring-schematics.md)
 
 ## Configuration
 - [Loading the firmware](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-loading-firmware.md)
