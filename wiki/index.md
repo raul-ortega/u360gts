@@ -28,6 +28,7 @@ First of all we would like you to understand the big effort spent to create such
 - [OFFSET setting](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-offset.md)
 - [PID Controller](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuraiton-pid.md)
 - [NOPID controll system](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-nopid.md)
+- [GPS](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-gps.md)
 
 ## Telemetry input
 - [Supported protocols](https://github.com/raul-ortega/u360gts/blob/master/wiki/Telemetr%C3%ADa-de-entrada:-protocolos-soportados)
