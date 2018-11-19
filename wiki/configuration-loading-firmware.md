@@ -1,11 +1,13 @@
+## Loading firmware
+
 In this moment the u360gts-configurator tools can not be used to flash the firmware on the board, but it can help to force the board into boot mode.
 
 There are serveral options:
 
 - Using the STM Micro electronics tool [Flash Loader Demonsrator](https://www.st.com/en/development-tools/flasher-stm32.html)
-- Using Betaflight/iNav configurator
+- Using Betaflight/iNav configurator.
 
-**Note: This wiki will focuse only on STM Micro electronics**
+**Note: This wiki will focuse only on STM Micro electronics tool.**
 
 Please, follow this instructions in orther to install the firmware on the board with success.
 
@@ -22,8 +24,4 @@ Download first the firmware [latest release](https://github.com/raul-ortega/u360
 8.- Vuelve a conectar el cable Micro USB.
 ```
 
-Enlaces externos de descarga:
-
-[Flash Loader Demonstrator](http://www.st.com/web/en/catalog/tools/PF257525)
-
-[Manual NAZE32](http://www.abusemark.com/downloads/naze32_rev3.pdf)
+[<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
