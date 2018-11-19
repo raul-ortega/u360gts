@@ -19,51 +19,51 @@ First of all we would like you to understand the big effort spent to create such
 
 ## Configuration
 - [Loading the firmware](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-loading-firmware.md)
-- [Configurator]()
-- [Magnetometer]()
-- [Pan servo]()
-- [Tilt servo]()
-- [OFFSET setting]()
-- [PID Controller]()
-- [NOPID controll system]()
+- [Configurator](index.md)
+- [Magnetometer](index.md)
+- [Pan servo](index.md)
+- [Tilt servo](index.md)
+- [OFFSET setting](index.md)
+- [PID Controller](index.md)
+- [NOPID controll system](index.md)
 - [GPS](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-gps.md)
 
 ## Telemetry input
-- [Supported protocols]()
-- [Configuring serial 0 (UART1)]()
-- [Protocol selection]()
+- [Supported protocols](index.md)
+- [Configuring serial 0 (UART1)](index.md)
+- [Protocol selection](index.md)
 
 ##  CLI mode
-- [Enter CLI mode]()
-- [Save settings]()
-- [Default settings]()
-- [Enable/Disable features]()
-- [Help]()
-- [Full list of parameters]()
+- [Enter CLI mode](index.md)
+- [Save settings](index.md)
+- [Default settings](index.md)
+- [Enable/Disable features](index.md)
+- [Help](index.md)
+- [Full list of parameters](index.md)
 
 ## Display
-- [Description and operation]()
-- [Enable/Disable display]()
+- [Description and operation](index.md)
+- [Enable/Disable display](index.md)
 
 ## Local GPS
-- [Installation]()
-- [Settings]()
-- [Set HOME position]()
+- [Installation](index.md)
+- [Settings](index.md)
+- [Set HOME position](index.md)
 
 ## Telemetry output: protocol translation
-- [Settings]()
-- [Supported protocols]()
+- [Settings](index.md)
+- [Supported protocols](index.md)
 - Case of use: FMD
 - Case of use: Mavlink
 
 ## Virtual serial ports
-- [Configuración y asignación de funciones]()
-- [Conexiones]()
+- [Configuración y asignación de funciones](index.md)
+- [Conexiones](index.md)
 
 ## Battery monitoring
 - Voltage level
 - Settings
 
 ## Buttons
-- [MENU]()
-- [HOME]()
+- [MENU](index.md)
+- [HOME](index.md)
