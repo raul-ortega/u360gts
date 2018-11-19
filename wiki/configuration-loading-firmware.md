@@ -13,15 +13,34 @@ Please, follow this instructions in orther to install the firmware on the board 
 
 Download first the firmware [latest release](https://github.com/raul-ortega/u360gts/releases/latest).
 
-```
-1.- Coloca el jumper en los pines boot.
-2.- Conecta el cable Micro USB a la controladora y al PC.
-3.- Abre el programa Flash Loader Demonstrator
-4.- Sigue las instrucciones del modo boot del manual de la NAZE32.
-5.- Cierra el programa Flash Loader Demonstrator.
-6.- Desconecta el cable Micro USB.
-7.- Quita el Jumper.
-8.- Vuelve a conectar el cable Micro USB.
-```
+### Flashing for the first time
+
+1. Download the hex file for your controller board.
+2. Turn on your controller board in "boot mode". For NAZE32/Flip32 you have to bridge boot pins before giving power.
+3. Run Flash Loader Demonstrator (download from [here](https://www.st.com/en/development-tools/flasher-stm32.html).)
+4. Select port, baud rate, and next.
+5. Browse and select the hex file, select Global Erase and Jump to user program options, and next.
+6. After flashing close Flash Loader Demonstrator.
+7. Run u360gts configurator, select 115200 bauds, press Connect and  CLI ENTER buttons.
+
+### Upgrading from previous version
+
+1. Download the hex file for your controller board.
+2. Select baud rate, connect and press CLI ENTER button
+3. Go to Cli Mode tab, press BACKUP Config and save the configuration file.
+4. Press BOOT MODE button.
+5. Run Flash Loader Demonstrator (download from [here](https://www.st.com/en/development-tools/flasher-stm32.html).)
+6. Select port, baud rate, and next.
+7. Browse and select the hex file, select Global Erase and Jump to user program options, and next.
+8. After flashing close Flash Loader Demonstrator.
+9. Go to u360gts configurator, select 115200 bauds, press Connect and  CLI ENTER buttons.
+10. Go to Cli Mode tab and press RESTORE CONFIG.
+11. Save and you are done.
+
+After this you are ready to connect and enter CLI Mode in order to configure the new features.
+
+## Configuration
+
+
 
 [<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
