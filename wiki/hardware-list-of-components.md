@@ -1,5 +1,7 @@
 # List of Components
 
+**Please, take into account that the frame is still a work in progress and this list might change**.
+
 This list of components is suitable for the [u360gts official 3d printted frame](https://github.com/raul-ortega/u360gts/blob/master/wiki/hardware-frame.md). Other alternatives to this list are possible for other frames, please contact the community of users to get mor information. 
 
 ## Mandatory parts:
@@ -11,11 +13,20 @@ This list of components is suitable for the [u360gts official 3d printted frame]
 - Two buttons
 - 5V BEC
 - Bluetooth module
+- Bearings
+- Battery
+- XT60 connector
+- USB cable
+- M2 screws
+- M3 screws
     
 ## Optional parts are:
 
 - GPS ublox/nmea compatible (with compass when using a Naze32 acro).
 - Buzzer
 - Slip ring
+- Switch button
+- Aviation connector
+- Power jack connector
 
 [<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
