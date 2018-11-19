@@ -19,56 +19,51 @@ First of all we would like you to understand the big effort spent to create such
 
 ## Configuration
 - [Loading the firmware](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-loading-firmware.md)
-- [Boot sequence](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-boot-sequence.md)
-- [Configurator](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-configurator.md)
-- [Magnetometer](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-configurator.md)
-- [Pan servo](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-configurator.md)
-- [Tilt servo](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-configurator.md)
-- [OFFSET setting](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-offset.md)
-- [PID Controller](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuraiton-pid.md)
-- [NOPID controll system](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-nopid.md)
+- [Configurator]()
+- [Magnetometer]()
+- [Pan servo]()
+- [Tilt servo]()
+- [OFFSET setting]()
+- [PID Controller]()
+- [NOPID controll system]()
 - [GPS](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-gps.md)
 
 ## Telemetry input
-- [Supported protocols](https://github.com/raul-ortega/u360gts/blob/master/wiki/Telemetr%C3%ADa-de-entrada:-protocolos-soportados)
-- [Configuring serial 0 (UART1)](https://github.com/raul-ortega/u360gts/blob/master/wiki/Telemetr%C3%ADa-de-entrada:-Configuraci%C3%B3n-del-puerto-serie-0-%28UART1%29)
-- [Protocol selection](https://github.com/raul-ortega/u360gts/blob/master/wiki/Telemetr%C3%ADa-de-entrada:-selecci%C3%B3n-del-protocolo)
+- [Supported protocols]()
+- [Configuring serial 0 (UART1)]()
+- [Protocol selection]()
 
 ##  CLI mode
-- [Enter CLI mode](https://github.com/raul-ortega/u360gts/blob/master/wiki/cli-mode-enter.md)
-- [Save settings](https://github.com/raul-ortega/u360gts/blob/master/wiki/cli-mode-save-settings.md)
-- [Default settings](https://github.com/raul-ortega/u360gts/blob/master/wiki/cli-mode-deault.md)
-- [Enable/Disable features](https://github.com/raul-ortega/u360gts/blob/master/wiki/cli-mode-features.md)
-- [Help](https://github.com/raul-ortega/u360gts/blob/master/wiki/cli-mode-help.md)
-- [Full list of parameters](https://github.com/raul-ortega/u360gts/blob/master/wiki/cli-mode-parametters.md)
+- [Enter CLI mode]()
+- [Save settings]()
+- [Default settings]()
+- [Enable/Disable features]()
+- [Help]()
+- [Full list of parameters]()
 
 ## Display
-- [Description and operation](https://github.com/raul-ortega/u360gts/blob/master/wiki/Display-OLED:-Descripci%C3%B3n-y-funcionamiento)
-- [Enable/Disable display](https://github.com/raul-ortega/u360gts/blob/master/wiki/Display-OLED:-Activar-desactivar-el-display)
+- [Description and operation]()
+- [Enable/Disable display]()
 
 ## Local GPS
-- [Installation](https://github.com/raul-ortega/u360gts/blob/master/wiki/GPS-local:-instalaci%C3%B3n)
-- [Settings](https://github.com/raul-ortega/u360gts/blob/master/wiki/GPS-local:-configuraci%C3%B3n)
-- [Set HOME position](https://github.com/raul-ortega/u360gts/blob/master/wiki/GPS-local:-posici%C3%B3n-HOME)
+- [Installation]()
+- [Settings]()
+- [Set HOME position]()
 
 ## Telemetry output: protocol translation
-- [Settings](https://github.com/raul-ortega/u360gts/blob/master/wiki/Telemetr%C3%ADa-de-salida:-configuraci%C3%B3n)
-- [Supported protocols](https://github.com/raul-ortega/u360gts/blob/master/wiki/Telemetr%C3%ADa-de-salida:-protocolos-soportados)
+- [Settings]()
+- [Supported protocols]()
 - Case of use: FMD
 - Case of use: Mavlink
 
 ## Virtual serial ports
-- [Configuración y asignación de funciones](https://github.com/raul-ortega/u360gts/blob/master/wiki/Puertos-series-virtuales:-configuraci%C3%B3n)
-- [Conexiones](https://github.com/raul-ortega/u360gts/blob/master/wiki/Puertos-serie-virtuales:-conexi%C3%B3n)
+- [Configuración y asignación de funciones]()
+- [Conexiones]()
 
 ## Battery monitoring
 - Voltage level
 - Settings
 
 ## Buttons
-- [MENU](https://github.com/raul-ortega/u360gts/blob/master/wiki/Botones:-MEN%C3%9A)
-- [HOME](https://github.com/raul-ortega/u360gts/blob/master/wiki/Botones:-HOME)
-
-## 3D Frames
-- [Ivan_Cillo (Thingiverse)](http://www.thingiverse.com/thing:1367337)
-
+- [MENU]()
+- [HOME]()
