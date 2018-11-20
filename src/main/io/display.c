@@ -695,7 +695,7 @@ void showTelemetryPage(void){
     } else {
     	//
     }
-    tfp_sprintf(lineBuffer, "Alt: %u Dis: %u  ", targetPosition.alt,targetPosition.distance);
+    tfp_sprintf(lineBuffer, "Alt: %d Dis: %d  ", targetPosition.alt,targetPosition.distance);
     padLineBuffer();
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
