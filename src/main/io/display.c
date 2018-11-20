@@ -790,7 +790,7 @@ void showGpsPage() {
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
 
-    tfp_sprintf(lineBuffer, "La/Lo: %d/%d Hdop:%d", GPS_coord[LAT] / GPS_DEGREES_DIVIDER, GPS_coord[LON] / GPS_DEGREES_DIVIDER, GPS_hdop);
+    tfp_sprintf(lineBuffer, "Pos: %d/%d Hdop:%d", GPS_coord[LAT] / GPS_DEGREES_DIVIDER, GPS_coord[LON] / GPS_DEGREES_DIVIDER, GPS_hdop);
     padLineBuffer();
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
