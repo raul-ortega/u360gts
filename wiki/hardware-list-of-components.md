@@ -22,7 +22,7 @@ This list of components is suitable for the [u360gts official 3d printted frame]
 - M3 screws
     
 ## Optional parts are:
-- 1 x External magnetometer HMC5883L for Arduino
+- 1 x [External magnetometer HMC5883L for Arduino](https://www.ebay.es/itm/Modulo-brujula-digital-GY-271-Arduino-Compas-Magnetometro-HMC5883L-5883-M0061/202030420309)
 - 1 x [GPS ublox/nmea compatible](https://www.banggood.com/BS-880-Flight-Control-GPS-Module-With-HMC5883L-Electric-Compass-For-APM-2_5-2_6-pixhawk-p-995591.html?p=LH07161453356201504A) (with compass when using a Naze32 acro).
 - 1 x [Buzzer](https://www.banggood.com/10Pcs-5V-Electromagnetic-Active-Buzzer-Continuous-Beep-Continuously-p-943524.html?p=LH07161453356201504A)
 - 1 x [Slip Ring ZSR022 - 12 Wires 2A 500Rpm A Type](https://es.aliexpress.com/item/ZSR022-12A-12-Channel-2A-Electrical-Collector-Slip-Ring-Rotating-Connector-slip-rings-for-High-Speed/32816156509.html)
