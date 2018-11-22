@@ -13,7 +13,7 @@ This list of components is suitable for the [u360gts official 3d printted frame]
 - Two buttons
 - 5V BEC
 - Bluetooth module
-- Bearings
+- 2 pcs [Bearing 30mm x 55mm x 13mm](https://www.amazon.es/dp/B00TX2VJ60/ref=cm_sw_r_wa_apa_KAO9BbBXY06JT)
 - Battery
 - XT60 connector
 - USB cable
