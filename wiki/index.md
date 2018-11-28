@@ -3,6 +3,7 @@
 First of all we would like you to understand the big effort spent to create such a tool for the RC community. This is a open source project, and people involved on it have their own responsabilities in their lifes (a job, a family, ..., definitely a lif). We do this because we love our hobby and would like to share it whith you, please, if something is not clear, or some information is missing, try to contact us by
 
 - [submitting a new issue](https://github.com/raul-ortega/u360gts/issues)
+- [Facebook u360 group](https://www.facebook.com/groups/u360gts/)
 - [posting in the spanish community in english and/or spanish](http://www.forodrones.com/threads/antena-tracker-360%C2%BA.34530/)
 - [posting in Jelle737's Build Log u360gts: 360° antenna tracker on rcgropus](https://www.rcgroups.com/forums/showthread.php?2964122-u360gts-360%C2%B0-antenna-tracker)
 ### About u360gts
