@@ -2,7 +2,7 @@
 
 u360gts is a complete DIY software and hardware antenna tracker solution for Drones (UAVs, RPAs proffesionals and FPV hobbyiests). We try to make it as unniversal as possible in terms of being compatible with the most popular flight controller, radio and video systems. It is the perfect option if you need to track differenet aircrafts with different telemetry protocol systems. Firmware and hardware desing have been developed by bembers of the spanigh FPV community and it is FREE for you.
 
-Please, we encourage you to read all the documentation before using this firmware in your devices, otherwhise they could be dammaged. In the wiki you'll find detailled information about how to install and configure it with success.
+Please, we encourage you to [read all the documentation](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md) before using this firmware in your devices, otherwhise they could be dammaged. In the wiki you'll find detailled information about how to install and configure it with success.
 
 ## Hardware platform
 
