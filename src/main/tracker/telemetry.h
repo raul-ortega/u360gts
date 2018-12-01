@@ -33,21 +33,31 @@ extern bool settingHome;
 
 extern int32_t telemetry_lat;
 extern int32_t telemetry_lon;
-extern int16_t telemetry_alt;
-extern int16_t telemetry_sats;
-extern int32_t telemetry_time;
-extern int32_t telemetry_date;
-extern int16_t telemetry_age;
-extern float telemetry_course;
-extern float telemetry_speed;
-extern float telemetry_declination;
-extern float telemetry_hdop;
-extern float telemetry_pitch;
-extern float telemetry_roll;
-extern float telemetry_yaw;
+extern int16_t telemetry_alt;		// replace with int32_t
+extern int16_t telemetry_sats;    // replace with uint8_t
+extern int32_t telemetry_time;   
+extern int32_t telemetry_date;   // replace with uint16_t
+extern int16_t telemetry_age;    // replace with uint16_t
+extern float telemetry_course;   // replace with int16_t
+extern float telemetry_speed;        // to replace with telemetry_gnd_speed  and  telemetry_air_speed
+extern float telemetry_declination;  // replace with uint8_t
+extern float telemetry_hdop;        // replace with uint8_t
+extern float telemetry_pitch;       // replace with int16_t
+extern float telemetry_roll;			// replace with int16_t
+extern float telemetry_yaw;			// replace with int16_t
 extern uint8_t telemetry_failed_cs;
+/////////////////////////////////////////////////////////////////////     new 
+extern uint8_t telemetry_gnd_speed;
+extern uint8_t telemetry_air_speed; 
 extern uint8_t telemetry_provider;
 extern uint8_t telemetry_fixtype;
+extern uint8_t telemetry_volts;
+extern uint8_t telemetry_amps;
+extern uint8_t telemetry_rssi;
+extern uint8_t telemetry_flightmode;
+extern uint8_t telemetry_uav_type;
+extern bool telemetry_armed;
+extern bool telemetry_failsafe;
 
 int16_t getTargetAlt(int16_t home_alt);
 void encodeTargetData(uint8_t c);
