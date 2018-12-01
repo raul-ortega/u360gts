@@ -2,7 +2,7 @@
  * This file is part of u360gts, aka amv-open360tracker 32bits:
  * https://github.com/raul-ortega/amv-open360tracker-32bits
  *
- * The code below is an adaptation by Raúl Ortega of the original code of Ghettostation antenna tracker
+ * The code below is an adaptation by RaÃºl Ortega of the original code of Ghettostation antenna tracker
  * https://github.com/KipK/Ghettostation
  *
  * u360gts is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ SPD ( speed ) : uint8 ( m/s )
 ALT ( alititude ) int32 ( cm )
 SATS ( number of sat visible ) 6bits
 FIX ( sat fix ) 2 bits ( sats & fix are coupled in the same byte )
-PITCH/ROLL/HEADING int16 ( deg , -180/180° range )
+PITCH/ROLL/HEADING int16 ( deg , -180/180Â° range )
 VBAT( voltage ) uint16 (mv )
 Current uint16 ( ma )
 RSSI : uint8 ( in % )
@@ -63,11 +63,16 @@ Attached LTM-log with sample attitude data nothing else (changed text document i
 #include "telemetry.h"
 
 //
-#define LTM_HEADER_START1 0x24 //$
-#define LTM_HEADER_START2 0x54 //T
-#define LTM_GFRAME 0x47 //G Frame
 
-#define LTM_GFRAME_LENGTH 18
+#define LIGHTTELEMETRY_START1 0x24 //$
+#define LIGHTTELEMETRY_START2 0x54 //T
+#define LTM_GFRAME 0x47 //G GPS + Baro altitude data ( Lat, Lon, Speed, Alt, Sats, Sat fix)
+#define LTM_AFRAME 0x41 //A Attitude data ( Roll,Pitch, Heading )
+#define LTM_SFRAME 0x53 //S Sensors/Status data ( VBat, Consumed current, Rssi, Airspeed, Arm status, Failsafe status, Flight mode )
+#define LIGHTTELEMETRY_GFRAMELENGTH 18
+#define LIGHTTELEMETRY_AFRAMELENGTH 10
+#define LIGHTTELEMETRY_SFRAMELENGTH 11
+#define LIGHTTELEMETRY_OFRAMELENGTH 18
 
 // machine states
 enum LtmDataState {
@@ -87,12 +92,8 @@ static uint8_t LTM_read_index;
 static uint8_t LTM_frame_length;
 static uint8_t dataState = IDLE;
 
-int32_t temp_alt;
-uint8_t groundspeedms;
-uint8_t satsfix;
-uint8_t fix_type;
 
-void parseLTM_GFRAME(void);
+void parseLTM_FRAME(void);
 uint8_t ltmread_u8();
 uint16_t ltmread_u16();
 uint32_t ltmread_u32();
@@ -112,12 +113,12 @@ void ltm_encodeTargetData(uint8_t c) {
 	           dataState = STATE_MSGTYPE;
 	           break;
 	         case 'A':
-	        	 dataState=IDLE;
-	        	 return;
+	        	  LTM_frame_length = LTM_AFRAME_LENGTH;
+	              dataState = STATE_MSGTYPE;
 	           break;
 	         case 'S':
-	        	 dataState=IDLE;
-	        	 return;
+	        	 LTM_frame_length = LTM_SFRAME_LENGTH;
+	              dataState = STATE_MSGTYPE;
 	           break;
 	         default:
 	           dataState = IDLE;
@@ -135,7 +136,7 @@ void ltm_encodeTargetData(uint8_t c) {
 	      if(LTM_Index == LTM_frame_length-4) {   // received checksum byte
 	        if(LTM_chk == 0) {
 	        	LTM_read_index = 0;
-	        	parseLTM_GFRAME();
+	        	parseLTM_FRAME();
 	            dataState = IDLE;
 	        }
 	        else {                                                   // wrong checksum, drop packet
@@ -147,23 +148,43 @@ void ltm_encodeTargetData(uint8_t c) {
 	    }
 }
 
-void parseLTM_GFRAME(void) {
-  if (LTM_cmd==LTM_GFRAME)
-  {
+void parseLTM_FRAME(void) {
+	
+  if (LTM_cmd==LTM_GFRAME){
     telemetry_lat = (int32_t)ltmread_u32();
     telemetry_lat = telemetry_lat/10;
     telemetry_lon = (int32_t)ltmread_u32();
     telemetry_lon = telemetry_lon/10;
-    groundspeedms = ltmread_u8();
-    temp_alt = (int32_t)ltmread_u32();//10000000;
-    telemetry_alt = (int16_t)(temp_alt/100);
-    satsfix = ltmread_u8();
+    telemetry_gnd_speed = ltmread_u8();
+    int32_t temp_alt = (int32_t)ltmread_u32();    // in cm;
+    telemetry_alt = (int16_t)(temp_alt/100);        // to meters
+    uint8_t satsfix = ltmread_u8();
     telemetry_sats = (int16_t)((satsfix >> 2) & 0xFF);
     telemetry_fixtype = satsfix & 0b00000011;
     if(telemetry_sats>=5) gotFix = 1;
     gotAlt = true;
   }
+  
+  if (LTMcmd==LTM_AFRAME){
+    telemetry_pitch = (float)ltmread_u16();
+    telemetry_roll =  (float)ltmread_u16();
+    telemetry_course = (float)ltmread_u16();
+    if (telemetry_course < 0 ) telemetry_course = telemetry_course + 360.0f; //convert from -180/180 to 0/360Â°
+  }
+  
+  if (LTMcmd==LTM_SFRAME){
+    telemetry_volt = ltmread_u16();
+    telemetry_amp = ltmread_u16();
+    telemetry_course = ltmread_u8();
+    telemetry_air_speed = ltmread_u8();
+    uint8_t ltm_armfsmode = ltmread_u8();
+    telemetry_armed = ltm_armfsmode & 0b00000001;
+    telemetry_failsafe = (ltm_armfsmode >> 1) & 0b00000001;
+    telemetry_flightmode = (ltm_armfsmode >> 2) & 0b00111111;   
+  }
+  
 }
+
 uint8_t ltmread_u8()  {
   return LTM_Buffer[LTM_read_index++];
 }
