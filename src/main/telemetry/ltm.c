@@ -90,11 +90,9 @@
 
 static telemetryConfig_t *telemetryConfig;
 static bool nmeaTelemetryEnabled =  false;
-static portSharing_e nmeaPortSharing;
 
 bool LTM_TELEMETRY_FIX = false;
-extern bool trackingStarted;
-extern bool homeSet;
+
 extern positionVector_t targetPosition;
 
 extern uint16_t rssi;           // FIXME dependency on mw.c
