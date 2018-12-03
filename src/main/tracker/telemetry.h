@@ -33,13 +33,17 @@ extern bool settingHome;
 
 extern int32_t telemetry_lat;
 extern int32_t telemetry_lon;
-extern int16_t telemetry_alt;		// replace with int32_t
-extern int16_t telemetry_sats;    // replace with uint8_t
-extern int32_t telemetry_time;   
-extern int32_t telemetry_date;   // replace with uint16_t
-extern int16_t telemetry_age;    // replace with uint16_t
-extern float telemetry_course;   // replace with int16_t
+extern int32_t telemetry_alt;
+extern uint8_t telemetry_sats;
+extern uint32_t telemetry_time;
+extern uint32_t telemetry_date;
+extern uint16_t telemetry_age;    // replace with uint16_t
+extern uint16_t telemetry_volt;  //
+extern uint16_t telemetry_amp;
+extern float telemetry_course;
 extern float telemetry_speed;        // to replace with telemetry_gnd_speed  and  telemetry_air_speed
+extern uint8_t telemetry_gnd_speed;
+extern uint8_t telemetry_air_speed;
 extern float telemetry_declination;  // replace with uint8_t
 extern float telemetry_hdop;        // replace with uint8_t
 extern float telemetry_pitch;       // replace with int16_t
@@ -59,7 +63,7 @@ extern uint8_t telemetry_uav_type;
 extern bool telemetry_armed;
 extern bool telemetry_failsafe;
 
-int16_t getTargetAlt(int16_t home_alt);
+int32_t getTargetAlt(int16_t home_alt);
 void encodeTargetData(uint8_t c);
 int32_t getTargetLat();
 int32_t getTargetLon();

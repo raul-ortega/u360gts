@@ -69,10 +69,10 @@ Attached LTM-log with sample attitude data nothing else (changed text document i
 #define LTM_GFRAME 0x47 //G GPS + Baro altitude data ( Lat, Lon, Speed, Alt, Sats, Sat fix)
 #define LTM_AFRAME 0x41 //A Attitude data ( Roll,Pitch, Heading )
 #define LTM_SFRAME 0x53 //S Sensors/Status data ( VBat, Consumed current, Rssi, Airspeed, Arm status, Failsafe status, Flight mode )
-#define LIGHTTELEMETRY_GFRAMELENGTH 18
-#define LIGHTTELEMETRY_AFRAMELENGTH 10
-#define LIGHTTELEMETRY_SFRAMELENGTH 11
-#define LIGHTTELEMETRY_OFRAMELENGTH 18
+#define LTM_GFRAME_LENGTH 18
+#define LTM_AFRAME_LENGTH 10
+#define LTM_SFRAME_LENGTH 11
+#define LTM_OFRAME_LENGTH 18
 
 // machine states
 enum LtmDataState {
@@ -165,14 +165,14 @@ void parseLTM_FRAME(void) {
     gotAlt = true;
   }
   
-  if (LTMcmd==LTM_AFRAME){
+  if (LTM_cmd==LTM_AFRAME){
     telemetry_pitch = (float)ltmread_u16();
     telemetry_roll =  (float)ltmread_u16();
     telemetry_course = (float)ltmread_u16();
     if (telemetry_course < 0 ) telemetry_course = telemetry_course + 360.0f; //convert from -180/180 to 0/360°
   }
   
-  if (LTMcmd==LTM_SFRAME){
+  if (LTM_cmd==LTM_SFRAME){
     telemetry_volt = ltmread_u16();
     telemetry_amp = ltmread_u16();
     telemetry_course = ltmread_u8();

@@ -69,7 +69,7 @@
 extern int32_t telemetry_lat;
 extern int32_t telemetry_lon;
 extern int16_t telemetry_alt;
-extern int16_t telemetry_sats;
+extern uint8_t telemetry_sats;
 extern uint8_t telemetry_failed_cs;
 extern uint8_t telemetry_fixtype;
 extern uint8_t telemetry_frequency;

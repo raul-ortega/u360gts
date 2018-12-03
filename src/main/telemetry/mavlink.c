@@ -58,7 +58,7 @@ uint8_t mavlinkParamIdx=0;
 extern bool trackingStarted;
 extern bool homeSet;
 extern positionVector_t targetPosition;
-extern int16_t telemetry_sats;
+extern uint8_t telemetry_sats;
 extern float telemetry_roll;
 extern float telemetry_pitch;
 extern float telemetry_yaw;

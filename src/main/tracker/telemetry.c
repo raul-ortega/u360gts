@@ -27,17 +27,20 @@
 
 int32_t telemetry_lat = 0;
 int32_t telemetry_lon = 0;
-int16_t telemetry_alt = 0;
-int16_t telemetry_sats = 0;
-int32_t telemetry_time = 0;
-int32_t telemetry_date = 0;
-int16_t telemetry_age = 0;
+int32_t telemetry_alt = 0;
+uint8_t telemetry_sats = 0;
+uint32_t telemetry_time = 0;
+uint32_t telemetry_date = 0;
+uint16_t telemetry_age = 0;
 
 
 uint8_t telemetry_failed_cs = 0;
 
+uint16_t telemetry_volt = 0;
+uint16_t telemetry_amp = 0;
 float telemetry_course = 0.0f;
 float telemetry_speed = 0.0f;
+
 float telemetry_declination = 0.0f;
 float telemetry_hdop = 0.0f;
 
@@ -52,6 +55,17 @@ uint8_t telemetry_fixtype = 0;
 uint8_t telemetry_fixes = 0;
 uint8_t telemetry_frequency = 0;
 uint32_t telemetry_millis = 0;
+
+// LTM to Mavlink enhancement
+
+uint8_t telemetry_gnd_speed = 0;
+uint8_t telemetry_air_speed = 0;
+uint8_t telemetry_flightmode;
+uint8_t telemetry_uav_type;
+bool telemetry_armed;
+bool telemetry_failsafe;
+
+//
 
 uint8_t a;
 
@@ -69,8 +83,8 @@ int32_t getTargetLon() {
   return telemetry_lon;
 }
 
-int16_t getTargetAlt(int16_t home_alt) {
-  return telemetry_alt - home_alt;
+int32_t getTargetAlt(int16_t home_alt) {
+  return telemetry_alt - (int32_t)home_alt;
 }
 
 uint16_t getSats() {

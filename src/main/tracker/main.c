@@ -297,7 +297,7 @@ uint8_t homeButtonCount=0;
 uint16_t calibrateButton=0;
 uint8_t calibrateButtonCount=0;
 
-extern int16_t telemetry_sats;
+extern uint8_t telemetry_sats;
 
 int _contador=0;
 
