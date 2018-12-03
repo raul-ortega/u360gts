@@ -37,20 +37,20 @@ extern int32_t telemetry_alt;
 extern uint8_t telemetry_sats;
 extern uint32_t telemetry_time;
 extern uint32_t telemetry_date;
-extern uint16_t telemetry_age;    // replace with uint16_t
-extern uint16_t telemetry_volt;  //
+extern uint16_t telemetry_age;
+extern uint16_t telemetry_volt;
 extern uint16_t telemetry_amp;
 extern float telemetry_course;
-extern float telemetry_speed;        // to replace with telemetry_gnd_speed  and  telemetry_air_speed
+extern float telemetry_speed;
 extern uint8_t telemetry_gnd_speed;
 extern uint8_t telemetry_air_speed;
-extern float telemetry_declination;  // replace with uint8_t
-extern float telemetry_hdop;        // replace with uint8_t
-extern float telemetry_pitch;       // replace with int16_t
-extern float telemetry_roll;			// replace with int16_t
-extern float telemetry_yaw;			// replace with int16_t
+extern float telemetry_declination;
+extern float telemetry_hdop;
+extern float telemetry_pitch;
+extern float telemetry_roll;
+extern float telemetry_yaw;
 extern uint8_t telemetry_failed_cs;
-/////////////////////////////////////////////////////////////////////     new 
+
 extern uint8_t telemetry_gnd_speed;
 extern uint8_t telemetry_air_speed; 
 extern uint8_t telemetry_provider;
