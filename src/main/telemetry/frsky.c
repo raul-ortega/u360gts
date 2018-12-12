@@ -74,7 +74,7 @@ static portSharing_e frskyPortSharing;
 
 extern batteryConfig_t *batteryConfig;
 
-extern int16_t telemTemperature1; // FIXME dependency on mw.c
+//extern int16_t telemTemperature1; // FIXME dependency on mw.c
 
 #define CYCLETIME             125
 
@@ -214,7 +214,7 @@ static void sendTemperature1(void)
 #ifdef BARO
     serialize16((baroTemperature + 50)/ 100); //Airmamaf
 #else
-    serialize16(telemTemperature1 / 10);
+    //serialize16(telemTemperature1 / 10);
 #endif
 }
 

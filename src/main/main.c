@@ -472,11 +472,11 @@ void init(void)
     previousTime = micros();
 
     if (masterConfig.mixerMode == MIXER_GIMBAL) {
-        accSetCalibrationCycles(CALIBRATING_ACC_CYCLES);
+        //accSetCalibrationCycles(CALIBRATING_ACC_CYCLES);
     }
-    gyroSetCalibrationCycles(CALIBRATING_GYRO_CYCLES);
+    //gyroSetCalibrationCycles(CALIBRATING_GYRO_CYCLES);
 #ifdef BARO
-    baroSetCalibrationCycles(CALIBRATING_BARO_CYCLES);
+    //baroSetCalibrationCycles(CALIBRATING_BARO_CYCLES);
 #endif
 
     // start all timers
