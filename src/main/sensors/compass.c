@@ -76,63 +76,64 @@ void updateCompass(flightDynamicsTrims_t *magZero)
     static flightDynamicsTrims_t magZeroTempMin;
     static flightDynamicsTrims_t magZeroTempMax;
     uint32_t axis;
+    if(detectedSensors[SENSOR_INDEX_MAG] != MAG_NONE){
+		if ((int32_t)(currentTime - nextUpdateAt) < 0)
+			return;
 
-    if ((int32_t)(currentTime - nextUpdateAt) < 0)
-        return;
+		nextUpdateAt = currentTime + COMPASS_UPDATE_FREQUENCY_10HZ;
 
-    nextUpdateAt = currentTime + COMPASS_UPDATE_FREQUENCY_10HZ;
+		mag.read(magADC);
+		alignSensors(magADC, magADC, magAlign);
 
-    mag.read(magADC);
-    alignSensors(magADC, magADC, magAlign);
+		if (STATE(CALIBRATE_MAG)) {
+			tCal = nextUpdateAt;
+			for (axis = 0; axis < 3; axis++) {
+				magZero->raw[axis] = 0;
+				magZeroTempMin.raw[axis] = magADC[axis];
+				magZeroTempMax.raw[axis] = magADC[axis];
+			}
+			DISABLE_STATE(CALIBRATE_MAG);
+			ENABLE_PROTOCOL(TP_CALIBRATING_MAG);
+			displayShowFixedPage(PAGE_CALIBRATING_MAG);
+			displayResetPageCycling();
+			displayDisablePageCycling();
+			pwmWriteServo(panServo, pwmPanCalibrationPulse);
+		}
 
-    if (STATE(CALIBRATE_MAG)) {
-        tCal = nextUpdateAt;
-        for (axis = 0; axis < 3; axis++) {
-            magZero->raw[axis] = 0;
-            magZeroTempMin.raw[axis] = magADC[axis];
-            magZeroTempMax.raw[axis] = magADC[axis];
-        }
-        DISABLE_STATE(CALIBRATE_MAG);
-        ENABLE_PROTOCOL(TP_CALIBRATING_MAG);
-        displayShowFixedPage(PAGE_CALIBRATING_MAG);
-        displayResetPageCycling();
-    	displayDisablePageCycling();
-        pwmWriteServo(panServo, pwmPanCalibrationPulse);
-    }
+		if (magInit) {              // we apply offset only once mag calibration is done
+			magADC[X] -= magZero->raw[X];
+			magADC[Y] -= magZero->raw[Y];
+			magADC[Z] -= magZero->raw[Z];
+		}
 
-    if (magInit) {              // we apply offset only once mag calibration is done
-        magADC[X] -= magZero->raw[X];
-        magADC[Y] -= magZero->raw[Y];
-        magADC[Z] -= magZero->raw[Z];
-    }
+		if (tCal != 0) {
+			if ((nextUpdateAt - tCal) < 10000000){//30000000) {    // 30s: you have 30s to turn the multi in all directions
+				LED0_TOGGLE;
+				for (axis = 0; axis < 3; axis++) {
+					if (magADC[axis] < magZeroTempMin.raw[axis])
+						magZeroTempMin.raw[axis] = magADC[axis];
+					if (magADC[axis] > magZeroTempMax.raw[axis])
+						magZeroTempMax.raw[axis] = magADC[axis];
+				}
+			} else {
+				tCal = 0;
+				for (axis = 0; axis < 3; axis++) {
+					magZero->raw[axis] = (magZeroTempMin.raw[axis] + magZeroTempMax.raw[axis]) / 2; // Calculate offsets
+				}
+				pwmWriteServo(panServo, pwmPan0);
+				DISABLE_PROTOCOL(TP_CALIBRATING_MAG);
 
-    if (tCal != 0) {
-        if ((nextUpdateAt - tCal) < 10000000){//30000000) {    // 30s: you have 30s to turn the multi in all directions
-            LED0_TOGGLE;
-            for (axis = 0; axis < 3; axis++) {
-                if (magADC[axis] < magZeroTempMin.raw[axis])
-                    magZeroTempMin.raw[axis] = magADC[axis];
-                if (magADC[axis] > magZeroTempMax.raw[axis])
-                    magZeroTempMax.raw[axis] = magADC[axis];
-            }
-        } else {
-            tCal = 0;
-            for (axis = 0; axis < 3; axis++) {
-                magZero->raw[axis] = (magZeroTempMin.raw[axis] + magZeroTempMax.raw[axis]) / 2; // Calculate offsets
-            }
-            pwmWriteServo(panServo, pwmPan0);
-            DISABLE_PROTOCOL(TP_CALIBRATING_MAG);
+				if(cliMode && feature(FEATURE_DISPLAY)) {
+					displayShowFixedPage(PAGE_CLI_MODE);
 
-            if(cliMode && feature(FEATURE_DISPLAY)) {
-                displayShowFixedPage(PAGE_CLI_MODE);
-
-            }
-            else {
-				displayResetPageCycling();
-				displayEnablePageCycling();
-            }
-            saveConfigAndNotify();
-        }
+				}
+				else {
+					displayResetPageCycling();
+					displayEnablePageCycling();
+				}
+				saveConfigAndNotify();
+			}
+		}
     }
 }
 #endif
