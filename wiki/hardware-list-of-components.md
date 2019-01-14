@@ -4,6 +4,8 @@
 
 This list of components is suitable for the [u360gts official 3d printted frame](https://github.com/raul-ortega/u360gts/blob/master/wiki/hardware-frame.md). Other alternatives to this list are possible for other frames, please contact the community of users to get mor information. 
 
+<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/u360_gts_official_frame_list_of_components.jpeg" width="640" />
+
 ## Mandatory parts:
 
 - 1 x CONTROLLER: [Naze32 rev5 acro](http://www.surveilzone.com/NAZE-32-Full-6DOF-REV-5-Flight-Controller-Board-g-1462) (if used with external magnetometer / [Naze32 rev5 full]() / [Flip32 10dof]() / [Spracing F3]() **waiting for real flight tests**
