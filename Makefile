@@ -35,13 +35,13 @@ FLASH_SIZE ?=
 
 FORKNAME			 = amv-open360tracker
 
-VALID_TARGETS	 = ALIENWIIF1 ALIENWIIF3 CC3D CHEBUZZF3 CJMCU COLIBRI_RACE EUSTM32F103RC MOTOLAB NAZE NAZE32PRO OLIMEXINO PORT103R RMDO SPARKY SPRACINGF3 STM32F3DISCOVERY 
+VALID_TARGETS	 = ALIENWIIF1 BLUEPILL ALIENWIIF3 CC3D CHEBUZZF3 CJMCU COLIBRI_RACE EUSTM32F103RC MOTOLAB NAZE NAZE32PRO OLIMEXINO PORT103R RMDO SPARKY SPRACINGF3 STM32F3DISCOVERY 
 
 # Configure default flash sizes for the targets
 ifeq ($(FLASH_SIZE),)
 ifeq ($(TARGET),$(filter $(TARGET),CJMCU))
 FLASH_SIZE = 64
-else ifeq ($(TARGET),$(filter $(TARGET),ALIENWIIF1 CC3D NAZE OLIMEXINO RMDO))
+else ifeq ($(TARGET),$(filter $(TARGET),ALIENWIIF1 BLUEPILL CC3D NAZE OLIMEXINO RMDO))
 FLASH_SIZE = 128
 else ifeq ($(TARGET),$(filter $(TARGET),ALIENWIIF3 CHEBUZZF3 COLIBRI_RACE EUSTM32F103RC MOTOLAB NAZE32PRO PORT103R SPARKY SPRACINGF3 STM32F3DISCOVERY))
 FLASH_SIZE = 256
@@ -351,6 +351,35 @@ NAZE_SRC = startup_stm32f10x_md_gcc.S \
 		   $(COMMON_SRC)
 
 ALIENWIIF1_SRC = $(NAZE_SRC)
+
+BLUEPILL_SRC = startup_stm32f10x_md_gcc.S \
+		   drivers/adc.c \
+		   drivers/adc_stm32f10x.c \
+		   drivers/bus_spi.c \
+		   drivers/bus_i2c_stm32f10x.c \
+		   drivers/compass_hmc5883l.c \
+		   drivers/display_ug2864hsweg01.h \
+		   drivers/flash_m25p16.c \
+		   drivers/gpio_stm32f10x.c \
+		   drivers/inverter.c \
+		   drivers/light_led_stm32f10x.c \
+		   drivers/light_ws2811strip.c \
+		   drivers/light_ws2811strip_stm32f10x.c \
+		   drivers/sonar_hcsr04.c \
+		   drivers/pwm_mapping.c \
+		   drivers/pwm_output.c \
+		   drivers/pwm_rx.c \
+		   drivers/serial_softserial.c \
+		   drivers/serial_uart.c \
+		   drivers/serial_uart_stm32f10x.c \
+		   drivers/sound_beeper_stm32f10x.c \
+		   drivers/system_stm32f10x.c \
+		   drivers/timer.c \
+		   drivers/timer_stm32f10x.c \
+		   io/flashfs.c \
+		   hardware_revision.c \
+		   $(HIGHEND_SRC) \
+		   $(COMMON_SRC)
 
 EUSTM32F103RC_SRC = startup_stm32f10x_hd_gcc.S \
 		   drivers/accgyro_adxl345.c \

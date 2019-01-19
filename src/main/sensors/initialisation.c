@@ -198,6 +198,9 @@ bool fakeAccDetect(acc_t *acc)
 
 bool detectGyro(void)
 {
+#ifdef BLUEPILL
+	return false;
+#else
     gyroSensor_e gyroHardware = GYRO_DEFAULT;
 
     gyroAlign = ALIGN_DEFAULT;
@@ -302,6 +305,7 @@ bool detectGyro(void)
     sensorsSet(SENSOR_GYRO);
 
     return true;
+#endif
 }
 
 static void detectAcc(accelerationSensor_e accHardwareToUse)
@@ -640,17 +644,25 @@ bool sensorsAutodetect(sensorAlignmentConfig_t *sensorAlignmentConfig, uint16_t 
 #if defined(USE_GYRO_MPU6050) || defined(USE_GYRO_MPU3050) || defined(USE_GYRO_MPU6500) || defined(USE_GYRO_SPI_MPU6500) || defined(USE_GYRO_SPI_MPU6000) || defined(USE_ACC_MPU6050)
 
     const extiConfig_t *extiConfig = selectMPUIntExtiConfig();
-
+#ifdef BLUEPILL
+#else
     mpuDetectionResult_t *mpuDetectionResult = detectMpu(extiConfig);
+#endif
     UNUSED(mpuDetectionResult);
 #endif
 
     if (!detectGyro()) {
         return false;
     }
-    detectAcc(accHardwareToUse);
-    detectBaro(baroHardwareToUse);
 
+
+
+    detectAcc(accHardwareToUse);
+
+#ifdef BLUEPILL
+#else
+    detectBaro(baroHardwareToUse);
+#endif
 
     // Now time to init things, acc first
     if (sensors(SENSOR_ACC))
