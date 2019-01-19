@@ -457,3 +457,7 @@ bool gpsisdigit(char c) {
 uint8_t get_sentence_type(void){
 	return _sentence_type;
 }
+uint8_t satellites()
+{
+	return _numsats;
+}
