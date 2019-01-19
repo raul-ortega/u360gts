@@ -385,10 +385,7 @@ void init(void)
 
     if (!sensorsAutodetect(&masterConfig.sensorAlignmentConfig, masterConfig.gyro_lpf, masterConfig.acc_hardware, masterConfig.mag_hardware, masterConfig.baro_hardware, currentProfile->mag_declination)) {
         // if gyro was not detected due to whatever reason, we give up now.
-#ifdef BLUEPILL
-#else
-        failureMode(FAILURE_MISSING_ACC);
-#endif
+        //failureMode(FAILURE_MISSING_ACC);
     }
 
     systemState |= SYSTEM_STATE_SENSORS_READY;
