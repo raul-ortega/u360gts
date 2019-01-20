@@ -697,7 +697,7 @@ void showTelemetryPage(void){
     }
     char altSgn = (targetPosition.alt < 0) ? '-' : '\0';
     targetPosition.alt = (targetPosition.alt < 0)? -1 * targetPosition.alt : targetPosition.alt;
-    tfp_sprintf(lineBuffer, "Alt:%c%d Dis: %d  ", altSgn,targetPosition.alt,targetPosition.distance);
+    tfp_sprintf(lineBuffer, "Alt:%s%d Dis: %d  ", altSgn,targetPosition.alt,targetPosition.distance);
     padLineBuffer();
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
