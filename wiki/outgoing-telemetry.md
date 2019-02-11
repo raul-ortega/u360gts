@@ -49,11 +49,11 @@ Those are the numbers of the supported outgoing protocols.
 
 **Examples**
 
--LTM 9600 bauds on softserial 1:
+- LTM 9600 bauds on softserial 1:
 ```
 serial 30 2048 9600 9600 9600 9600
 ```
--MAVLINK 57600 bauds on uart2:
+- MAVLINK 57600 bauds on uart2:
 ```
 serial 1 512 57600 57600 57600 57600
 ```
