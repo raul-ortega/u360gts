@@ -29,7 +29,7 @@ First of all we would like you to understand the big effort spent to create such
 - [NOPID controll system](index.md)
 - [GPS](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-gps.md)
 
-## Telemetry input
+## Ingoing Telemetry
 - [Supported protocols](index.md)
 - [Configuring serial 0 (UART1)](index.md)
 - [Protocol selection](index.md)
