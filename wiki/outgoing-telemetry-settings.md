@@ -29,15 +29,37 @@ save
 And finally, you have to configure the communication parameters:
 
 ```
-serial port_name protocol_number baudrate1 baudrate2 baudrate3 baudrate4
+serial port_number protocol_number baudrate1 baudrate2 baudrate3 baudrate4
 
 save
 ```
 
-This command is similar to the serial command used to configure the GPS and the ingoing telemetry, the only difference is that you have to specify the port name, the protocol number and the baudrate. The value indicated in baudrate3 is the value that will be take into account  for the outgoing telemetry, the other ones doesn't matter their values, you can set all them with the same value.
+This command is similar to the serial command used to configure the GPS and the ingoing telemetry, the differences are that you have to specify a port number, a protocol number and the baudrate. The value indicated in baudrate3 is the value that will be take into account  for the outgoing telemetry, the other ones doesn't matter their values, you can set all them with the same value.
 
 Note: As a general rule only the proccesed packets for tracking pursposes may be translated: GPS position data, altitude and number of satellites. For MFD is sent Dinstance, Altitude and  Azimut. Some other data might be sent depending of the ingoing telemetry protocol used and particular settings. As an exaple, for NMEA are exported the course and the ground speed. For mavlink, attitude data is also relayed Pith, Roll y Yaw).
 
+**Supported protocols**
+
+Those are the numbers of the supported outgoing protocols.
+
+* 256 for MFD
+* 512 for MAVLINK
+* 1024 for NMEA
+* 2048 for LTM
+
+**Examples**
+
+-LTM 9600 bauds on softserial 1:
+```
+serial 30 2048 9600 9600 9600 9600
+```
+-MAVLINK 57600 bauds on uart2:
+```
+serial 1 512 57600 57600 57600 57600
+```
+
+
+-MAVLINK 57600 bauds:
 
 **Supported External Applications**
 
@@ -46,3 +68,5 @@ These applications have been tested:
 * Mission Planner (mavlink)
 * Droid Planner / Tower (mavlink)
 * Oruxmpas (NMEA)
+
+[<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
