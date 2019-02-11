@@ -51,11 +51,8 @@ First of all we would like you to understand the big effort spent to create such
 - [Settings](index.md)
 - [Set HOME position](index.md)
 
-## Telemetry output: protocol translation
-- [Settings](index.md)
-- [Supported protocols](index.md)
-- Case of use: FMD
-- Case of use: Mavlink
+## Outgoing Telemetry: protocol translation and relaying
+- [Settings](https://github.com/raul-ortega/u360gts/blob/master/wiki/outgoing-telemetry.md)
 
 ## Virtual serial ports
 - [Configuración y asignación de funciones](index.md)
