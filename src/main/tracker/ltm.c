@@ -61,13 +61,16 @@ Attached LTM-log with sample attitude data nothing else (changed text document i
  */
 #include "config.h"
 #include "telemetry.h"
+#include "Arduino.h"
 
 //
 #define LTM_HEADER_START1 0x24 //$
 #define LTM_HEADER_START2 0x54 //T
 #define LTM_GFRAME 0x47 //G Frame
+#define LTM_AFRAME 0x41 //A Frame
 
 #define LTM_GFRAME_LENGTH 18
+#define LTM_AFRAME_LENGTH 10
 
 // machine states
 enum LtmDataState {
@@ -112,8 +115,8 @@ void ltm_encodeTargetData(uint8_t c) {
 	           dataState = STATE_MSGTYPE;
 	           break;
 	         case 'A':
-	        	 dataState=IDLE;
-	        	 return;
+		       LTM_frame_length = LTM_AFRAME_LENGTH;
+		       dataState = STATE_MSGTYPE;
 	           break;
 	         case 'S':
 	        	 dataState=IDLE;
@@ -162,6 +165,13 @@ void parseLTM_GFRAME(void) {
     telemetry_fixtype = satsfix & 0b00000011;
     if(telemetry_sats>=5) gotFix = 1;
     gotAlt = true;
+  }
+  if (LTM_cmd==LTM_AFRAME)
+    {
+      telemetry_pitch = radians((int16_t)ltmread_u16());
+      telemetry_roll =  radians((int16_t)ltmread_u16());
+      telemetry_course = (int16_t)ltmread_u16() * 1.0f ;
+      telemetry_yaw = radians(telemetry_course);
   }
 }
 uint8_t ltmread_u8()  {
