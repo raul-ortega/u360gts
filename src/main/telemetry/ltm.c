@@ -147,8 +147,8 @@ static void ltm_gframe(void)
 
     uint8_t gps_fix_type = 0;
 
-    if (!sensors(SENSOR_GPS))
-        return;
+    //if (!sensors(SENSOR_GPS))
+    //    return;
 
     gps_fix_type = 1;
 
@@ -202,12 +202,12 @@ static void ltm_aframe()
 {
 	uint16_t pitch = 0;
 	uint16_t roll = 0;
-	uint16_t yaw = telemetry_course * 100;
+	uint16_t yaw = 0;
 
     ltm_initialise_packet('A');
     ltm_serialise_16(DECIDEGREES_TO_DEGREES(pitch));
     ltm_serialise_16(DECIDEGREES_TO_DEGREES(roll));
-    ltm_serialise_16(DECIDEGREES_TO_DEGREES(yaw));
+    ltm_serialise_16((uint16_t)telemetry_course);
     ltm_finalise();
 }
 
