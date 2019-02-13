@@ -1959,6 +1959,14 @@ static void cliHelp(char *cmdline)
     for(i=0;i< BAUD_250000-1;i++)
     	printf("#    %u: %u\r\n",i,baudRates[i]);
     cliPrint("\r\n");
+
+    printf("\r\n# Outgoing Telemetry:\r\n");
+    printf("%u: MFD\r\n",FUNCTION_TELEMETRY_MFD);
+    printf("%u: MAVLINK\r\n",FUNCTION_TELEMETRY_MAVLINK);
+    printf("%u: NMEA\r\n",FUNCTION_TELEMETRY_NMEA);
+    printf("%u: LTM\r\n",FUNCTION_TELEMETRY_LTM);
+    cliPrint("\r\n");
+
 }
 
 /*static void cliMap(char *cmdline)
@@ -2457,7 +2465,7 @@ static void cliVersion(char *cmdline)
 {
     UNUSED(cmdline);
 
-    printf("# amv-open360tracker-32bits /%s %s %s / %s (%s)",
+    printf("# u360gts / %s %s %s / %s (%s)",
         targetName,
         FC_VERSION_STRING,
         buildDate,
@@ -2536,7 +2544,7 @@ static void cliDumpTracker() {
 
 	cliPrint("\r\n\r\n# feature\r\n");
 
-	if(featureConfigured(FEATURE_EASING))
+	/*if(featureConfigured(FEATURE_EASING))
 		printf("feature EASING\r\n");
 	else
 		printf("feature -EASING");
@@ -2544,7 +2552,22 @@ static void cliDumpTracker() {
 	if(featureConfigured(FEATURE_DEBUG))
 		printf("feature DEBUG\r\n");
 	else
-		printf("feature -DEBUG");
+		printf("feature -DEBUG");*/
+	unsigned int i;
+	char buf[16];
+	uint32_t mask;
+	mask = featureMask();
+	for (i = 0; ; i++) { // disable all feature first
+		if (featureNames[i] == NULL)
+			break;
+		printf("feature -%s\r\n", featureNames[i]);
+	}
+	for (i = 0; ; i++) {  // reenable what we want.
+		if (featureNames[i] == NULL)
+			break;
+		if (mask & (1 << i))
+			printf("feature %s\r\n", featureNames[i]);
+	}
 
 	printSectionBreak();
 
