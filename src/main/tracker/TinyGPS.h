@@ -98,7 +98,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
   inline unsigned long speed() { return _speed; }
 
   // satellites used in last full GPGGA sentence
-  inline unsigned short satellites() { return _numsats; }
+  uint8_t satellites();
 
   // horizontal dilution of precision in 100ths
   inline unsigned long hdop() { return _hdop; }

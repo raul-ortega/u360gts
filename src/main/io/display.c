@@ -117,7 +117,7 @@ static char lineBuffer[SCREEN_CHARACTER_COLUMN_COUNT + 1];
 #define IS_SCREEN_CHARACTER_COLUMN_COUNT_ODD (SCREEN_CHARACTER_COLUMN_COUNT & 1)
 
 static const char* const pageTitles[] = {
-    "AMV-OPEN360TRACKER",
+    "U360GTS",
     "ARMED",
     "BATTERY",
     "TELEMETRY",
@@ -695,7 +695,9 @@ void showTelemetryPage(void){
     } else {
     	//
     }
-    tfp_sprintf(lineBuffer, "Alt: %u Dis: %u  ", targetPosition.alt,targetPosition.distance);
+    char altSgn = (targetPosition.alt < 0) ? '-' : '\0';
+    targetPosition.alt = (targetPosition.alt < 0)? -1 * targetPosition.alt : targetPosition.alt;
+    tfp_sprintf(lineBuffer, "Alt:%s%d Dis: %d  ", altSgn,targetPosition.alt,targetPosition.distance);
     padLineBuffer();
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
@@ -790,7 +792,7 @@ void showGpsPage() {
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
 
-    tfp_sprintf(lineBuffer, "La/Lo: %d/%d Hdop:%d", GPS_coord[LAT] / GPS_DEGREES_DIVIDER, GPS_coord[LON] / GPS_DEGREES_DIVIDER, GPS_hdop);
+    tfp_sprintf(lineBuffer, "Pos: %d/%d Hdop:%d", GPS_coord[LAT] / GPS_DEGREES_DIVIDER, GPS_coord[LON] / GPS_DEGREES_DIVIDER, GPS_hdop);
     padLineBuffer();
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
@@ -1108,6 +1110,8 @@ void updateDisplay(void)
         	break;
         case PAGE_BOOT_MODE:
         		showBootModePage();
+        	break;
+        default:
         	break;
     }
     /*if (!armedState) {

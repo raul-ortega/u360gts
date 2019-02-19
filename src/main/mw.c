@@ -107,7 +107,7 @@ int16_t headFreeModeHold;
 
 uint8_t motorControlEnable = false;
 
-int16_t telemTemperature1;      // gyro sensor temperature
+//int16_t telemTemperature1;      // gyro sensor temperature
 static uint32_t disarmAt;     // Time of automatic disarm when "Don't spin the motors when armed" is enabled and auto_disarm_delay is nonzero
 
 extern uint8_t dynP8[3], dynI8[3], dynD8[3], PIDweight[3];
@@ -296,8 +296,8 @@ void annexCode(void)
 #endif
 
     // Read out gyro temperature. can use it for something somewhere. maybe get MCU temperature instead? lots of fun possibilities.
-    if (gyro.temperature)
-        gyro.temperature(&telemTemperature1);
+    /*if (gyro.temperature)
+        gyro.temperature(&telemTemperature1);*/
 }
 
 void mwDisarm(void)

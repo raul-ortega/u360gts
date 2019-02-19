@@ -18,3 +18,5 @@ docs/Manual.pdf
 README.pdf
 
 /Release/
+/Debug/
+/makeall.sh

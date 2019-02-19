@@ -23,6 +23,7 @@
 #include "config.h"
 #include "telemetry.h"
 #include "telemetry/mavlink/common/mavlink.h"
+#include "Arduino.h"
 
 #define MAVLINK_MAX_PAYLOAD_LEN 36
 
@@ -60,6 +61,7 @@ void mavlink_handleMessage(mavlink_message_t* msg) {
 			telemetry_pitch = mavlink_msg_attitude_get_pitch(msg);
 			telemetry_roll = mavlink_msg_attitude_get_roll(msg);
 			telemetry_yaw = mavlink_msg_attitude_get_yaw(msg);
+			telemetry_course = degrees(telemetry_yaw);
 		}
 		break;
   }
