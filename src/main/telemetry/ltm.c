@@ -73,6 +73,7 @@
 #include "telemetry/telemetry.h"
 #include "telemetry/ltm.h"
 
+#include "tracker/Arduino.h"
 #include "tracker/defines.h"
 #include "tracker/telemetry.h"
 
@@ -147,8 +148,8 @@ static void ltm_gframe(void)
 
     uint8_t gps_fix_type = 0;
 
-    if (!sensors(SENSOR_GPS))
-        return;
+    //if (!sensors(SENSOR_GPS))
+    //    return;
 
     gps_fix_type = 1;
 
@@ -202,12 +203,12 @@ static void ltm_aframe()
 {
 	uint16_t pitch = 0;
 	uint16_t roll = 0;
-	uint16_t yaw = telemetry_course * 100;
+	uint16_t yaw = 0;
 
     ltm_initialise_packet('A');
     ltm_serialise_16(DECIDEGREES_TO_DEGREES(pitch));
     ltm_serialise_16(DECIDEGREES_TO_DEGREES(roll));
-    ltm_serialise_16(DECIDEGREES_TO_DEGREES(yaw));
+    ltm_serialise_16((uint16_t)telemetry_course);
     ltm_finalise();
 }
 
@@ -218,10 +219,10 @@ static void ltm_oframe()
 
 	ltm_initialise_packet('O');
 
-    ltm_serialise_32(targetPosition.lat * 10);
-    ltm_serialise_32(targetPosition.lon * 10);
+    ltm_serialise_32(telemetry_home_lat * 10);
+    ltm_serialise_32(telemetry_home_lon * 10);
 
-    ltm_serialise_32(0);                // Don't have GPS home altitude
+    ltm_serialise_32(telemetry_home_alt);                // Don't have GPS home altitude
     ltm_serialise_8(1);                 // OSD always ON
     ltm_serialise_8(1);					// ltm_serialise_8(STATE(GPS_FIX_HOME) ? 1 : 0);
     ltm_finalise();

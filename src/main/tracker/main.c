@@ -689,6 +689,8 @@ void setHomeByTelemetry(positionVector_t *tracker, positionVector_t *target) {
   tracker->lon = target->lon;
   tracker->alt = target->alt;
 
+  setTelemetryHome(target->lat,target->lon,target->alt);
+
   if(feature(FEATURE_DEBUG)){
 	  tracker->lat = 47403583; tracker->lon = 8535850; tracker->alt = 474;
   }
@@ -708,6 +710,8 @@ void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int1
   tracker->lat = lat;
   tracker->lon = lon;
   tracker->alt = alt;
+
+  setTelemetryHome(lat,lon,alt);
 
   if(feature(FEATURE_DEBUG)) {
 	  tracker->lat = 47403583; tracker->lon = 8535850; tracker->alt = 474;

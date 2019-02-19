@@ -198,6 +198,9 @@ bool fakeAccDetect(acc_t *acc)
 
 bool detectGyro(void)
 {
+#ifdef BLUEPILL
+	return false;
+#else
     gyroSensor_e gyroHardware = GYRO_DEFAULT;
 
     gyroAlign = ALIGN_DEFAULT;
@@ -302,6 +305,7 @@ bool detectGyro(void)
     sensorsSet(SENSOR_GYRO);
 
     return true;
+#endif
 }
 
 static void detectAcc(accelerationSensor_e accHardwareToUse)
@@ -619,12 +623,16 @@ retry:
 
 void reconfigureAlignment(sensorAlignmentConfig_t *sensorAlignmentConfig)
 {
-    if (sensorAlignmentConfig->gyro_align != ALIGN_DEFAULT) {
+#ifdef BLUEPILL
+    //do nothing
+#else
+	if (sensorAlignmentConfig->gyro_align != ALIGN_DEFAULT) {
         gyroAlign = sensorAlignmentConfig->gyro_align;
     }
     if (sensorAlignmentConfig->acc_align != ALIGN_DEFAULT) {
         accAlign = sensorAlignmentConfig->acc_align;
     }
+#endif
     if (sensorAlignmentConfig->mag_align != ALIGN_DEFAULT) {
         magAlign = sensorAlignmentConfig->mag_align;
     }
@@ -633,7 +641,9 @@ void reconfigureAlignment(sensorAlignmentConfig_t *sensorAlignmentConfig)
 bool sensorsAutodetect(sensorAlignmentConfig_t *sensorAlignmentConfig, uint16_t gyroLpf, uint8_t accHardwareToUse, uint8_t magHardwareToUse, uint8_t baroHardwareToUse, int16_t magDeclinationFromConfig)
 {
     int16_t deg, min;
-
+#ifdef BLUEPILL
+    //do nothing
+#else
     memset(&acc, 0, sizeof(acc));
     memset(&gyro, 0, sizeof(gyro));
 
@@ -641,23 +651,37 @@ bool sensorsAutodetect(sensorAlignmentConfig_t *sensorAlignmentConfig, uint16_t 
 
     const extiConfig_t *extiConfig = selectMPUIntExtiConfig();
 
+
     mpuDetectionResult_t *mpuDetectionResult = detectMpu(extiConfig);
+
     UNUSED(mpuDetectionResult);
 #endif
 
     if (!detectGyro()) {
         return false;
     }
+
+
+
     detectAcc(accHardwareToUse);
+#endif
+
+#ifdef BLUEPILL
+    //do nothing
+#else
     detectBaro(baroHardwareToUse);
+#endif
 
 
     // Now time to init things, acc first
+#ifdef BLUEPILL
+    //do nothing
+#else
     if (sensors(SENSOR_ACC))
         acc.init();
     // this is safe because either mpu6050 or mpu3050 or lg3d20 sets it, and in case of fail, we never get here.
     gyro.init(gyroLpf);
-
+#endif
     detectMag(magHardwareToUse);
 
     reconfigureAlignment(sensorAlignmentConfig);

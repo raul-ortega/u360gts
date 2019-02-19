@@ -385,7 +385,7 @@ void init(void)
 
     if (!sensorsAutodetect(&masterConfig.sensorAlignmentConfig, masterConfig.gyro_lpf, masterConfig.acc_hardware, masterConfig.mag_hardware, masterConfig.baro_hardware, currentProfile->mag_declination)) {
         // if gyro was not detected due to whatever reason, we give up now.
-        failureMode(FAILURE_MISSING_ACC);
+        //failureMode(FAILURE_MISSING_ACC);
     }
 
     systemState |= SYSTEM_STATE_SENSORS_READY;
@@ -472,11 +472,11 @@ void init(void)
     previousTime = micros();
 
     if (masterConfig.mixerMode == MIXER_GIMBAL) {
-        accSetCalibrationCycles(CALIBRATING_ACC_CYCLES);
+        //accSetCalibrationCycles(CALIBRATING_ACC_CYCLES);
     }
-    gyroSetCalibrationCycles(CALIBRATING_GYRO_CYCLES);
+    //gyroSetCalibrationCycles(CALIBRATING_GYRO_CYCLES);
 #ifdef BARO
-    baroSetCalibrationCycles(CALIBRATING_BARO_CYCLES);
+    //baroSetCalibrationCycles(CALIBRATING_BARO_CYCLES);
 #endif
 
     // start all timers

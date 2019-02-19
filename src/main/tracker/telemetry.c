@@ -53,6 +53,10 @@ uint8_t telemetry_fixes = 0;
 uint8_t telemetry_frequency = 0;
 uint32_t telemetry_millis = 0;
 
+int32_t telemetry_home_lat;
+int32_t telemetry_home_lon;
+int16_t telemetry_home_alt;
+
 uint8_t a;
 
 uint8_t LOCAL_GPS;
@@ -155,4 +159,10 @@ int32_t gpsToLong(int8_t neg, uint16_t bp, uint16_t ap) {
 
   // take sign into account
   return ((int32_t)(first + second) * (uint32_t)neg);
+}
+
+void setTelemetryHome(int32_t lat, int32_t lon, int16_t alt){
+	telemetry_home_lat = lat;
+	telemetry_home_lon = lon;
+	telemetry_home_alt = alt;
 }
