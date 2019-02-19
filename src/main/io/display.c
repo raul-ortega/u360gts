@@ -117,7 +117,7 @@ static char lineBuffer[SCREEN_CHARACTER_COLUMN_COUNT + 1];
 #define IS_SCREEN_CHARACTER_COLUMN_COUNT_ODD (SCREEN_CHARACTER_COLUMN_COUNT & 1)
 
 static const char* const pageTitles[] = {
-    "AMV-OPEN360TRACKER",
+    "U360GTS",
     "ARMED",
     "BATTERY",
     "TELEMETRY",
