@@ -48,6 +48,9 @@ extern float telemetry_yaw;
 extern uint8_t telemetry_failed_cs;
 extern uint8_t telemetry_provider;
 extern uint8_t telemetry_fixtype;
+extern int32_t telemetry_home_lat;
+extern int32_t telemetry_home_lon;
+extern int16_t telemetry_home_alt;
 
 int16_t getTargetAlt(int16_t home_alt);
 void encodeTargetData(uint8_t c);
@@ -58,4 +61,5 @@ uint16_t getDistance();
 uint16_t getAzimuth();
 void enableProtocolDetection(void);
 void disableProtocolDetection(void);
+void setTelemetryHome(int32_t lat, int32_t lon, int16_t alt);
 
