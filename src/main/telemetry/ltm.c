@@ -73,6 +73,7 @@
 #include "telemetry/telemetry.h"
 #include "telemetry/ltm.h"
 
+#include "tracker/Arduino.h"
 #include "tracker/defines.h"
 #include "tracker/telemetry.h"
 
@@ -218,10 +219,10 @@ static void ltm_oframe()
 
 	ltm_initialise_packet('O');
 
-    ltm_serialise_32(targetPosition.lat * 10);
-    ltm_serialise_32(targetPosition.lon * 10);
+    ltm_serialise_32(telemetry_home_lat * 10);
+    ltm_serialise_32(telemetry_home_lon * 10);
 
-    ltm_serialise_32(0);                // Don't have GPS home altitude
+    ltm_serialise_32(telemetry_home_alt);                // Don't have GPS home altitude
     ltm_serialise_8(1);                 // OSD always ON
     ltm_serialise_8(1);					// ltm_serialise_8(STATE(GPS_FIX_HOME) ? 1 : 0);
     ltm_finalise();
