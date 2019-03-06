@@ -39,5 +39,5 @@ Take a look to [wiki/overview.md](https://github.com/raul-ortega/u360gts/blob/ma
 
 - [Submitting a new issue](https://github.com/raul-ortega/u360gts/issues)
 - [Asking in u360 facebook group](https://www.facebook.com/groups/u360gts/)
-- [Posting in the spanish community in english and/or spanish](http://www.forodrones.com/threads/antena-tracker-360%C2%BA.34530/)
+- [Posting in the spanish community (español)](http://www.zonafpv.com/foro/estacion-de-tierra/u360gts-seguidor-de-antena-de-rotacion-continua-360o/)
 - [Posting in Jelle737's Build Log u360gts: 360° antenna tracker on rcgropus](https://www.rcgroups.com/forums/showthread.php?2964122-u360gts-360%C2%B0-antenna-tracker)
