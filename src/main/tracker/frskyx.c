@@ -261,8 +261,7 @@ void processSportPacket(uint8_t *packet)
     	  msl_x = (SPORT_DATA_U32(packet) & bitmask(2,22)) >> 22;
     	  msl_sgn = (SPORT_DATA_U32(packet) & bitmask(1,31)) >> 31;
     	  //homeAlt = bit32.extract(VALUE,14,10) * (10^bit32.extract(VALUE,12,2)) * 0.1 * (bit32.extract(VALUE,24,1) == 1 and -1 or 1) --m
-    	  alt = ((int16_t) (msl_dc * msl_x * 0.1 * msl_sgn == 1?-1:1));
-    	  telemetry_alt = alt;
+    	  telemetry_alt = ((int16_t) (msl_dc * msl_x * 0.1 * msl_sgn == 1?-1:1));
     	  gotAlt = true;
       }
       break;
