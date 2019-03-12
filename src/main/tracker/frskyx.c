@@ -256,11 +256,11 @@ void processSportPacket(uint8_t *packet)
     	  sats = (uint8_t) (SPORT_DATA_U32(packet) & bitmask(4,0));
       }
       else if(appId == AIRCRAFT_HOME && telemetry_provider==3){
+    	  //HomeAlt=bit32.extract(value,21,10)*(10^bit32.extract(value,19,2)) -- 2+10+1 bit. 10^x + dm * sign  if (bit32.extract(value,31,1) == 1) then HomeAlt = -HomeAlt end
     	  uint16_t msl_dc, msl_x, msl_sgn;
-    	  msl_dc = (SPORT_DATA_U32(packet) & bitmask(7,24)) >> 24;
-    	  msl_x = (SPORT_DATA_U32(packet) & bitmask(2,22)) >> 22;
+    	  msl_dc = (SPORT_DATA_U32(packet) & bitmask(10,21)) >> 21;
+    	  msl_x = (SPORT_DATA_U32(packet) & bitmask(2,19)) >> 19;
     	  msl_sgn = (SPORT_DATA_U32(packet) & bitmask(1,31)) >> 31;
-    	  //homeAlt = bit32.extract(VALUE,14,10) * (10^bit32.extract(VALUE,12,2)) * 0.1 * (bit32.extract(VALUE,24,1) == 1 and -1 or 1) --m
     	  telemetry_alt = ((int16_t) (msl_dc * msl_x * 0.1 * msl_sgn == 1?-1:1));
     	  gotAlt = true;
       }
