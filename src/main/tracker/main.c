@@ -1100,10 +1100,9 @@ bool couldTelemetrySetHome(void){
 
 void updateMFD(void){
 	if(PROTOCOL(TP_MFD)){
-		if (settingHome) {
-			homeSet = true;
-			settingHome = 0;
-		}
+
+		homeSet = true;
+		settingHome = 0;
 
 		if (mfdTestMode || (homeSet && gotFix)) {
 			targetPosition.distance = getDistance();
