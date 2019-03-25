@@ -354,6 +354,7 @@ void tracker_setup(void)
 
   epsVectorsInit(&targetLast,&targetCurrent,&targetEstimated,masterConfig.eps_interpolation,masterConfig.eps_interpolation_points);
 
+  targetPosition.home_alt = -32768;
  }
 
 void telemetryPortInit(void){
@@ -386,8 +387,6 @@ void trackingInit(void){
 	gotNewHeading = false;
 
 	menuState = 0;
-
-	targetPosition.home_alt = -32768;
 
 	telemetry_frequency = 0;
 	telemetry_millis = millis();
