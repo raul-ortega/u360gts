@@ -161,7 +161,7 @@ static void ltm_gframe(void)
     ltm_initialise_packet('G');
     ltm_serialise_32(targetPosition.lat * 10);
     ltm_serialise_32(targetPosition.lon * 10);
-    ltm_serialise_8((uint8_t)(telemetry_speed * 100)); // / 100));
+    ltm_serialise_8((uint8_t)(telemetry_speed)); // / 100));
     //printf("speed %d course %d\n",telemetry_speed,telemetry_course);
     ltm_serialise_32(targetPosition.alt*100);
     ltm_serialise_8((telemetry_sats << 2) | gps_fix_type);
