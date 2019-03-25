@@ -35,6 +35,7 @@ void mavlink_handleMessage(mavlink_message_t* msg) {
       telemetry_sats = mavlink_msg_gps_raw_int_get_satellites_visible(msg);
       telemetry_alt = (int16_t)(mavlink_msg_gps_raw_int_get_alt(msg) / 1000);
       telemetry_fixtype = mavlink_msg_gps_raw_int_get_fix_type(msg);
+      telemetry_speed = mavlink_msg_gps_raw_int_get_vel(msg) / 100;
       gotAlt = true;
 
       // fix_type: GPS lock 0-1=no fix, 2=2D, 3=3D
