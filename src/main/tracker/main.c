@@ -1105,7 +1105,7 @@ void updateMFD(void){
 
 		if (mfdTestMode || (homeSet && gotFix)) {
 			targetPosition.distance = getDistance();
-			targetPosition.alt = getTargetAlt(targetPosition.home_alt);
+			targetPosition.alt = getTargetAlt(0);
 			targetPosition.heading = getAzimuth() * 10;
 			gotFix = false;
 		}
