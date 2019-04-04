@@ -1117,6 +1117,11 @@ void updateMFD(void){
 			calcTilt();
 			gotNewHeading = false;
 		}
+
+		if(homeSet && lostTelemetry == true && !cliMode){
+			pwmWritePanServo(masterConfig.pan0);
+			return;
+		}
 	}
 }
 
