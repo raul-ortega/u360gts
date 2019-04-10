@@ -354,6 +354,10 @@ static const char * const lookupTabletelemetryProvider[] = {
     "NONE", "DIY_GPS","INAV","APM10"
 };
 
+static const char * const lookupTableAltitudePriority[] = {
+	"BARO","GPS"
+};
+
 static const char * const lookupTabletelemetryHome[] = {
     "DEFAULT", "AUTO"
 };
@@ -405,6 +409,7 @@ typedef enum {
     TABLE_UNIT,
     TABLE_ALIGNMENT,
 	TABLE_TELEMETRY_PROVIDER,
+	TABLE_ALTITUDE_PRIORITY,
 	TABLE_TELEMETRY_HOME,
 #ifdef GPS
     TABLE_GPS_PROVIDER,
@@ -424,6 +429,7 @@ static const lookupTableEntry_t lookupTables[] = {
     { lookupTableUnit, sizeof(lookupTableUnit) / sizeof(char *) },
     { lookupTableAlignment, sizeof(lookupTableAlignment) / sizeof(char *) },
 	{ lookupTabletelemetryProvider, sizeof(lookupTabletelemetryProvider) / sizeof(char *) },
+	{ lookupTableAltitudePriority, sizeof(lookupTableAltitudePriority) / sizeof(char *) },
 	{ lookupTabletelemetryHome, sizeof(lookupTabletelemetryHome) / sizeof(char *) },
 #ifdef GPS
     { lookupTableGPSProvider, sizeof(lookupTableGPSProvider) / sizeof(char *) },
@@ -757,7 +763,8 @@ const clivalue_t valueTable[] = {
     { "eps_interpolation",   	    VAR_UINT8 | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.eps_interpolation, .config.lookup = { TABLE_OFF_ON } },
 	{ "eps_interpolation_points",   VAR_UINT8 | TRACKER_VALUE, &masterConfig.eps_interpolation_points, .config.minmax = { 2,  10 } },
     { "update_home_by_local_gps",   VAR_UINT8 | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.update_home_by_local_gps, .config.lookup = { TABLE_OFF_ON } },
-	{ "max_speed_filter",   	    VAR_UINT8 | TRACKER_VALUE, &masterConfig.max_speed_filter, .config.minmax = { 0,  255 } }
+	{ "max_speed_filter",   	    VAR_UINT8 | TRACKER_VALUE, &masterConfig.max_speed_filter, .config.minmax = { 0,  255 } },
+	{ "telemetry_altitude_priority",   VAR_UINT8 | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.altitude_priority, .config.lookup = {TABLE_ALTITUDE_PRIORITY} }
 };
 
 #define VALUE_COUNT (sizeof(valueTable) / sizeof(clivalue_t))
@@ -2571,7 +2578,7 @@ static void cliDumpTracker() {
 
 	printSectionBreak();
 
-	cliPrint("\r\n\r\n# feature\r\n");
+	cliPrint("\r\n\r\n# parameters\r\n");
 
 	dumpValues(TRACKER_VALUE);
 }
