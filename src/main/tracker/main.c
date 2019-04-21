@@ -966,6 +966,7 @@ void updateMenuButton(void){
 					//start calibration routine if button pressed > 4s and released
 					//ENABLE_STATE(CALIBRATE_MAG);
 					calib_timer = 0;
+					home_timer = 0;
 					enterMenuMode();
 				}
 			}
