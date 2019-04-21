@@ -14,7 +14,7 @@
 
 <img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/bluepill_wiring.png" width="520" />
 
-## BLUEPILL + ARIEL'S PDB
+## ARIEL'S PDB FOR BLUEPILL
 
 <img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/PDB_bluepill_top.png" width="520" />
 
