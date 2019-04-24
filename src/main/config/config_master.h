@@ -147,6 +147,7 @@ typedef struct master_t {
 	uint8_t update_home_by_local_gps;
 	uint16_t pan_calibration_pulse;
 	uint8_t max_speed_filter;
+	uint8_t altitude_priority;
 } master_t;
 
 extern master_t masterConfig;
