@@ -76,13 +76,13 @@ void blackboxLogInflightAdjustmentEvent(adjustmentFunction_e adjustmentFunction,
     UNUSED(adjustmentFunction);
     UNUSED(newValue);
 #else
-    if (feature(FEATURE_BLACKBOX)) {
+/*    if (feature(FEATURE_BLACKBOX)) {
         flightLogEvent_inflightAdjustment_t eventData;
         eventData.adjustmentFunction = adjustmentFunction;
         eventData.newValue = newValue;
         eventData.floatFlag = false;
         blackboxLogEvent(FLIGHT_LOG_EVENT_INFLIGHT_ADJUSTMENT, (flightLogEventData_t*)&eventData);
-    }
+    }*/
 #endif
 }
 
@@ -91,13 +91,13 @@ void blackboxLogInflightAdjustmentEventFloat(adjustmentFunction_e adjustmentFunc
     UNUSED(adjustmentFunction);
     UNUSED(newFloatValue);
 #else
-    if (feature(FEATURE_BLACKBOX)) {
+    /*if (feature(FEATURE_BLACKBOX)) {
         flightLogEvent_inflightAdjustment_t eventData;
         eventData.adjustmentFunction = adjustmentFunction;
         eventData.newFloatValue = newFloatValue;
         eventData.floatFlag = true;
         blackboxLogEvent(FLIGHT_LOG_EVENT_INFLIGHT_ADJUSTMENT, (flightLogEventData_t*)&eventData);
-    }
+    }*/
 #endif
 }
 

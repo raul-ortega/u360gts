@@ -31,7 +31,7 @@ typedef enum {
     FEATURE_TELEMETRY = 1 << 5,
     FEATURE_CURRENT_METER = 1 << 6,
     FEATURE_DISPLAY = 1 << 7,
-    FEATURE_BLACKBOX = 1 << 8,
+    //FEATURE_BLACKBOX = 1 << 8,
 	FEATURE_EASING = 1 << 9,
 	FEATURE_NOPID = 1 << 10,
 	FEATURE_DEBUG = 1 << 11,

@@ -675,7 +675,7 @@ static void resetConf(void)
 /////////////////////////////
     //TRACKER CONFIG
 
-    featureSet(FEATURE_SOFTSERIAL);
+    //featureSet(FEATURE_SOFTSERIAL);
 
     //Serial 1
     masterConfig.serialConfig.portConfigs[0].identifier = SERIAL_PORT_USART1;
@@ -724,14 +724,14 @@ static void resetConf(void)
     masterConfig.tilt_max_angle = 0;
 
     //EASING
-    featureSet(FEATURE_EASING);
+    //featureSet(FEATURE_EASING);
     masterConfig.easing = 2 ;
     masterConfig.easing_steps = 60;
     masterConfig.easing_min_angle = 4;
     masterConfig.easing_millis = 15;
 
 	//NOPID feature by default
-	featureSet(FEATURE_NOPID);
+	//featureSet(FEATURE_NOPID);
     masterConfig.nopid_min_delta = 0.2;
     masterConfig.nopid_max_speed = 200;
     masterConfig.nopid_map_angle = 90;
@@ -744,7 +744,7 @@ static void resetConf(void)
    	masterConfig.telemetry_provider = 0;
 
     //Display
-   	featureSet(FEATURE_DISPLAY);
+   	//featureSet(FEATURE_DISPLAY);
 
    	//GPS
    	featureClear(FEATURE_GPS);
@@ -764,18 +764,21 @@ static void resetConf(void)
    	// FILTERS
    	masterConfig.max_speed_filter = 0;
    	//VBAT
-   	featureSet(FEATURE_VBAT);
+   	//featureSet(FEATURE_VBAT);
 
    	//BUTTONS
    	masterConfig.min_logic_level=60;
 
    	//TELEMETRY OUT
-   	featureSet(FEATURE_TELEMETRY);
+   	//featureSet(FEATURE_TELEMETRY);
 
    	//RSSI
    	//featureSet(FEATURE_RSSI_ADC);
    	masterConfig.rxConfig.rssi_scale = RSSI_SCALE_DEFAULT;
    	masterConfig.rxConfig.rssi_zoom = 35;
+
+   	//ALTITUDE
+   	masterConfig.altitude_priority = 0;
 
 /////////////////////////////
 

@@ -1413,7 +1413,7 @@ void handleBlackbox(void)
 
 static bool canUseBlackboxWithCurrentConfiguration(void)
 {
-    return feature(FEATURE_BLACKBOX);
+    return false;//feature(FEATURE_BLACKBOX);
 }
 
 /**
