@@ -662,7 +662,7 @@ int16_t getOffset(int16_t offset_master,int8_t offset_trim){
 
 void updateDigitalButtons(void) {
 	//Home Button
-	homeButton=GPIO_ReadInputDataBit(GPIOB, Pin_9);
+	homeButton=GPIO_ReadInputDataBit(GPIOB, pwm_params.sonarGPIOConfig->echoPin);
 	if(homeButton==0) {
 		homeButtonCount++;
 	} else if (homeButton==1) {
@@ -673,7 +673,7 @@ void updateDigitalButtons(void) {
 		ENABLE_BUTTON(HOME_BUTTON);
 	}
 	//Calibrate Button
-	calibrateButton=GPIO_ReadInputDataBit(GPIOB, Pin_8);
+	calibrateButton=GPIO_ReadInputDataBit(GPIOB, pwm_params.sonarGPIOConfig->triggerPin);
 	if(calibrateButton==0) {
 		calibrateButtonCount++;
 	} else if (calibrateButton==1) {
@@ -681,7 +681,6 @@ void updateDigitalButtons(void) {
 		DISABLE_BUTTON(MENU_BUTTON);
 	}
 	if(calibrateButtonCount > masterConfig.min_logic_level) ENABLE_BUTTON(MENU_BUTTON);
-
 }
 
 void setHomeByTelemetry(positionVector_t *tracker, positionVector_t *target) {
