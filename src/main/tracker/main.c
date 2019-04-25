@@ -310,6 +310,8 @@ extern uint8_t telemetry_frequency;
 uint8_t telemetry_fixes;
 uint32_t telemetry_millis;
 
+extern drv_pwm_config_t pwm_params;
+
 void tracker_setup(void)
 {
 
