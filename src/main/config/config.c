@@ -399,11 +399,7 @@ static void resetConf(void)
     setControlRateProfile(0);
 
     masterConfig.version = EEPROM_CONF_VERSION;
-#if defined(SPRACINGF3)
-    masterConfig.mixerMode = MIXER_FLYING_WING;
-#else
     masterConfig.mixerMode = MIXER_QUADX;
-#endif
     featureClearAll();
     //////// Nueva Líneas
     featureSet(FEATURE_SERVO_TILT);
