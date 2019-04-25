@@ -194,7 +194,7 @@ static const char * const featureNames[] = {
 	"TELEMETRY",
 	"CURRENT_METER",
 	"DISPLAY",
-    //"BLACKBOX",
+    "BLACKBOX",
 	"EASING",
 	"NOPID",
 	"DEBUG",
