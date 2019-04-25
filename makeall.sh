@@ -1,0 +1,2 @@
+#/bin/bash
+find obj/ -type f -name "*$1*.hex" | xargs rm -f;targets="NAZE BLUEPILL CC3D SPRACINGF3";for target in $targets;do echo $TARGET;make clean TARGET=$target && make -j 4 TARGET=$target && mv "obj/amv-open360tracker_"$target".hex" "obj/amv-open360tracker_"$target"_v"$1".hex";done

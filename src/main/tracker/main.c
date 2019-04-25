@@ -664,7 +664,7 @@ int16_t getOffset(int16_t offset_master,int8_t offset_trim){
 
 void updateDigitalButtons(void) {
 	//Home Button
-	homeButton=GPIO_ReadInputDataBit(GPIOB, pwm_params.sonarGPIOConfig->echoPin);
+	homeButton=GPIO_ReadInputDataBit(GPIOB, Pin_9);//pwm_params.sonarGPIOConfig->echoPin);//NAZE Pin_9 SPRACINFGF3 Pin_1
 	if(homeButton==0) {
 		homeButtonCount++;
 	} else if (homeButton==1) {
@@ -675,7 +675,7 @@ void updateDigitalButtons(void) {
 		ENABLE_BUTTON(HOME_BUTTON);
 	}
 	//Calibrate Button
-	calibrateButton=GPIO_ReadInputDataBit(GPIOB, pwm_params.sonarGPIOConfig->triggerPin);
+	calibrateButton=GPIO_ReadInputDataBit(GPIOB, Pin_8);//pwm_params.sonarGPIOConfig->triggerPin);//NAZE Pin_8 SPRACINFGF3 Pin_0
 	if(calibrateButton==0) {
 		calibrateButtonCount++;
 	} else if (calibrateButton==1) {
