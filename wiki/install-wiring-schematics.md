@@ -20,4 +20,8 @@
 
 <img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/PDB_bluepill_bottom.png" width="520" />
 
+## SP RACING F3
+
+<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/u360gts_spracingf3_wiring_schematics.png" width="600" />
+
 [<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
