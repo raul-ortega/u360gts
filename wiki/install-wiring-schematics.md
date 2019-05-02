@@ -22,6 +22,6 @@
 
 ## SP RACING F3
 
-<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/u360gts_spracingf3_wiring_schematics.png" width="1200" />
+<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/u360gts_spracingf3_wiring_schematics.png" width="1600" />
 
 [<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
