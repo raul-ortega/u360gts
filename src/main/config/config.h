@@ -42,6 +42,7 @@ typedef enum {
 	FEATURE_RX_PPM = 1 << 15,*/
 } features_e;
 
+uint8_t pwmPanPin;
 uint16_t pwmPan0;
 uint16_t pwmPanCalibrationPulse;
 

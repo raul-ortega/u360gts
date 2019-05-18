@@ -678,9 +678,14 @@ static void resetConf(void)
     masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex = BAUD_115200;
     masterConfig.serialConfig.portConfigs[0].functionMask = FUNCTION_MSP;
     //Serial 2
+#if defined(SPRACINGF3)
+    masterConfig.serialConfig.portConfigs[1].identifier = SERIAL_PORT_USART3;
+#else
     masterConfig.serialConfig.portConfigs[1].identifier = SERIAL_PORT_USART2;
+#endif
     masterConfig.serialConfig.portConfigs[1].gps_baudrateIndex = BAUD_9600;
     masterConfig.serialConfig.portConfigs[1].functionMask = FUNCTION_GPS;
+
     //Softserial 1
     /*masterConfig.serialConfig.portConfigs[2].identifier = SERIAL_PORT_SOFTSERIAL1;
     masterConfig.serialConfig.portConfigs[2].telemetry_baudrateIndex = BAUD_9600;
@@ -699,6 +704,7 @@ static void resetConf(void)
     masterConfig.max_pid_divider = 15;
 
     //PAN
+    masterConfig.pan_pin = 0;
     masterConfig.pan0 = 1500;
     pwmPan0 = masterConfig.pan0;
     masterConfig.pan_calibration_pulse = 1400;
@@ -715,6 +721,7 @@ static void resetConf(void)
     masterConfig.mag_calibrated = 0;
 
     //TILT
+    masterConfig.tilt_pin = 1;
     masterConfig.tilt0 = 500;
     masterConfig.tilt90 = 1400;
     masterConfig.tilt_max_angle = 0;

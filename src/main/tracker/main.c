@@ -154,6 +154,8 @@ void telemetryPortInit(void);
 void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int16_t alt, bool home_updated, bool beep);
 void calcTelemetryFrequency(void);
 uint8_t filterTiltAngle(uint8_t target);
+void servosInit(void);
+
 //EASING
 int16_t _lastTilt;
 int16_t tilt;
@@ -514,7 +516,7 @@ void calcTilt(void) {
   }
   else {
 	pwmTilt = (uint16_t) map(tiltTarget,0,90,masterConfig.tilt0, masterConfig.tilt90);
-    pwmWriteTiltServo(pwmTilt);
+    pwmWriteServo(masterConfig.tilt_pin,pwmTilt);
   }
 }
 
@@ -602,13 +604,13 @@ void servo_tilt_update(){
 			easingout = _lastTilt - easeTilt(_tilt_pos, 0, _lastTilt - _servo_tilt_must_move, masterConfig.easing_steps);
 			pwmTilt=(int16_t)map(easingout,0,90,masterConfig.tilt0,masterConfig.tilt90);
 			if(_lastPwmTilt != pwmTilt)
-				pwmWriteTiltServo(pwmTilt);
+				pwmWriteServo(masterConfig.tilt_pin,pwmTilt);
 			_tilt_pos++;
 	  }
 	  else {
 		if(_tilt_pos == masterConfig.easing_steps){
 		  pwmTilt = (uint16_t) map(_servo_tilt_must_move,0,90, masterConfig.tilt0, masterConfig.tilt90);
-		  pwmWriteTiltServo(pwmTilt);
+		  pwmWriteServo(masterConfig.tilt_pin,pwmTilt);
 		  _lastTilt = _servo_tilt_must_move;
 		  _tilt_pos=0;
 		  _servo_tilt_has_arrived = true;
@@ -777,7 +779,7 @@ void updateServoTest(void){
 			else
 			{
 				tilt = map(SERVOTEST_TILT, 0, 90, masterConfig.tilt0, masterConfig.tilt90);
-				pwmWriteTiltServo(tilt);
+				pwmWriteServo(masterConfig.tilt_pin,tilt);
 			}
 			DISABLE_SERVO(SERVOTILT_MOVE);
 		}
@@ -1114,13 +1116,13 @@ void updateMFD(void){
 		if ((mfdTestMode || homeSet) && gotNewHeading) {
 			getError();
 			calculatePID();
-			pwmWritePanServo(pwmPan);
+			pwmWriteServo(masterConfig.pan_pin,pwmPan);
 			calcTilt();
 			gotNewHeading = false;
 		}
 
 		if(homeSet && lostTelemetry == true && !cliMode){
-			pwmWritePanServo(masterConfig.pan0);
+			pwmWriteServo(masterConfig.pan_pin,masterConfig.pan0);
 			return;
 		}
 	}
@@ -1138,7 +1140,7 @@ void updateTracking(void){
 
 		if(trackingStarted)  {
 			if(lostTelemetry == true && !cliMode){
-				pwmWritePanServo(masterConfig.pan0);
+				pwmWriteServo(masterConfig.pan_pin,masterConfig.pan0);
 				return;
 			}
 			if(!PROTOCOL(TP_SERVOTEST))
@@ -1147,7 +1149,7 @@ void updateTracking(void){
 			if (gotNewHeading) {
 				  getError();
 				  calculatePID();
-				  pwmWritePanServo(pwmPan);
+				  pwmWriteServo(masterConfig.pan_pin,pwmPan);
 				  gotNewHeading = false;
 			}
 
@@ -1157,7 +1159,7 @@ void updateTracking(void){
 		} else {
 			OFFSET_TRIM_STATE = TRIM_STATE_DISABLED;
 			if(homeSet && !cliMode )
-				pwmWritePanServo(masterConfig.pan0);
+				pwmWriteServo(masterConfig.pan_pin,masterConfig.pan0);
 		}
 	}
 }
@@ -1392,7 +1394,7 @@ void updateCalibratePan()
         DISABLE_STATE(CALIBRATE_PAN);
         ENABLE_PROTOCOL(TP_CALIBRATING_PAN0);
         pwmPan = masterConfig.pan_calibration_pulse;
-        pwmWriteServo(panServo, pwmPan);
+        pwmWriteServo(masterConfig.pan_pin, pwmPan);
         masterConfig.pan0_calibrated = 0;
         minPwmPan = 1500;
         maxPwmPan = 1500;
@@ -1423,7 +1425,7 @@ void updateCalibratePan()
 						if(pwmPan < minPwmPan - 100)
 							pwmPan = maxPwmPan + 100;
 					}
-					pwmWriteServo(panServo, pwmPan);
+					pwmWriteServo(masterConfig.pan_pin, pwmPan);
 				} else {
 					// SERVO SEEMS TO BE STOPPED
 					if(pwmPanState == FINDING_OUT_MIN_PWMPAN0){
@@ -1456,7 +1458,7 @@ void updateCalibratePan()
 							pwmPanState = FINDING_OUT_MAX_PWMPAN0;
 							pwmPan = 1500 + (1500 - masterConfig.pan_calibration_pulse);
 						}
-						pwmWriteServo(panServo, pwmPan);
+						pwmWriteServo(masterConfig.pan_pin, pwmPan);
 					}
 					else {
 						// SERVO IS STOPED
@@ -1464,7 +1466,7 @@ void updateCalibratePan()
 							//targetPosition.heading = trackerPosition.heading;
 							pwmPanState = FINDING_OUT_MAX_PWMPAN0;
 							pwmPan = 1500 + (1500 - masterConfig.pan_calibration_pulse);
-							pwmWriteServo(panServo, pwmPan);
+							pwmWriteServo(masterConfig.pan_pin, pwmPan);
 						} else if(pwmPanState == MAX_PWMPAN0_FOUND) {
 							// CALIBRATION FIHISHED WITH SUCCESS
 							pwmPanState = PWMPAN0_CALCULATED_WITH_SUCCESS;
@@ -1481,7 +1483,7 @@ void updateCalibratePan()
 							// ACTIVATE MAX PWMPAN CALCULATION
 							/*ENABLE_PROTOCOL(TP_CALIBRATING_MAXPAN);
 							pwmPan = masterConfig.pan0 - 600;
-							pwmWriteServo(panServo, pwmPan);*/
+							pwmWriteServo(masterConfig.pan_pin, pwmPan);*/
 							trackerPosition.heading = getHeading();
 							targetPosition.heading = trackerPosition.heading;
 						}
@@ -1511,11 +1513,11 @@ void updateCalibratePan()
 			if(pwmPan > masterConfig.pan0 + 600) {
 				//Calcular m�ximo y finalizar
 				masterConfig.max_pid_gain = maxPwmPan;
-				pwmWriteServo(panServo, masterConfig.pan0);
+				pwmWriteServo(masterConfig.pan_pin, masterConfig.pan0);
 				DISABLE_PROTOCOL(TP_CALIBRATING_MAXPAN);
 				saveConfigAndNotify();
 			} else {
-				pwmWriteServo(panServo, pwmPan);
+				pwmWriteServo(masterConfig.pan_pin, pwmPan);
 				trackerPosition.heading = getHeading();
 				targetPosition.heading = trackerPosition.heading;
 				servoPanTimer = millis();
@@ -1641,3 +1643,8 @@ void calcTelemetryFrequency(void){
 	}
 }
 
+void servosInit(void)
+{
+	pwmWriteServo(masterConfig.pan_pin, masterConfig.pan0);
+	pwmWriteServo(masterConfig.tilt_pin, masterConfig.tilt0);
+}

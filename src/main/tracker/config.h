@@ -19,7 +19,4 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#define panServo 0
-#define TILT_SERVO 1
-
 #endif
