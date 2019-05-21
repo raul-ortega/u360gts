@@ -1,4 +1,4 @@
-##QUICK START GUIDE
+## QUICK START GUIDE
 
 Once you have assembled your antenna tracker you have to do a initial setup in order to get it working. Try to apply these steps in same order to do it with success:
 
