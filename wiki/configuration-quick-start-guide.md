@@ -2,7 +2,7 @@
 
 Once you have assembled your antenna tracker you have to do a initial setup in order to get it working. Try to apply these steps in same order to do it with success:
 
-1.- ***Enable OLED display** (Features --> Display).
+1.- **Enable OLED display** (Features --> Display).
 
 2.- **Configure pan0** value (the stop pulse for pan servo).
 
