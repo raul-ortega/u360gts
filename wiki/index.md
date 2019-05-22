@@ -25,7 +25,7 @@ First of all we would like you to understand the big effort spent to create such
 - [Pan servo](index.md)
 - [Tilt servo](index.md)
 - [OFFSET setting](index.md)
-- [PID Controller](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-pid-controller.md)
+- [PID Control](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-pid-controller.md)
 - [NOPID controll system](index.md)
 - [GPS](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-gps.md)
 
