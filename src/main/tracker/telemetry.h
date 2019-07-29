@@ -52,6 +52,10 @@ extern int32_t telemetry_home_lat;
 extern int32_t telemetry_home_lon;
 extern int16_t telemetry_home_alt;
 
+enum telemetryProviders {
+    NONE = 0, DIY_GPS, INAV, APM10
+};
+
 int16_t getTargetAlt(int16_t home_alt);
 void encodeTargetData(uint8_t c);
 int32_t getTargetLat();
