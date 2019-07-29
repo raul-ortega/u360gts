@@ -53,7 +53,10 @@ extern int32_t telemetry_home_lon;
 extern int16_t telemetry_home_alt;
 
 enum telemetryProviders {
-    NONE = 0, DIY_GPS, INAV, APM10
+    TELEMETRY_PROVIDER_NONE = 0,
+    TELEMETRY_PROVIDER_DIY_GPS,
+    TELEMETRY_PROVIDER_INAV,
+    TELEMETRY_PROVIDER_APM10
 };
 
 int16_t getTargetAlt(int16_t home_alt);
