@@ -16,6 +16,8 @@
  * along with u360gts.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef TELEMETRY_H
+#define TELEMETRY_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -70,3 +72,4 @@ void enableProtocolDetection(void);
 void disableProtocolDetection(void);
 void setTelemetryHome(int32_t lat, int32_t lon, int16_t alt);
 
+#endif
