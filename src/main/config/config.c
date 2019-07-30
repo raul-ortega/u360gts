@@ -399,11 +399,7 @@ static void resetConf(void)
     setControlRateProfile(0);
 
     masterConfig.version = EEPROM_CONF_VERSION;
-#if defined(SPRACINGF3)
-    masterConfig.mixerMode = MIXER_FLYING_WING;
-#else
     masterConfig.mixerMode = MIXER_QUADX;
-#endif
     featureClearAll();
     //////// Nueva Líneas
     featureSet(FEATURE_SERVO_TILT);
@@ -675,7 +671,7 @@ static void resetConf(void)
 /////////////////////////////
     //TRACKER CONFIG
 
-    featureSet(FEATURE_SOFTSERIAL);
+    //featureSet(FEATURE_SOFTSERIAL);
 
     //Serial 1
     masterConfig.serialConfig.portConfigs[0].identifier = SERIAL_PORT_USART1;
@@ -685,6 +681,7 @@ static void resetConf(void)
     masterConfig.serialConfig.portConfigs[1].identifier = SERIAL_PORT_USART2;
     masterConfig.serialConfig.portConfigs[1].gps_baudrateIndex = BAUD_9600;
     masterConfig.serialConfig.portConfigs[1].functionMask = FUNCTION_GPS;
+
     //Softserial 1
     /*masterConfig.serialConfig.portConfigs[2].identifier = SERIAL_PORT_SOFTSERIAL1;
     masterConfig.serialConfig.portConfigs[2].telemetry_baudrateIndex = BAUD_9600;
@@ -703,6 +700,7 @@ static void resetConf(void)
     masterConfig.max_pid_divider = 15;
 
     //PAN
+    masterConfig.pan_pin = 0;
     masterConfig.pan0 = 1500;
     pwmPan0 = masterConfig.pan0;
     masterConfig.pan_calibration_pulse = 1400;
@@ -719,19 +717,20 @@ static void resetConf(void)
     masterConfig.mag_calibrated = 0;
 
     //TILT
+    masterConfig.tilt_pin = 1;
     masterConfig.tilt0 = 500;
     masterConfig.tilt90 = 1400;
     masterConfig.tilt_max_angle = 0;
 
     //EASING
-    featureSet(FEATURE_EASING);
+    //featureSet(FEATURE_EASING);
     masterConfig.easing = 2 ;
     masterConfig.easing_steps = 60;
     masterConfig.easing_min_angle = 4;
     masterConfig.easing_millis = 15;
 
 	//NOPID feature by default
-	featureSet(FEATURE_NOPID);
+	//featureSet(FEATURE_NOPID);
     masterConfig.nopid_min_delta = 0.2;
     masterConfig.nopid_max_speed = 200;
     masterConfig.nopid_map_angle = 90;
@@ -744,7 +743,7 @@ static void resetConf(void)
    	masterConfig.telemetry_provider = 0;
 
     //Display
-   	featureSet(FEATURE_DISPLAY);
+   	//featureSet(FEATURE_DISPLAY);
 
    	//GPS
    	featureClear(FEATURE_GPS);
@@ -764,18 +763,21 @@ static void resetConf(void)
    	// FILTERS
    	masterConfig.max_speed_filter = 0;
    	//VBAT
-   	featureSet(FEATURE_VBAT);
+   	//featureSet(FEATURE_VBAT);
 
    	//BUTTONS
    	masterConfig.min_logic_level=60;
 
    	//TELEMETRY OUT
-   	featureSet(FEATURE_TELEMETRY);
+   	//featureSet(FEATURE_TELEMETRY);
 
    	//RSSI
    	//featureSet(FEATURE_RSSI_ADC);
    	masterConfig.rxConfig.rssi_scale = RSSI_SCALE_DEFAULT;
    	masterConfig.rxConfig.rssi_zoom = 35;
+
+   	//ALTITUDE
+   	masterConfig.altitude_priority = 0;
 
 /////////////////////////////
 

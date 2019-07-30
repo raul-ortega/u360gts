@@ -20,27 +20,4 @@
 #ifndef SERVOS_H
 #define SERVOS_H
 
-#include "config.h"
-#include "drivers/pwm_output.h"
-
-void servosInit(void);
-void pwmWritePanServo(int16_t A);
-void pwmWriteTiltServo(int16_t A);
-
-void servosInit(void)
-{
-	pwmWritePanServo(masterConfig.pan0);
-	pwmWriteTiltServo(masterConfig.tilt0);
-}
-void pwmWritePanServo(int16_t A){
-	pwmWriteServo(panServo, A);
-}
-
-void stopPanServo(void){
-	pwmWritePanServo(masterConfig.pan0);
-}
-
-void pwmWriteTiltServo(int16_t A){
-	pwmWriteServo(TILT_SERVO, A);
-}
 #endif

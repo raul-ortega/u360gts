@@ -45,10 +45,13 @@
 #include "tracker/config.h"
 #include "io/display.h"
 
+#include "tracker/servos.h"
+
 mag_t mag;                   // mag access functions
 
 extern uint32_t currentTime; // FIXME dependency on global variable, pass it in instead.
 
+extern uint8_t pwmPanPin;
 extern uint16_t pwmPan0;
 extern uint16_t pwmPanCalibrationPulse;
 
@@ -97,7 +100,7 @@ void updateCompass(flightDynamicsTrims_t *magZero)
 			displayShowFixedPage(PAGE_CALIBRATING_MAG);
 			displayResetPageCycling();
 			displayDisablePageCycling();
-			pwmWriteServo(panServo, pwmPanCalibrationPulse);
+			pwmWriteServo(pwmPanPin, pwmPanCalibrationPulse);
 		}
 
 		if (magInit) {              // we apply offset only once mag calibration is done
@@ -120,7 +123,7 @@ void updateCompass(flightDynamicsTrims_t *magZero)
 				for (axis = 0; axis < 3; axis++) {
 					magZero->raw[axis] = (magZeroTempMin.raw[axis] + magZeroTempMax.raw[axis]) / 2; // Calculate offsets
 				}
-				pwmWriteServo(panServo, pwmPan0);
+				pwmWriteServo(pwmPanPin, pwmPan0);
 				DISABLE_PROTOCOL(TP_CALIBRATING_MAG);
 
 				if(cliMode && feature(FEATURE_DISPLAY)) {

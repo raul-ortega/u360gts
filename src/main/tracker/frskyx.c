@@ -140,10 +140,10 @@ void processHubPacket(uint8_t id, uint16_t value)
       NS = value;
       break;
     case TEMP2:
-	  if(telemetry_provider==1){
+	  if(telemetry_provider == TELEMETRY_PROVIDER_DIY_GPS){
 			sats = value / 10;
 			fix = value % 10;
-	  } else if (telemetry_provider==2){
+	  } else if (telemetry_provider == TELEMETRY_PROVIDER_INAV){
 			sats = value % 100;
 	  } else
 			sats = value;
@@ -185,6 +185,8 @@ void processSportPacket(uint8_t *packet)
 	  return;
   }
 
+  if(appId == GPS_STATUS) telemetry_provider = TELEMETRY_PROVIDER_APM10;
+
   switch (prim)
   {
     case DATA_FRAME:
@@ -195,10 +197,10 @@ void processSportPacket(uint8_t *packet)
         processHubPacket(id, value);
       }
       else if (appId >= T2_FIRST_ID && appId <= T2_LAST_ID) {
-		if(telemetry_provider==1){
+		if(telemetry_provider == TELEMETRY_PROVIDER_DIY_GPS){
 			sats = SPORT_DATA_S32(packet) / 10;
 			//fix = SPORT_DATA_S32(packet) % 10;
-		} else if (telemetry_provider==2){
+		} else if (telemetry_provider == TELEMETRY_PROVIDER_INAV){
 			sats = SPORT_DATA_S32(packet) % 100;
 		} else {
 			//we assume that other systems just send the sats over temp2 and fix over temp1
@@ -252,17 +254,14 @@ void processSportPacket(uint8_t *packet)
         }
 
       }
-      else if(appId == GPS_STATUS && telemetry_provider==3){
+      else if(appId == GPS_STATUS && telemetry_provider == TELEMETRY_PROVIDER_APM10){
     	  sats = (uint8_t) (SPORT_DATA_U32(packet) & bitmask(4,0));
-      }
-      else if(appId == AIRCRAFT_HOME && telemetry_provider==3){
-    	  uint16_t msl_dc, msl_x, msl_sgn;
-    	  msl_dc = (SPORT_DATA_U32(packet) & bitmask(7,24)) >> 24;
-    	  msl_x = (SPORT_DATA_U32(packet) & bitmask(2,22)) >> 22;
-    	  msl_sgn = (SPORT_DATA_U32(packet) & bitmask(1,31)) >> 31;
-    	  //homeAlt = bit32.extract(VALUE,14,10) * (10^bit32.extract(VALUE,12,2)) * 0.1 * (bit32.extract(VALUE,24,1) == 1 and -1 or 1) --m
-    	  alt = ((int16_t) (msl_dc * msl_x * 0.1 * msl_sgn == 1?-1:1));
-    	  telemetry_alt = alt;
+    	  //telemetry.gpsAlt = bit32.extract(VALUE,24,7) * (10^bit32.extract(VALUE,22,2)) * (bit32.extract(VALUE,31,1) == 1 and -1 or 1) -- dm
+		  uint16_t msl_dc, msl_x, msl_sgn;
+		  msl_dc = (SPORT_DATA_U32(packet) & bitmask(7,24)) >> 24;
+		  msl_x = (SPORT_DATA_U32(packet) & bitmask(2,22)) >> 22;
+		  msl_sgn = (SPORT_DATA_U32(packet) & bitmask(1,31)) >> 31;
+		  telemetry_alt = (int16_t) (msl_dc * pow(10,msl_x) * 0.1 * (msl_sgn == 1?-1:1));
     	  gotAlt = true;
       }
       break;

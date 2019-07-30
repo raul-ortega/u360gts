@@ -354,6 +354,10 @@ static const char * const lookupTabletelemetryProvider[] = {
     "NONE", "DIY_GPS","INAV","APM10"
 };
 
+static const char * const lookupTableAltitudePriority[] = {
+	"BARO","GPS"
+};
+
 static const char * const lookupTabletelemetryHome[] = {
     "DEFAULT", "AUTO"
 };
@@ -405,6 +409,7 @@ typedef enum {
     TABLE_UNIT,
     TABLE_ALIGNMENT,
 	TABLE_TELEMETRY_PROVIDER,
+	TABLE_ALTITUDE_PRIORITY,
 	TABLE_TELEMETRY_HOME,
 #ifdef GPS
     TABLE_GPS_PROVIDER,
@@ -424,6 +429,7 @@ static const lookupTableEntry_t lookupTables[] = {
     { lookupTableUnit, sizeof(lookupTableUnit) / sizeof(char *) },
     { lookupTableAlignment, sizeof(lookupTableAlignment) / sizeof(char *) },
 	{ lookupTabletelemetryProvider, sizeof(lookupTabletelemetryProvider) / sizeof(char *) },
+	{ lookupTableAltitudePriority, sizeof(lookupTableAltitudePriority) / sizeof(char *) },
 	{ lookupTabletelemetryHome, sizeof(lookupTabletelemetryHome) / sizeof(char *) },
 #ifdef GPS
     { lookupTableGPSProvider, sizeof(lookupTableGPSProvider) / sizeof(char *) },
@@ -551,7 +557,7 @@ const clivalue_t valueTable[] = {
 */
 #endif
 
-/*    { "serialrx_provider",          VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.rxConfig.serialrx_provider, .config.lookup = { TABLE_SERIAL_RX } },
+/*  { "serialrx_provider",          VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.rxConfig.serialrx_provider, .config.lookup = { TABLE_SERIAL_RX } },
     { "spektrum_sat_bind",          VAR_UINT8  | MASTER_VALUE,  &masterConfig.rxConfig.spektrum_sat_bind, .config.minmax = { SPEKTRUM_SAT_BIND_DISABLED,  SPEKTRUM_SAT_BIND_MAX} },
 
     { "telemetry_switch",           VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.telemetryConfig.telemetry_switch, .config.lookup = { TABLE_OFF_ON } },*/
@@ -568,23 +574,21 @@ const clivalue_t valueTable[] = {
     { "vbat_max_cell_voltage",      VAR_UINT8  | MASTER_VALUE,  &masterConfig.batteryConfig.vbatmaxcellvoltage, .config.minmax = { 10,  50 } },
     { "vbat_min_cell_voltage",      VAR_UINT8  | MASTER_VALUE,  &masterConfig.batteryConfig.vbatmincellvoltage, .config.minmax = { 10,  50 } },
     { "vbat_warning_cell_voltage",  VAR_UINT8  | MASTER_VALUE,  &masterConfig.batteryConfig.vbatwarningcellvoltage, .config.minmax = { 10,  50 } },
-//    { "current_meter_scale",        VAR_INT16  | MASTER_VALUE,  &masterConfig.batteryConfig.currentMeterScale, .config.minmax = { -10000,  10000 } },
-//    { "current_meter_offset",       VAR_UINT16 | MASTER_VALUE,  &masterConfig.batteryConfig.currentMeterOffset, .config.minmax = { 0,  3300 } },
-//    { "multiwii_current_meter_output", VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.batteryConfig.multiwiiCurrentMeterOutput, .config.lookup = { TABLE_OFF_ON } },
-//    { "current_meter_type",         VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.batteryConfig.currentMeterType, .config.lookup = { TABLE_CURRENT_SENSOR } },
-/*
+//  { "current_meter_scale",        VAR_INT16  | MASTER_VALUE,  &masterConfig.batteryConfig.currentMeterScale, .config.minmax = { -10000,  10000 } },
+//  { "current_meter_offset",       VAR_UINT16 | MASTER_VALUE,  &masterConfig.batteryConfig.currentMeterOffset, .config.minmax = { 0,  3300 } },
+//  { "multiwii_current_meter_output", VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.batteryConfig.multiwiiCurrentMeterOutput, .config.lookup = { TABLE_OFF_ON } },
+//  { "current_meter_type",         VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.batteryConfig.currentMeterType, .config.lookup = { TABLE_CURRENT_SENSOR } },
     { "align_gyro",                 VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.sensorAlignmentConfig.gyro_align, .config.lookup = { TABLE_ALIGNMENT } },
-    { "align_acc",                  VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.sensorAlignmentConfig.acc_align, .config.lookup = { TABLE_ALIGNMENT } },
-*/  { "align_mag",                  VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.sensorAlignmentConfig.mag_align, .config.lookup = { TABLE_ALIGNMENT } },
-/*
+//  { "align_acc",                  VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.sensorAlignmentConfig.acc_align, .config.lookup = { TABLE_ALIGNMENT } },
+	{ "align_mag",                  VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.sensorAlignmentConfig.mag_align, .config.lookup = { TABLE_ALIGNMENT } },
+
     { "align_board_roll",           VAR_INT16  | MASTER_VALUE,  &masterConfig.boardAlignment.rollDegrees, .config.minmax = { -180,  360 } },
     { "align_board_pitch",          VAR_INT16  | MASTER_VALUE,  &masterConfig.boardAlignment.pitchDegrees, .config.minmax = { -180,  360 } },
     { "align_board_yaw",            VAR_INT16  | MASTER_VALUE,  &masterConfig.boardAlignment.yawDegrees, .config.minmax = { -180,  360 } },
-
-    { "max_angle_inclination",      VAR_UINT16 | MASTER_VALUE,  &masterConfig.max_angle_inclination, .config.minmax = { 100,  900 } },
+//  { "max_angle_inclination",      VAR_UINT16 | MASTER_VALUE,  &masterConfig.max_angle_inclination, .config.minmax = { 100,  900 } },
 
     { "gyro_lpf",                   VAR_UINT16 | MASTER_VALUE,  &masterConfig.gyro_lpf, .config.minmax = { 0,  256 } },
-    { "moron_threshold",            VAR_UINT8  | MASTER_VALUE,  &masterConfig.gyroConfig.gyroMovementCalibrationThreshold, .config.minmax = { 0,  128 } },
+/*  { "moron_threshold",            VAR_UINT8  | MASTER_VALUE,  &masterConfig.gyroConfig.gyroMovementCalibrationThreshold, .config.minmax = { 0,  128 } },
     { "gyro_cmpf_factor",           VAR_UINT16 | MASTER_VALUE,  &masterConfig.gyro_cmpf_factor, .config.minmax = { 100,  1000 } },
     { "gyro_cmpfm_factor",          VAR_UINT16 | MASTER_VALUE,  &masterConfig.gyro_cmpfm_factor, .config.minmax = { 100,  1000 } },
 
@@ -720,13 +724,15 @@ const clivalue_t valueTable[] = {
 	{ "max_pid_accumulator",        VAR_UINT16  | TRACKER_VALUE, &masterConfig.max_pid_accumulator, .config.minmax = { 0,  50000 } },
 	{ "max_pid_gain",           	VAR_UINT16  | TRACKER_VALUE, &masterConfig.max_pid_gain, .config.minmax = { 0,  5000 } },
 	{ "pid_divider",           		VAR_UINT8  | TRACKER_VALUE, &masterConfig.max_pid_divider, .config.minmax = { 0,  255 } },
+	{ "pan_pin",           		    VAR_UINT8  | TRACKER_VALUE, &masterConfig.pan_pin, .config.minmax = { 0,  7 } },
 	{ "pan0",           			VAR_UINT16  | TRACKER_VALUE, &masterConfig.pan0, .config.minmax = { 0,  3000 } },
 	{ "pan0_calibrated",          	VAR_UINT8  | TRACKER_VALUE, &masterConfig.pan0_calibrated, .config.minmax = { 0,  1 } },
 	{ "pan_calibration_pulse",		VAR_UINT16  | TRACKER_VALUE, &masterConfig.pan_calibration_pulse, .config.minmax = { 1,  1500 } },
-	{ "min_pan_speed",     			VAR_INT8   | TRACKER_VALUE, &masterConfig.min_pan_speed, .config.minmax = { 0,  100 } },
+	{ "min_pan_speed",     			VAR_UINT8   | TRACKER_VALUE, &masterConfig.min_pan_speed, .config.minmax = { 0,  100 } },
 	{ "offset",     				VAR_INT16  | TRACKER_VALUE, &masterConfig.offset, .config.minmax = { -360,  360 } },
 	{ "offset_trim",   				VAR_INT8   | TRACKER_VALUE, &masterConfig.offset_trim, .config.minmax = { -20,  20 } },
 	{ "init_servos",    			VAR_UINT8  | TRACKER_VALUE, &masterConfig.init_servos, .config.minmax = { 0,  1 } },
+	{ "tilt_pin",           		VAR_UINT8  | TRACKER_VALUE, &masterConfig.tilt_pin, .config.minmax = { 0,  7 } },
 	{ "tilt0",           			VAR_UINT16  | TRACKER_VALUE, &masterConfig.tilt0, .config.minmax = { 0,  3000 } },
 	{ "tilt90",           			VAR_UINT16  | TRACKER_VALUE, &masterConfig.tilt90, .config.minmax = { 0,  3000 } },
 	{ "tilt_max_angle",         	VAR_UINT8  | TRACKER_VALUE, &masterConfig.tilt_max_angle, .config.minmax = { 0,  90 } },
@@ -757,7 +763,8 @@ const clivalue_t valueTable[] = {
     { "eps_interpolation",   	    VAR_UINT8 | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.eps_interpolation, .config.lookup = { TABLE_OFF_ON } },
 	{ "eps_interpolation_points",   VAR_UINT8 | TRACKER_VALUE, &masterConfig.eps_interpolation_points, .config.minmax = { 2,  10 } },
     { "update_home_by_local_gps",   VAR_UINT8 | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.update_home_by_local_gps, .config.lookup = { TABLE_OFF_ON } },
-	{ "max_speed_filter",   	    VAR_UINT8 | TRACKER_VALUE, &masterConfig.max_speed_filter, .config.minmax = { 0,  255 } }
+	{ "max_speed_filter",   	    VAR_UINT8 | TRACKER_VALUE, &masterConfig.max_speed_filter, .config.minmax = { 0,  255 } },
+	{ "telemetry_altitude_priority",   VAR_UINT8 | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.altitude_priority, .config.lookup = {TABLE_ALTITUDE_PRIORITY} }
 };
 
 #define VALUE_COUNT (sizeof(valueTable) / sizeof(clivalue_t))
@@ -2530,7 +2537,7 @@ static void cliSetPanServoSpeed()
 {
 	masterConfig.pan0_calibrated=0;
 	pwmPan0=masterConfig.pan0;
-   	pwmWritePanServo(masterConfig.pan0);
+   	pwmWriteServo(masterConfig.pan_pin,masterConfig.pan0);
    	cliPrint("\r\nWhen pan servo stops moving then you must set parameter pan0_calibrated to 1.\r\n");
 }
 static void cliSetOffset()
@@ -2571,7 +2578,7 @@ static void cliDumpTracker() {
 
 	printSectionBreak();
 
-	cliPrint("\r\n\r\n# feature\r\n");
+	cliPrint("\r\n\r\n# parameters\r\n");
 
 	dumpValues(TRACKER_VALUE);
 }

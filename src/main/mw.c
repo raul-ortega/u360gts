@@ -305,11 +305,11 @@ void mwDisarm(void)
     if (ARMING_FLAG(ARMED)) {
         DISABLE_ARMING_FLAG(ARMED);
 
-#ifdef BLACKBOX
+/*#ifdef BLACKBOX
         if (feature(FEATURE_BLACKBOX)) {
             finishBlackbox();
         }
-#endif
+#endif*/
 
         beeper(BEEPER_DISARMING);      // emit disarm tone
     }

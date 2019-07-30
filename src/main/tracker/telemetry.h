@@ -16,6 +16,8 @@
  * along with u360gts.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef TELEMETRY_H
+#define TELEMETRY_H
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -52,6 +54,13 @@ extern int32_t telemetry_home_lat;
 extern int32_t telemetry_home_lon;
 extern int16_t telemetry_home_alt;
 
+enum telemetryProviders {
+    TELEMETRY_PROVIDER_NONE = 0,
+    TELEMETRY_PROVIDER_DIY_GPS,
+    TELEMETRY_PROVIDER_INAV,
+    TELEMETRY_PROVIDER_APM10
+};
+
 int16_t getTargetAlt(int16_t home_alt);
 void encodeTargetData(uint8_t c);
 int32_t getTargetLat();
@@ -63,3 +72,4 @@ void enableProtocolDetection(void);
 void disableProtocolDetection(void);
 void setTelemetryHome(int32_t lat, int32_t lon, int16_t alt);
 
+#endif

@@ -705,11 +705,11 @@ void mspInit(serialConfig_t *serialConfig)
     }
 #endif
 
-#ifdef BLACKBOX
+/*#ifdef BLACKBOX
     if (feature(FEATURE_BLACKBOX)){
         activeBoxIds[activeBoxIdCount++] = BOXBLACKBOX;
     }
-#endif
+#endif*/
 
     /*if (feature(FEATURE_FAILSAFE)){
         activeBoxIds[activeBoxIdCount++] = BOXFAILSAFE;
