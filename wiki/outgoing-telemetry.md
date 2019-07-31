@@ -68,5 +68,6 @@ These applications have been tested:
 * Mission Planner (mavlink)
 * Droid Planner / Tower (mavlink)
 * Oruxmpas (NMEA)
+* EZ-GUI (LTME)
 
 [<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
