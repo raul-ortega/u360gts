@@ -37,6 +37,8 @@ enum protocolDetectionStates {
 	DETECTION_STATE_START_MAVLINK,
 	DETECTION_STATE_START_MFD,
 	DETECTION_STATE_START_PITLAB,
+	DETECTION_STATE_START_CROSSFIRE0,
+	DETECTION_STATE_START_CROSSFIRE1,
     DETECTION_STATE_DETECTED
   };
 
@@ -69,7 +71,10 @@ void protocolDetectionParser(uint8_t c){
 
 	switch(detectionState){
 		case DETECTION_STATE_IDLE:
-			if (c =='#' || c == 'X') {
+		    if (c == 0x80 ) {
+		        detectionState = DETECTION_STATE_START_CROSSFIRE0;
+		        detectionPacketIdex = 0;
+		    } else if (c =='#' || c == 'X') {
 				detectionState = DETECTION_STATE_START_MFD;
 				detectionPacketIdex = 0;
 			} else if (c == 0x7E)
@@ -85,6 +90,18 @@ void protocolDetectionParser(uint8_t c){
 			}
 			detectionPacketIdex ++;
 			break;
+		case DETECTION_STATE_START_CROSSFIRE0:
+		    if (c == 0x00){
+		        detectionState = DETECTION_STATE_START_CROSSFIRE1;
+		        detectionPacketIdex++;
+		    }
+		    break;
+		case DETECTION_STATE_START_CROSSFIRE1:
+            if (c == 0xA7 && detectionPacketIdex == 1) {
+                protocolDetected = TP_CROSSFIRE;
+                detectionState = DETECTION_STATE_DETECTED;
+            }
+            break;
 		case DETECTION_STATE_START_MFD:
 			if ((c == '#' || c == 'X'))
 				detectionPacketIdex++;

@@ -181,7 +181,8 @@ static const char* const telemetry_protocols_Titles[]={
 	"FRSKY_D       ",
 	"FRSKY_X       ",
 	"LTM           ",
-	"PITLAB        "
+	"PITLAB        ",
+	"CROSSFIRE     "
 };
 
 // Menu

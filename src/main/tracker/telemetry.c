@@ -102,11 +102,10 @@ void encodeTargetData(uint8_t c) {
 		frskyx_encodeTargetData(c);
 	else if(PROTOCOL(TP_LTM))
 		ltm_encodeTargetData(c);
-	else if(PROTOCOL(TP_LTM_FRSKYD))
-		frskyd_encodeTargetData(c);
+	else if(PROTOCOL(TP_CROSSFIRE))
+	    crossfire_encodeTargetData(c);
 	else if(PROTOCOL(TP_PITLAB))
 		pitlab_encodeTargetData(c);
-
 }
 
 void gps_encodeTargetData(uint8_t c) {

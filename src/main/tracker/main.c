@@ -1619,8 +1619,8 @@ void protocolInit(void){
 	  case TP_LTM:
 		ENABLE_PROTOCOL(TP_LTM);
 		break;
-	  case TP_LTM_FRSKYD:
-		ENABLE_PROTOCOL(TP_LTM_FRSKYD);
+	  case TP_CROSSFIRE:
+		ENABLE_PROTOCOL(TP_CROSSFIRE);
 		break;
 	  case TP_PITLAB:
 		ENABLE_PROTOCOL(TP_PITLAB);
