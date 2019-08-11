@@ -71,16 +71,16 @@ void protocolDetectionParser(uint8_t c){
 
 	switch(detectionState){
 		case DETECTION_STATE_IDLE:
-		    if (c == 0x80 ) {
+		    if (c == 0x08 ) {
 		        detectionState = DETECTION_STATE_START_CROSSFIRE0;
 		        detectionPacketIdex = 0;
+		        break;
 		    } else if (c =='#' || c == 'X') {
 				detectionState = DETECTION_STATE_START_MFD;
 				detectionPacketIdex = 0;
 			} else if (c == 0x7E)
 				detectionState = DETECTION_STATE_START_FRXKY;
 			else if (c == 254 && detectionPacketIdex > 10) {
-				/*detectionState = DETECTION_STATE_START_MAVLINK;*/
 				protocolDetected = TP_MAVLINK;
 				detectionState = DETECTION_STATE_DETECTED;
 			} else if (c == '$'){

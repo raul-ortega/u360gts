@@ -224,7 +224,7 @@ static const char* const telemetryProtocolMenu[] = {
 	"FRSKY X      ",
 	"LTM          ",
 	"PITLAB       ",
-	/*"LTM_FRSKYD   ",*/
+	"CROSSFIRE    ",
 	"AUTODETECT   ",
 	"EXIT         "
 };
@@ -400,7 +400,7 @@ void showTitle()
     //i2c_OLED_send_string(pageTitles[pageState.pageId]);
 	if(pageState.pageId==PAGE_TELEMETRY) {
         int16_t i;
-    	for(i=0;i < OP_PITLAB + 3;i++) {
+    	for(i=0;i < OP_CROSSFIRE + 3;i++) {
     		if(master_telemetry_protocol & (1<<i)) {
     			i2c_OLED_send_string(telemetry_protocols_Titles[i]);
     			if(feature(FEATURE_EPS) && !PROTOCOL(TP_MFD)){

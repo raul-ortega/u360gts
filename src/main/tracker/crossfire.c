@@ -28,17 +28,11 @@
 #define GPS_ID                         0x02
 #define TELEMETRY_RX_PACKET_SIZE       128
 
-bool checkCrossfireTelemetryFrameCRC();
-bool getCrossfireTelemetryValue(uint8_t N, uint8_t index, int32_t * value);
-void processCrossfireTelemetryFrame();
-void crossfire_encodeTargetData(uint8_t data);
 uint8_t crc8(const uint8_t * ptr, uint32_t len);
 
 uint8_t telemetryRxBuffer[TELEMETRY_RX_PACKET_SIZE];   // Receive buffer. 9 bytes (full packet), worst case 18 bytes with byte-stuffing (+1)
 uint8_t telemetryRxBufferCount = 0;
 uint8_t posCount = 0;
-
-
 
 bool checkCrossfireTelemetryFrameCRC()
 {
@@ -65,7 +59,7 @@ bool getCrossfireTelemetryValue(uint8_t N, uint8_t index, int32_t * value)
 void processCrossfireTelemetryFrame()
 {
   if (!checkCrossfireTelemetryFrameCRC()) {
-    printf("CRC error");
+    telemetry_failed_cs++;
     return;
   }
 
@@ -73,23 +67,23 @@ void processCrossfireTelemetryFrame()
   int32_t value;
   switch(id) {
     case GPS_ID:
-      if (getCrossfireTelemetryValue(4, 3, value)){
+      if (getCrossfireTelemetryValue(4, 3, &value)){
         telemetry_lat = value / 10;
-        if(posCount == 0) posCount ++;
+        if(posCount == 0) posCount++;
       }
-      if (getCrossfireTelemetryValue(4, 7, value)){
+      if (getCrossfireTelemetryValue(4, 7, &value)){
         telemetry_lon = value / 10;
-        if(posCount == 1) posCount ++;
+        if(posCount == 1) posCount++;
       }
-      if (getCrossfireTelemetryValue(2, 11, value))
+      if (getCrossfireTelemetryValue(2, 11, &value))
         telemetry_speed = (float) value;
-      if (getCrossfireTelemetryValue(2, 13, value))
+      if (getCrossfireTelemetryValue(2, 13, &value))
         telemetry_course = (float) value;
-      if (getCrossfireTelemetryValue(2, 15, value)){
+      if (getCrossfireTelemetryValue(2, 15, &value)){
         telemetry_alt = (uint16_t) (value - 1000);
         gotAlt = true;
       }
-      if (getCrossfireTelemetryValue(1, 17, value))
+      if (getCrossfireTelemetryValue(1, 17, &value))
         telemetry_sats = (uint16_t) value;
       break;
     }
