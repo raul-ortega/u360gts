@@ -2435,6 +2435,12 @@ static void cliStatus(char *cmdline)
         }
     }
 #endif
+
+#ifdef GPS
+    if(feature(FEATURE_GPS))
+        printf(", GPS=%d", feature(FEATURE_GPS) + isGpsReceivingData() + (STATE(GPS_FIX) == GPS_FIX));
+#endif
+
     cliPrint("\r\n");
 
 #ifdef USE_I2C
