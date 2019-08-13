@@ -2555,6 +2555,10 @@ static void cliDumpTracker() {
 
 	cliPrint("\r\n# dump configuration\r\n");
 
+	cliPrint("\r\n\r\n# serial\r\n");
+
+	cliSerial("");
+
 	cliPrint("\r\n\r\n# feature\r\n");
 
 	/*if(featureConfigured(FEATURE_EASING))
