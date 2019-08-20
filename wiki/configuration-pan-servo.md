@@ -20,13 +20,13 @@ At the same time the controller retrieves heading angles values and calculates h
 
 Once the lower value for the stop pulse range has been calculated, the controller sends a calibration pulse higher than the spected central estop pulse. The valuee of the new calibration pulse is calculated as follows:
 
-New calibration pulse = spected central stop pulse + (spected central stop pulse - calibration pulse) = 1500 + (1500 - 1400) = 1600 usec.
+**calibration pulse = central stop pulse + (central stop pulse - calibration pulse) = 1500 + (1500 - 1400) = 1600 usec**
 
 This time the tracker starts spinning clock wise. Again, as the value gets closer to the central stop pulse servo speed decreases. If the controller detects that the servo has stoped (heading difference threshold and time conditions are met), it stores the last sent pulse as the higher value for the range of stop pulses. The process is repeated as necessary until the higher stop pulse value is calculated (e.g. max_pan0 = 1527 usec).
 
 Now that we have the value of both limits of the range, the central stop pulse (pan0) is calculated as follows:
 
-pan0 = min_pan 0 + (max_pan0 - min_pan0) / 2 = 1511 + (1527 - 1511) / 2 = 1511 + 8 = 1519 usec
+**pan0 = min_pan 0 + (max_pan0 - min_pan0) / 2 = 1511 + (1527 - 1511) / 2 = 1511 + 8 = 1519 usec**
 
 During the process values for central stop pulse are automatically updated several times, and entries are shown on log panel.
 
@@ -34,7 +34,7 @@ During the process values for central stop pulse are automatically updated sever
 
 Finally, the algorithm calculates the value of min_pan_speed parameter as follows:
 
-min_pan_speed = (1527 - 1511) / 2 = 8 usec
+**min_pan_speed = (1527 - 1511) / 2 = 8 usec**
 
 and the configurator updates its value.
 
