@@ -27,7 +27,7 @@ u360gts locks pan servo movement if the compass is not pressent or if its not ca
 
 Note: Before mag calibration you should [configure the pan servo](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-pan-servo.md).
 
-To calibrate the compass from configurator go to Settings -> Mag and clic on Calibrate Mag button.
+To calibrate the compass from configurator go to Configuration -> Mag, and clic on Calibrate Mag button.
 
 <img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/mag_configuration.jpg" width="527" />
 
@@ -47,5 +47,26 @@ If you mounted the controller with the magnetometer aligned to north, you may no
 But if you mounted the controller in a different position, because you needed to place the micro usb connector to the side of the enclosure, then you need to configure this parameter.
 
 e.g set offset to 90 if the board/mag is rotated 90 degrees.
+
+### External Mag Alignment
+
+When using external mag, you have to be sure that the magnetometer is aligned with the arrow of the board pointing to the front and it is not placed upside down. If it is rotated and/or flipped, then you have to configure the align_mag parameter with one of this values:
+
+DEFAULT
+CW0
+CW90
+CW180
+CW270
+CW0FLIP
+CW90FLIP
+CW180FLIP
+CW270FLIP
+
+
+### Magnetic Declination
+
+To change magnetic declination you have to set correct declination of your spesific location, which can be found [here](www.magnetic-declination.com).
+
+If your magnetic declination readings are e.g. +3° 34' , the value entered in the u360gts configurator is 334. For west declination, use a minus value, e.g. for 1° 32' W, the value entered in the u360gts configurator is -132. In all cases (both CLI and GUI), the least significant digits are minutes, not decimal degrees.
 
 [<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
