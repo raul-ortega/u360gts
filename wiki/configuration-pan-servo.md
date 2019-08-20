@@ -18,7 +18,7 @@ The controller sends again the calibration pulse, and the tracker starts or cont
 
 At the same time the controller retrieves heading angles values and calculates how small the difference between consecutive values is. When this difference is equal or less than a specific threshold (0.2 degrees) the controller assumes that it has stopped spinning, and stores the last sent pulse as the lower value within a range of stop pulses. Now, the controller waits 3 seconds, and measure again heading value. If a difference greater than 5 degrees is detected then the controller assumes that the tracker is still in movement, and sends again the calibration pulse. The process is repeated as necessary until the lower stop pulse value is calculated (e.g. min_pan0 = 1511 usec)
 
-Once the lower value for the stop pulse range has been calculated, the controller sends a calibration pulse higher than the spected central estop pulse. The valuee of the new calibration pulse is calculated as follows:
+Once the lower value for the stop pulse range has been calculated, the controller sends a calibration pulse higher than the spected central stop pulse. The valuee of the new calibration pulse is calculated as follows:
 
 **calibration pulse = central stop pulse + (central stop pulse - calibration pulse) = 1500 + (1500 - 1400) = 1600 usec**
 
