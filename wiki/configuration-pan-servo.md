@@ -16,13 +16,13 @@ Note: When calibration pulse is lower than central stop pulse, the tracker spins
 
 The controller sends again the calibration pulse, and the tracker starts or continues spinning, depending on previous step. In each algorithm cycle the value of the pulse is decreased, and as the value gets closer to the central stop pulse servo speed decreases.
 
-At the same time the controller retrieves heading angles values and calculates how small the difference between consecutive values is. When this difference is equal or less than a specific threshold for some seconds, the controller assumes that it has stopped spinning, and stores the last sent pulse as the lower value within a range of stop pulses. If the threshold and time conditions are not met then the controller sends again the calibration pulse. The process is repeated as necessary until the lower stop pulse value is calculated (e.g. min_pan0 = 1511 usec)
+At the same time the controller retrieves heading angles values and calculates how small the difference between consecutive values is. When this difference is equal or less than a specific threshold (0.2 degrees) the controller assumes that it has stopped spinning, and stores the last sent pulse as the lower value within a range of stop pulses. Now, the controller waits 3 seconds, and measure again heading value. If a difference greater than 5 degrees is detected then the controller assumes that the tracker is still in movement, and sends again the calibration pulse. The process is repeated as necessary until the lower stop pulse value is calculated (e.g. min_pan0 = 1511 usec)
 
 Once the lower value for the stop pulse range has been calculated, the controller sends a calibration pulse higher than the spected central estop pulse. The valuee of the new calibration pulse is calculated as follows:
 
 **calibration pulse = central stop pulse + (central stop pulse - calibration pulse) = 1500 + (1500 - 1400) = 1600 usec**
 
-This time the tracker starts spinning clock wise. Again, as the value gets closer to the central stop pulse servo speed decreases. If the controller detects that the servo has stoped (heading difference threshold and time conditions are met), it stores the last sent pulse as the higher value for the range of stop pulses. The process is repeated as necessary until the higher stop pulse value is calculated (e.g. max_pan0 = 1527 usec).
+This time the tracker starts spinning clock wise. Again, as the value gets closer to the central stop pulse servo speed decreases. If the controller detects that the servo has stoped (heading difference of 0.2 degrees), it stores the last sent pulse as the higher value for the range of stop pulses. If after 3 secods a movement is detected (headding difference greater than 5 degrees) the controller sends again calibration pulse. The process is repeated as necessary until the higher stop pulse value is calculated (e.g. max_pan0 = 1527 usec).
 
 Now that we have the value of both limits of the range, the central stop pulse (pan0) is calculated as follows:
 
