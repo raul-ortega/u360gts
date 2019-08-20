@@ -32,7 +32,7 @@ During the process values for central stop pulse are automatically updated sever
 
 ### Third step, minimun increment of speed to start movement (min_pan_speed):
 
-Finally, the algorithm calculates the value of min_pan_speed parameter as follows:
+Now the algorithm calculates the value of min_pan_speed parameter as follows:
 
 **min_pan_speed = (1527 - 1511) / 2 = 8 usec**
 
