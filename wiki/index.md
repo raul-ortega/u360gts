@@ -21,7 +21,7 @@ First of all we would like you to understand the big effort spent to create such
 ## Configuration
 - [Loading the firmware](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-loading-firmware.md)
 - [Configurator](https://github.com/raul-ortega/u360gts-configurator/blob/master/README.md)
-- [Magnetometer](index.md)
+- [Magnetometer](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-compass.md)
 - [Pan servo](index.md)
 - [Tilt servo](index.md)
 - [OFFSET setting](index.md)
