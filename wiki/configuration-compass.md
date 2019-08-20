@@ -44,7 +44,7 @@ When entering in configuration mode, the tracker tries to point to 0 degrees (no
 
 If you mounted the controller with the magnetometer aligned to north, you may not need to touch this parameter, unless you want to adjust it even better.
 
-But if you mounted the controller in a different position, because you needed to place the micro usb connector to the side of the tracker box, then you need to configure this parameter.
+But if you mounted the controller in a different position, because you needed to place the micro usb connector to the side of the enclosure, then you need to configure this parameter.
 
 e.g set offset to 90 if the board/mag is rotated 90 degrees.
 
