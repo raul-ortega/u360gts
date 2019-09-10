@@ -16,12 +16,12 @@
  */
 
 #define FC_VERSION_MAJOR            10 // increment when a major release is made (big new feature, etc)
-#define FC_VERSION_MINOR            2 // increment when a minor release is made (small new feature, change etc)
-#define FC_VERSION_PATCH_LEVEL      0 // increment when a bug is fixed
+#define FC_VERSION_MINOR            1 // increment when a minor release is made (small new feature, change etc)
+#define FC_VERSION_PATCH_LEVEL      3 // increment when a bug is fixed
 
 #define STR_HELPER(x) #x
 #define STR(x) STR_HELPER(x)
-#define FC_VERSION_STRING " dev" STR(FC_VERSION_MAJOR) "." STR(FC_VERSION_MINOR) "." STR(FC_VERSION_PATCH_LEVEL)
+#define FC_VERSION_STRING STR(FC_VERSION_MAJOR) "." STR(FC_VERSION_MINOR) "." STR(FC_VERSION_PATCH_LEVEL)
 
 #define MW_VERSION              231
 
@@ -35,3 +35,5 @@ extern const char* const buildDate;  // "MMM DD YYYY" MMM = Jan/Feb/...
 
 #define BUILD_TIME_LENGTH 8
 extern const char* const buildTime;  // "HH:MM:SS"
+
+
