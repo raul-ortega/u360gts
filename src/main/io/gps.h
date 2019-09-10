@@ -127,3 +127,4 @@ extern uint8_t GPS_svinfo_cno[16];         // Carrier to Noise Ratio (Signal Str
 void gpsThread(void);
 bool gpsNewFrame(uint8_t c);
 void updateGpsIndicator(uint32_t currentTime);
+uint8_t isGpsReceivingData();

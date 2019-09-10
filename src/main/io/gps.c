@@ -1074,4 +1074,8 @@ void updateGpsIndicator(uint32_t currentTime)
         LED1_TOGGLE;
     }
 }
+
+uint8_t isGpsReceivingData(){
+    return (gpsData.state == GPS_RECEIVING_DATA);
+}
 #endif
