@@ -2565,15 +2565,6 @@ static void cliDumpTracker() {
 
 	cliPrint("\r\n\r\n# feature\r\n");
 
-	/*if(featureConfigured(FEATURE_EASING))
-		printf("feature EASING\r\n");
-	else
-		printf("feature -EASING");
-
-	if(featureConfigured(FEATURE_DEBUG))
-		printf("feature DEBUG\r\n");
-	else
-		printf("feature -DEBUG");*/
 	unsigned int i;
 	char buf[16];
 	uint32_t mask;
