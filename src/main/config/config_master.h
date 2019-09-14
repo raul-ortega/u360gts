@@ -150,6 +150,7 @@ typedef struct master_t {
 	uint16_t pan_calibration_pulse;
 	uint8_t max_speed_filter;
 	uint8_t altitude_priority;
+	uint8_t pan_inverted;
 } master_t;
 
 extern master_t masterConfig;
