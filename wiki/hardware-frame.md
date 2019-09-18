@@ -18,5 +18,6 @@ Other alternatives are available for this project:
 - [open360tracker v2 by Chriss_SI ](https://www.thingiverse.com/thing:1351489)
 - [open360tracker v2 by 3d4uandme](https://www.thingiverse.com/thing:2568906)
 - [Mecánica de seguimiento de giro continuo V2 by JuanTrillo](https://www.thingiverse.com/thing:2495035)
+- [Antenna Tracker frame for u360gts by Roman Foltyn](https://www.thingiverse.com/thing:3868457)
 
 [<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
