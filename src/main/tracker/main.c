@@ -545,7 +545,7 @@ void getError(void)
 
 void calculatePID(void)
 {
-  uint8_t panInverted = (masterConfig.pan_inverted == 0 ? 1 : -1);
+  int8_t panInverted = (masterConfig.pan_inverted == 0 ? 1 : -1);
   if(feature(FEATURE_NOPID)) {
 	// Calculate pwmPan without usind PID control system
 	int16_t PAN_SPEED;
