@@ -545,13 +545,14 @@ void getError(void)
 
 void calculatePID(void)
 {
+  int8_t panInverted = (masterConfig.pan_inverted == 0 ? 1 : -1);
   if(feature(FEATURE_NOPID)) {
 	// Calculate pwmPan without usind PID control system
 	int16_t PAN_SPEED;
-	if(abs(Error[0]) >= masterConfig.nopid_map_angle*10)
-		PAN_SPEED = masterConfig.nopid_max_speed;
+	if(abs(Error[0]) >= masterConfig.nopid_map_angle * 10)
+		PAN_SPEED = panInverted * masterConfig.nopid_max_speed;
 	else
-		PAN_SPEED = map(abs(Error[0]), 0, masterConfig.nopid_map_angle*10, masterConfig.min_pan_speed, masterConfig.nopid_max_speed);
+		PAN_SPEED = panInverted * map(abs(Error[0]), 0, masterConfig.nopid_map_angle * 10, masterConfig.min_pan_speed, masterConfig.nopid_max_speed);
 
 	if(abs(Error[0]) <= masterConfig.nopid_min_delta)
 		pwmPan = masterConfig.pan0;
@@ -564,14 +565,14 @@ void calculatePID(void)
   } else {
 	// Calculate pwmPan using PID control system
 	Divider = masterConfig.max_pid_divider;
-	PID = Error[0] * masterConfig.p;     // start with proportional gain
+	PID = Error[0] * (panInverted * masterConfig.p);     // start with proportional gain
 	Accumulator += Error[0];  // accumulator is sum of errors
 	if (Accumulator > masterConfig.max_pid_accumulator)
 		Accumulator = masterConfig.max_pid_accumulator;
 	if (Accumulator < -1 * masterConfig.max_pid_accumulator)
 		Accumulator = -1 * masterConfig.max_pid_accumulator;
-	PID += masterConfig.i * Accumulator; // add integral gain and error accumulation
-	Dk = masterConfig.d * (Error[0] - Error[10]);
+	PID += (panInverted * masterConfig.i) * Accumulator; // add integral gain and error accumulation
+	Dk = (panInverted * masterConfig.d) * (Error[0] - Error[10]);
 	PID += Dk; // differential gain comes next
 	PID = PID >> Divider; // scale PID down with divider
 	// limit the PID to the resolution we have for the PWM variable
