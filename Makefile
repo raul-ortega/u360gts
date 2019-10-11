@@ -228,7 +228,8 @@ TRACKER_SRC = tracker/main.c \
 			tracker/gps_estimation.c \
 			tracker/interpolation.c \
 			tracker/protocol_detection.c \
-			tracker/pitlab.c
+			tracker/pitlab.c \
+			tracker/crossfire.c
 
 COMMON_SRC = $(TRACKER_SRC)\
 		   build_config.c \

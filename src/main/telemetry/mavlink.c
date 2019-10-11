@@ -98,7 +98,7 @@ void sendMavlinkGpsCoord() {
 		sats = telemetry_sats;
 
 	//uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, uint64_t time_usec, uint8_t fix_type, int32_t lat, int32_t lon, int32_t alt, uint16_t eph, uint16_t epv, uint16_t vel, uint16_t cog, uint8_t satellites_visible
-	mavlink_msg_gps_raw_int_pack (100, 200, &msg, 0, gpsStatus, targetPosition.lat*10, targetPosition.lon*10, ((int32_t)targetPosition.alt)*1000, 0, 0, vgnd, 0, (uint8_t)sats);
+	mavlink_msg_gps_raw_int_pack (100, 200, &msg, 0, gpsStatus, targetPosition.lat*10, targetPosition.lon*10, ((int32_t)targetPosition.alt)*1000, 0, 0, telemetry_speed, 0, (uint8_t)sats);
 	//mavlink_msg_gps_raw_int_pack (100, 200, &msg, 0, gpsStatus, 471234500, 81234500, 1000, 0, 0, vgnd, 0, telemetry_sats);
 	len = mavlink_msg_to_send_buffer(mavlink_buf, &msg);
 }
@@ -146,7 +146,7 @@ void sendMavlinkParam() {
 
 void sendMavlinkAltitude() {
   //uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, float airspeed, float groundspeed, int16_t heading, uint16_t throttle, float alt, float climb)
-  mavlink_msg_vfr_hud_pack (100, 200, &msg, vgnd/100, vgnd/100, (uint16_t)telemetry_course, 0, ((int32_t)targetPosition.alt)*1000, 0);
+  mavlink_msg_vfr_hud_pack (100, 200, &msg, telemetry_speed, telemetry_speed, (uint16_t)telemetry_course, 0, ((int32_t)targetPosition.alt)*1000, 0);
   len = mavlink_msg_to_send_buffer(mavlink_buf, &msg);
 }
 

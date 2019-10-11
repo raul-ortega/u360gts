@@ -91,7 +91,6 @@ static uint8_t LTM_frame_length;
 static uint8_t dataState = IDLE;
 
 int32_t temp_alt;
-uint8_t groundspeedms;
 uint8_t satsfix;
 uint8_t fix_type;
 
@@ -157,7 +156,7 @@ void parseLTM_GFRAME(void) {
     telemetry_lat = telemetry_lat/10;
     telemetry_lon = (int32_t)ltmread_u32();
     telemetry_lon = telemetry_lon/10;
-    groundspeedms = ltmread_u8();
+    telemetry_speed = ltmread_u8();
     temp_alt = (int32_t)ltmread_u32();//10000000;
     telemetry_alt = (int16_t)(temp_alt/100);
     satsfix = ltmread_u8();

@@ -728,6 +728,7 @@ const clivalue_t valueTable[] = {
 	{ "pan0",           			VAR_UINT16  | TRACKER_VALUE, &masterConfig.pan0, .config.minmax = { 0,  3000 } },
 	{ "pan0_calibrated",          	VAR_UINT8  | TRACKER_VALUE, &masterConfig.pan0_calibrated, .config.minmax = { 0,  1 } },
 	{ "pan_calibration_pulse",		VAR_UINT16  | TRACKER_VALUE, &masterConfig.pan_calibration_pulse, .config.minmax = { 1,  1500 } },
+	{ "pan_inverted",               VAR_UINT8 | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.pan_inverted, .config.lookup = { TABLE_OFF_ON } },
 	{ "min_pan_speed",     			VAR_UINT8   | TRACKER_VALUE, &masterConfig.min_pan_speed, .config.minmax = { 0,  100 } },
 	{ "offset",     				VAR_INT16  | TRACKER_VALUE, &masterConfig.offset, .config.minmax = { -360,  360 } },
 	{ "offset_trim",   				VAR_INT8   | TRACKER_VALUE, &masterConfig.offset_trim, .config.minmax = { -20,  20 } },
@@ -742,7 +743,7 @@ const clivalue_t valueTable[] = {
 	{ "easing_millis",           	VAR_UINT8  | TRACKER_VALUE, &masterConfig.easing_millis, .config.minmax = { 1,  100 } },
 	//{ "telemetry_port",        	VAR_UINT8  | TRACKER_VALUE, &masterConfig.p, .config.minmax = { 0,  3 } },
 	{ "telemetry_baud",           	VAR_UINT8 |  TRACKER_VALUE, &masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex, .config.minmax = { BAUD_1200,  BAUD_250000 } },
-	{ "telemetry_protocol",        	VAR_UINT16 | TRACKER_VALUE, &masterConfig.telemetry_protocol, .config.minmax = { TP_SERVOTEST,  TP_PITLAB } },
+	{ "telemetry_protocol",        	VAR_UINT16 | TRACKER_VALUE, &masterConfig.telemetry_protocol, .config.minmax = { TP_SERVOTEST,  TP_CROSSFIRE } },
     { "telemetry_min_sats",         VAR_UINT8  | TRACKER_VALUE, &masterConfig.telemetry_min_sats, .config.minmax = { 0,  20 } },
 	{ "telemetry_provider",			VAR_UINT8  | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.telemetry_provider, .config.lookup = {TABLE_TELEMETRY_PROVIDER} },
 	{ "telemetry_home"	,			VAR_UINT8  | TRACKER_VALUE | MODE_LOOKUP, &masterConfig.telemetry_home, .config.lookup = {TABLE_TELEMETRY_HOME} },
@@ -2555,21 +2556,16 @@ static void cliDumpTracker() {
 
 	cliPrint("\r\n# dump configuration\r\n");
 
+	cliPrint("\r\n\r\n# version\r\n");
+
+	cliVersion(NULL);
+
 	cliPrint("\r\n\r\n# serial\r\n");
 
-	cliSerial("");
+	cliSerial(NULL);
 
 	cliPrint("\r\n\r\n# feature\r\n");
 
-	/*if(featureConfigured(FEATURE_EASING))
-		printf("feature EASING\r\n");
-	else
-		printf("feature -EASING");
-
-	if(featureConfigured(FEATURE_DEBUG))
-		printf("feature DEBUG\r\n");
-	else
-		printf("feature -DEBUG");*/
 	unsigned int i;
 	char buf[16];
 	uint32_t mask;
@@ -2591,6 +2587,8 @@ static void cliDumpTracker() {
 	cliPrint("\r\n\r\n# parameters\r\n");
 
 	dumpValues(TRACKER_VALUE);
+
+	cliPrint("\r\n\r\n# dump finished\r\n");
 }
 
 static void cliBootMode(){
