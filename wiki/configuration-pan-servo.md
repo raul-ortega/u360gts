@@ -41,3 +41,32 @@ and the configurator updates its value.
 ### Final step
 
 Finally the tracker has sttoped spinning, and some beeps confirms that the automatic pan servo calibration process has finished.
+
+## Manual Pan Servo Calibration
+	
+Calibration pulse is not an stop pulse (min or max), it is only a pulse we need to start movement for the calibration, it has nothing to do with calculations. If you think that the pan0 (stop pulse) value might be arround 1500, we set calibration pulse as 1400. This calibration pulse is used only during automatic calibration proccess.
+
+During automatic calibration, the tracker will try to figure out the min_pan0 pulse (pulse lower than pan0 where the tracker stops) and max_pulse (pulse higher than pan0 where the tracker stops). This is because the servo stops movement whithing a range of pulses.
+
+For a better precission you may caluculate pan0 and min_pan_speed manualy. You should figure out the min_pan0 and max_pan0 pulses using the up/down arrows of stop pulse field of the GUI, and then do the calculations bellow.
+
+e.g.:
+
+	min_pan0 = 1495 
+	max_pan0 = 1530
+
+Lets calculate the stop pulse:
+
+	**pan0 = min_pan 0 + (max_pan0 - min_pan0) / 2**
+
+	pan0 = 1495 + (1530 - 1495) / 2 = 1512.5
+
+	Rounded **pan0 = 1513**
+
+And finally the minimun increment to start moving:
+
+	**min_pan_speed = (max_pan0 - pan0) / 2** 
+
+	min_pan_speed = (1530 - 1513) / 2 = 8.5
+
+	Rounded **min_pan_speed = 9**
