@@ -57,16 +57,16 @@ e.g.:
 
 Lets calculate the stop pulse:
 
-	**pan0 = min_pan 0 + (max_pan0 - min_pan0) / 2**
+	pan0 = min_pan 0 + (max_pan0 - min_pan0) / 2
 
 	pan0 = 1495 + (1530 - 1495) / 2 = 1512.5
 
-	Rounded **pan0 = 1513**
+	Rounded pan0 = 1513
 
 And finally the minimun increment to start moving:
 
-	**min_pan_speed = (max_pan0 - pan0) / 2** 
+	min_pan_speed = (max_pan0 - pan0) / 2 
 
 	min_pan_speed = (1530 - 1513) / 2 = 8.5
 
-	Rounded **min_pan_speed = 9**
+	Rounded min_pan_speed = 9
