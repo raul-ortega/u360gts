@@ -461,6 +461,7 @@ typedef enum {
     MASTER_VALUE = (0 << VALUE_SECTION_OFFSET),
     PROFILE_VALUE = (1 << VALUE_SECTION_OFFSET),
     CONTROL_RATE_VALUE = (2 << VALUE_SECTION_OFFSET),
+    HIDDEN_VALUE     = (3 << VALUE_SECTION_OFFSET),
 
     // value mode
     MODE_DIRECT = (0 << VALUE_MODE_OFFSET),
@@ -496,6 +497,7 @@ typedef struct {
 const clivalue_t valueTable[] = {
     { "looptime",                   VAR_UINT16 | MASTER_VALUE,  &masterConfig.looptime, .config.minmax = {0, 9000} },
     { "emf_avoidance",              VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.emf_avoidance, .config.lookup = { TABLE_OFF_ON } },
+    { "min_logic_level",            VAR_UINT8  | MASTER_VALUE, &masterConfig.min_logic_level, .config.minmax = { 0,  255 } },
     /*{ "i2c_overclock",              VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.i2c_overclock, .config.lookup = { TABLE_OFF_ON } },
 
     { "mid_rc",                     VAR_UINT16 | MASTER_VALUE,  &masterConfig.rxConfig.midrc, .config.minmax = { 1200,  1700 } },
@@ -519,8 +521,6 @@ const clivalue_t valueTable[] = {
     { "3d_deadband_throttle",       VAR_UINT16 | MASTER_VALUE,  &masterConfig.flight3DConfig.deadband3d_throttle, .config.minmax = { PWM_RANGE_ZERO,  PWM_RANGE_MAX } },
 
     { "motor_pwm_rate",             VAR_UINT16 | MASTER_VALUE,  &masterConfig.motor_pwm_rate, .config.minmax = { 50,  32000 } },*/
-    { "servo_pwm_rate",             VAR_UINT16 | MASTER_VALUE,  &masterConfig.servo_pwm_rate, .config.minmax = { 50,  498 } },
-
 /*    { "retarded_arm",               VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.retarded_arm, .config.lookup = { TABLE_OFF_ON } },
     { "disarm_kill_switch",         VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.disarm_kill_switch, .config.lookup = { TABLE_OFF_ON } },
     { "auto_disarm_delay",          VAR_UINT8  | MASTER_VALUE,  &masterConfig.auto_disarm_delay, .config.minmax = { 0,  60 } },
@@ -538,6 +538,7 @@ const clivalue_t valueTable[] = {
     { "gps_auto_baud",              VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.gpsConfig.autoBaud, .config.lookup = { TABLE_OFF_ON } },
     { "gps_min_sats",               VAR_UINT8  | MASTER_VALUE, &masterConfig.gps_min_sats, .config.minmax = { 4,  20 } },
     { "gps_home_beeper",            VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.gpsConfig.homeBeeper, .config.lookup = { TABLE_OFF_ON } },
+    { "update_home_by_local_gps",   VAR_UINT8 | MASTER_VALUE | MODE_LOOKUP, &masterConfig.update_home_by_local_gps, .config.lookup = { TABLE_OFF_ON } },
 	/*
     { "gps_pos_p",                  VAR_UINT8  | PROFILE_VALUE, &masterConfig.profile[0].pidProfile.P8[PIDPOS], .config.minmax = { 0,  200 } },
     { "gps_pos_i",                  VAR_UINT8  | PROFILE_VALUE, &masterConfig.profile[0].pidProfile.I8[PIDPOS], .config.minmax = { 0,  200 } },
@@ -560,7 +561,6 @@ const clivalue_t valueTable[] = {
     { "spektrum_sat_bind",          VAR_UINT8  | MASTER_VALUE,  &masterConfig.rxConfig.spektrum_sat_bind, .config.minmax = { SPEKTRUM_SAT_BIND_DISABLED,  SPEKTRUM_SAT_BIND_MAX} },
 
     { "telemetry_switch",           VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.telemetryConfig.telemetry_switch, .config.lookup = { TABLE_OFF_ON } },*/
-    { "telemetry_inversion",        VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.telemetryConfig.telemetry_inversion, .config.lookup = { TABLE_OFF_ON } },
 /*    { "frsky_default_lattitude",    VAR_FLOAT  | MASTER_VALUE,  &masterConfig.telemetryConfig.gpsNoFixLatitude, .config.minmax = { -90.0,  90.0 } },
     { "frsky_default_longitude",    VAR_FLOAT  | MASTER_VALUE,  &masterConfig.telemetryConfig.gpsNoFixLongitude, .config.minmax = { -180.0,  180.0 } },
     { "frsky_coordinates_format",   VAR_UINT8  | MASTER_VALUE,  &masterConfig.telemetryConfig.frsky_coordinate_format, .config.minmax = { 0,  FRSKY_FORMAT_NMEA } },
@@ -716,6 +716,10 @@ const clivalue_t valueTable[] = {
     { "magzero_x",                  VAR_INT16  | MASTER_VALUE, &masterConfig.magZero.raw[X], .config.minmax = { -32768,  32767 } },
     { "magzero_y",                  VAR_INT16  | MASTER_VALUE, &masterConfig.magZero.raw[Y], .config.minmax = { -32768,  32767 } },
     { "magzero_z",                  VAR_INT16  | MASTER_VALUE, &masterConfig.magZero.raw[Z], .config.minmax = { -32768,  32767 } },
+    { "mag_declination",            VAR_INT16  | MASTER_VALUE, &masterConfig.profile[0].mag_declination, .config.minmax = { -18000,  18000 } },
+    { "mag_calibrated",             VAR_UINT8  | MASTER_VALUE, &masterConfig.mag_calibrated, .config.minmax = { 0,  1 } },
+    { "offset",                     VAR_INT16  | MASTER_VALUE, &masterConfig.offset, .config.minmax = { -360,  360 } },
+    { "offset_trim",                VAR_INT8   | MASTER_VALUE, &masterConfig.offset_trim, .config.minmax = { -20,  20 } },
 	{ "p",           				VAR_UINT16 | MASTER_VALUE, &masterConfig.p, .config.minmax = { 0,  50000 } },
 	{ "i",           				VAR_UINT16 | MASTER_VALUE, &masterConfig.i, .config.minmax = { 0,  50000 } },
 	{ "d",           				VAR_UINT16 | MASTER_VALUE, &masterConfig.d, .config.minmax = { 0,  50000 } },
@@ -723,15 +727,15 @@ const clivalue_t valueTable[] = {
 	{ "max_pid_accumulator",        VAR_UINT16  | MASTER_VALUE, &masterConfig.max_pid_accumulator, .config.minmax = { 0,  50000 } },
 	{ "max_pid_gain",           	VAR_UINT16  | MASTER_VALUE, &masterConfig.max_pid_gain, .config.minmax = { 0,  5000 } },
 	{ "pid_divider",           		VAR_UINT8  | MASTER_VALUE, &masterConfig.max_pid_divider, .config.minmax = { 0,  255 } },
+    { "nopid_min_delta",            VAR_FLOAT  | MASTER_VALUE, &masterConfig.nopid_min_delta, .config.minmax = { 0,  100 } },
+    { "nopid_map_angle",            VAR_UINT8  | MASTER_VALUE, &masterConfig.nopid_map_angle, .config.minmax = { 0,  180 } },
+    { "nopid_max_speed",            VAR_UINT16 | MASTER_VALUE, &masterConfig.nopid_max_speed, .config.minmax = { 0,  500 } },
 	{ "pan_pin",           		    VAR_UINT8  | MASTER_VALUE, &masterConfig.pan_pin, .config.minmax = { 0,  7 } },
 	{ "pan0",           			VAR_UINT16  | MASTER_VALUE, &masterConfig.pan0, .config.minmax = { 0,  3000 } },
 	{ "pan0_calibrated",          	VAR_UINT8  | MASTER_VALUE, &masterConfig.pan0_calibrated, .config.minmax = { 0,  1 } },
 	{ "pan_calibration_pulse",		VAR_UINT16  | MASTER_VALUE, &masterConfig.pan_calibration_pulse, .config.minmax = { 1,  1500 } },
 	{ "pan_inverted",               VAR_UINT8 | MASTER_VALUE | MODE_LOOKUP, &masterConfig.pan_inverted, .config.lookup = { TABLE_OFF_ON } },
 	{ "min_pan_speed",     			VAR_UINT8   | MASTER_VALUE, &masterConfig.min_pan_speed, .config.minmax = { 0,  100 } },
-	{ "offset",     				VAR_INT16  | MASTER_VALUE, &masterConfig.offset, .config.minmax = { -360,  360 } },
-	{ "offset_trim",   				VAR_INT8   | MASTER_VALUE, &masterConfig.offset_trim, .config.minmax = { -20,  20 } },
-	{ "init_servos",    			VAR_UINT8  | MASTER_VALUE, &masterConfig.init_servos, .config.minmax = { 0,  1 } },
 	{ "tilt_pin",           		VAR_UINT8  | MASTER_VALUE, &masterConfig.tilt_pin, .config.minmax = { 0,  7 } },
 	{ "tilt0",           			VAR_UINT16  | MASTER_VALUE, &masterConfig.tilt0, .config.minmax = { 0,  3000 } },
 	{ "tilt90",           			VAR_UINT16  | MASTER_VALUE, &masterConfig.tilt90, .config.minmax = { 0,  3000 } },
@@ -740,21 +744,19 @@ const clivalue_t valueTable[] = {
 	{ "easing_steps",           	VAR_UINT8  | MASTER_VALUE, &masterConfig.easing_steps, .config.minmax = { 0,  100 } },
 	{ "easing_min_angle",           VAR_UINT8  | MASTER_VALUE, &masterConfig.easing_min_angle, .config.minmax = { 1,  10 } },
 	{ "easing_millis",           	VAR_UINT8  | MASTER_VALUE, &masterConfig.easing_millis, .config.minmax = { 1,  100 } },
+    { "init_servos",                VAR_UINT8  | MASTER_VALUE, &masterConfig.init_servos, .config.minmax = { 0,  1 } },
+    { "servo_pwm_rate",             VAR_UINT16 | MASTER_VALUE,  &masterConfig.servo_pwm_rate, .config.minmax = { 50,  498 } },
 	//{ "telemetry_port",        	VAR_UINT8  | MASTER_VALUE, &masterConfig.p, .config.minmax = { 0,  3 } },
 	{ "telemetry_baud",           	VAR_UINT8 |  MASTER_VALUE, &masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex, .config.minmax = { BAUD_1200,  BAUD_250000 } },
 	{ "telemetry_protocol",        	VAR_UINT16 | MASTER_VALUE, &masterConfig.telemetry_protocol, .config.minmax = { TP_SERVOTEST,  TP_CROSSFIRE } },
     { "telemetry_min_sats",         VAR_UINT8  | MASTER_VALUE, &masterConfig.telemetry_min_sats, .config.minmax = { 0,  20 } },
 	{ "telemetry_provider",			VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, &masterConfig.telemetry_provider, .config.lookup = {TABLE_TELEMETRY_PROVIDER} },
 	{ "telemetry_home"	,			VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, &masterConfig.telemetry_home, .config.lookup = {TABLE_TELEMETRY_HOME} },
+    { "telemetry_altitude_priority",   VAR_UINT8 | HIDDEN_VALUE | MODE_LOOKUP, &masterConfig.altitude_priority, .config.lookup = {TABLE_ALTITUDE_PRIORITY} },
+    { "telemetry_inversion",        VAR_UINT8  | HIDDEN_VALUE | MODE_LOOKUP,  &masterConfig.telemetryConfig.telemetry_inversion, .config.lookup = { TABLE_OFF_ON } },
 	//{ "gps_port",      		   	VAR_UINT8  | MASTER_VALUE, &masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex, .config.minmax = { 0,  4 } },
 	{ "start_tracking_distance",   	VAR_UINT8  | MASTER_VALUE, &masterConfig.start_tracking_distance, .config.minmax = { 0,  100 } },
 	{ "start_tracking_altitude",   	VAR_UINT8  | MASTER_VALUE, &masterConfig.start_tracking_altitude, .config.minmax = { 0,  100 } },
-    { "mag_declination",            VAR_INT16  | MASTER_VALUE, &masterConfig.profile[0].mag_declination, .config.minmax = { -18000,  18000 } },
-	{ "mag_calibrated",          	VAR_UINT8  | MASTER_VALUE, &masterConfig.mag_calibrated, .config.minmax = { 0,  1 } },
-	{ "min_logic_level",            VAR_UINT8  | MASTER_VALUE, &masterConfig.min_logic_level, .config.minmax = { 0,  255 } },
-	{ "nopid_min_delta",            VAR_FLOAT  | MASTER_VALUE, &masterConfig.nopid_min_delta, .config.minmax = { 0,  100 } },
-	{ "nopid_map_angle",            VAR_UINT8  | MASTER_VALUE, &masterConfig.nopid_map_angle, .config.minmax = { 0,  180 } },
-    { "nopid_max_speed",            VAR_UINT16 | MASTER_VALUE, &masterConfig.nopid_max_speed, .config.minmax = { 0,  500 } },
 	{ "eps",     					VAR_UINT8 | MASTER_VALUE, &masterConfig.eps, .config.minmax = { 1,  3 } },
 	{ "eps_distance_gain",     		VAR_UINT16 | MASTER_VALUE, &masterConfig.eps_gain.distance, .config.minmax = { 1,  1000 } },
 	{ "eps_heading_gain",     		VAR_UINT16 | MASTER_VALUE, &masterConfig.eps_gain.heading, .config.minmax = { 1,  1000 } },
@@ -762,9 +764,7 @@ const clivalue_t valueTable[] = {
 	{ "eps_frequency",     			VAR_UINT16 | MASTER_VALUE, &masterConfig.eps_frequency, .config.minmax = { 100,  1000 } },
     { "eps_interpolation",   	    VAR_UINT8 | MASTER_VALUE | MODE_LOOKUP, &masterConfig.eps_interpolation, .config.lookup = { TABLE_OFF_ON } },
 	{ "eps_interpolation_points",   VAR_UINT8 | MASTER_VALUE, &masterConfig.eps_interpolation_points, .config.minmax = { 2,  10 } },
-    { "update_home_by_local_gps",   VAR_UINT8 | MASTER_VALUE | MODE_LOOKUP, &masterConfig.update_home_by_local_gps, .config.lookup = { TABLE_OFF_ON } },
-	{ "max_speed_filter",   	    VAR_UINT8 | MASTER_VALUE, &masterConfig.max_speed_filter, .config.minmax = { 0,  255 } },
-	{ "telemetry_altitude_priority",   VAR_UINT8 | MASTER_VALUE | MODE_LOOKUP, &masterConfig.altitude_priority, .config.lookup = {TABLE_ALTITUDE_PRIORITY} }
+	{ "max_speed_filter",   	    VAR_UINT8 | MASTER_VALUE, &masterConfig.max_speed_filter, .config.minmax = { 0,  255 } }
 };
 
 #define VALUE_COUNT (sizeof(valueTable) / sizeof(clivalue_t))
