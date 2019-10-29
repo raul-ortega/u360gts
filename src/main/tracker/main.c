@@ -1575,7 +1575,7 @@ void updateProtocolDetection(void){
 		return;
 	}
 
-	if(protocol != masterConfig.telemetry_protocol && protocol > 0) {
+	if((protocol != masterConfig.telemetry_protocol || (protocol == masterConfig.telemetry_protocol && !homeSet)) && protocol > 0) {
 		masterConfig.telemetry_protocol = protocol;
 		protocolInit();
 		trackingInit();
