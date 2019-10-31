@@ -148,7 +148,7 @@ uint16_t calculateDeltaHeading(uint16_t heading1, uint16_t heading2);
 void setEpsMode(void);
 int16_t getOffset(int16_t offset_master,int8_t offset_trim);
 void updateProtocolDetection(void);
-void protocolInit(void);
+void protocolInit(uint16_t protocol);
 void trackingInit(void);
 void telemetryPortInit(void);
 void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int16_t alt, bool home_updated, bool beep);
@@ -315,7 +315,7 @@ uint32_t telemetry_millis;
 void tracker_setup(void)
 {
 
-  protocolInit();
+  protocolInit(masterConfig.telemetry_protocol);
 
   if(feature(FEATURE_AUTODETECT))
 	  enableProtocolDetection();
@@ -1554,43 +1554,35 @@ void updateEPSParams(){
 }
 
 void updateProtocolDetection(void){
-	uint16_t protocol;
+	uint16_t detected_protocol;
 
 	if(!feature(FEATURE_AUTODETECT) || cliMode)
 		return;
 
-	protocol = getProtocol();
+	detected_protocol = getProtocol();
 
-	if(protocol == 0 && !detection_title_updated ){
+	if(detected_protocol == 0 && !detection_title_updated ){
 		detection_title_updated = true;
-		updateDisplayProtocolTitle(protocol);
+		updateDisplayProtocolTitle(detected_protocol);
 		return;
 	}
 
 
-	if(protocol == masterConfig.telemetry_protocol && isProtocolDetectionEnabled() && !lostTelemetry){
-		showAutodetectingTitle(protocol);
-		if(PROTOCOL(TP_MFD))
-			settingHome = true;
-		return;
+	if(detected_protocol > 0 && isProtocolDetectionEnabled()){
+	    updateDisplayProtocolTitle(detected_protocol);
+	    detection_title_updated = false;
+	    protocolInit(detected_protocol);
+	    if(!homeSet){
+            trackingInit();
+            if(PROTOCOL(TP_MFD))
+                settingHome = true;
+        }
 	}
-
-	if(protocol != masterConfig.telemetry_protocol && protocol > 0) {
-		masterConfig.telemetry_protocol = protocol;
-		protocolInit();
-		trackingInit();
-		if(PROTOCOL(TP_MFD))
-			settingHome = true;
-		updateDisplayProtocolTitle(protocol);
-		detection_title_updated = false;
-	}
-
-
 }
 
-void protocolInit(void){
+void protocolInit(uint16_t protocol){
 	DISABLE_PROTOCOL(0b1111111111111);
-	switch(masterConfig.telemetry_protocol) {
+	switch(protocol) {
 	  case TP_SERVOTEST:
 		ENABLE_PROTOCOL(TP_SERVOTEST);
 		break;
