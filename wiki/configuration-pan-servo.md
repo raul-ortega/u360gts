@@ -12,10 +12,10 @@ The controller sends the calibration pulse to the servo, which starts spinning c
 
 **Note:** When calibration pulse is lower than central stop pulse, the tracker spins **counter clock wise** for the calibration process. And when calibration pulse is greater than stop pulse, the tracker spins clock wise. **If the tracker does not spin as described during compass calibration process**, then your **pan servop is reversed**. You may solve it executing these commands from CLI:
 
-´´´
+```
 set pan_inverted=on
 save
-´´´
+```
 
 Alternatively you may do a hardware mod which consist on inverting the polarity of the wires directly connected to the motor (do the mod under your own risk).**
 
