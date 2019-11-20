@@ -10,7 +10,14 @@ If the process take too much time and you want to interrupt, you need to cut pow
 
 The controller sends the calibration pulse to the servo, which starts spinning counter clock wise. Durig 10 seconds the controller retrieves data from the sensor, and calculates magzero x, y and z values. Then the controller sends the stop pulse to the servo, and if its value has been properly configured previously, it stops spinning. However, if the stop pulse was no properly configured previously, the tracker continues spinning. In both cases, after 10 seconds, the mag calibration process has finished, and the controller jumps to second step. 
 
-Note: When calibration pulse is lower than central stop pulse, the tracker spins counter clock wise for the calibration process. And when calibration pulse is greater than stop pulse, the tracker spins clock wise. If the tracker does not spin as described during compass calibration process, then your pan servop is reversed, and you need to solve it by a hardware mod, which consist on inverting the polarity of the wires directly connected to the motor (do the mod under your own risk).
+**Note:** When calibration pulse is lower than central stop pulse, the tracker spins **counter clock wise** for the calibration process. And when calibration pulse is greater than stop pulse, the tracker spins clock wise. **If the tracker does not spin as described during compass calibration process**, then your **pan servop is reversed**. You may solve it executing these commands from CLI:
+
+´´´
+set pan_inverted=on
+save
+´´´
+
+Alternatively you may do a hardware mod which consist on inverting the polarity of the wires directly connected to the motor (do the mod under your own risk).**
 
 ### Second step, central stop pulse (pan0) calibration:
 
