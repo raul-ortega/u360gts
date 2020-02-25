@@ -84,7 +84,7 @@ extern bool homeReset;
 
 extern uint16_t pwmPan;
 extern uint16_t pwmTilt;
-extern float tiltTarget;
+extern uint8_t SERVOTEST_TILT;
 
 extern int8_t OFFSET_TRIM;
 
@@ -637,7 +637,7 @@ void showCliModePage(void)
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
 
-    tfp_sprintf(lineBuffer, "T: %03d  ", (uint16_t)tiltTarget);
+    tfp_sprintf(lineBuffer, "T: %03d  ", SERVOTEST_TILT);
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
 

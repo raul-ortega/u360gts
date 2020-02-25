@@ -20,7 +20,7 @@
 
 extern uint8_t cliMode;
 extern uint16_t SERVOTEST_HEADING;
-extern uint16_t SERVOTEST_TILT;
+extern uint8_t SERVOTEST_TILT;
 
 void cliProcess(void);
 bool cliIsActiveOnPort(serialPort_t *serialPort);

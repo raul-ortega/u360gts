@@ -92,7 +92,7 @@
 // signal that we're in cli mode
 uint8_t cliMode = 0;
 uint16_t SERVOTEST_HEADING = 0;
-uint16_t SERVOTEST_TILT = 0;
+uint8_t SERVOTEST_TILT = 0;
 
 #ifdef USE_CLI
 
