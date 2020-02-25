@@ -1136,7 +1136,7 @@ void updateTracking(void){
 			trackingStarted = true;
 		} else {
 			trackingStarted = (homeSet && ((targetPosition.distance >= masterConfig.start_tracking_distance) || \
-					(targetPosition.distance < masterConfig.start_tracking_distance && (targetPosition.alt - trackerPosition.alt) >= masterConfig.start_tracking_altitude))) ;
+					(targetPosition.distance < masterConfig.start_tracking_distance && (targetPosition.alt - trackerPosition.alt) >= masterConfig.start_tracking_altitude) && targetPosition.home_alt != -32768));
 		}
 
 		if(trackingStarted)  {
