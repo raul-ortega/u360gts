@@ -20,3 +20,4 @@ README.pdf
 /Release/
 /Debug/
 /makeall.sh
+src/main/telemetry/mavlink_v1.zip
