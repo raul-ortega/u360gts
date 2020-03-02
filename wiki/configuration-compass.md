@@ -35,8 +35,14 @@ The controller will send the calibration pulse to the servo, and it will start s
 
 If you are using configurator version 4.0 or higher, than the "Calibration done" toggle button should be shown as on. If you are using an older version of the configurator, then check the box "calibrated".
 
-**Note:** If calibration pulse is lower than stop pulse, then the tracker will spin counter clock wise for the calibration process. However, if calibration pulse is greater than stop pulse, then the tracker will spin clock wise. If the tracker does not spin as described, then you have a reversed servo, and you have to solve it by a hardware mod, that consist on inverting the polarity of the wires directly connected to the motor (do the mod under your own risk).
+**Note:** When calibration pulse is lower than central stop pulse, the tracker spins **counter clock wise** for the calibration process. And when calibration pulse is greater than stop pulse, the tracker spins clock wise. **If the tracker does not spin as described during compass calibration process**, then your **pan servop is reversed**. You may solve it executing these commands from CLI:
 
+```
+set pan_inverted=on
+save
+```
+
+Alternatively you may do a hardware mod which consist on inverting the polarity of the wires directly connected to the motor (do the mod under your own risk).**
 
 ### Offset
 

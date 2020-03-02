@@ -19,8 +19,8 @@ This list of components is suitable for the [u360gts official 3d printted frame]
 - 2 x [Momentary Push Button Switch ](https://www.banggood.com/5Pcs-DC-50V-0_5A-Red-Knob-Momentary-Push-Button-Switch-p-1114676.html?p=LH07161453356201504A)
 - 1 x [5V 3A BEC](https://www.banggood.com/HENGE-UBEC-6V-6A-2-6S-Lipo-NiMh-Battery-Switch-Mode-BEC-p-1099336.html?p=LH07161453356201504A)
 - 1 X [Bluetooth module HC-05](https://www.banggood.com/5Pcs-HC-05-Wireless-Bluetooth-Serial-Transceiver-Module-For-Arduino-p-959211.html?p=LH07161453356201504A)
-- 2 x [Bearing 30mm x 55mm x 13mm](https://www.amazon.es/dp/B00TX2VJ60/ref=cm_sw_r_wa_apa_KAO9BbBXY06JT) for pan.
-- 1 x [Bearing 16mm x 5mm x 5mm](https://www.amazon.es/dp/B00TX2VJ60/ref=cm_sw_r_wa_apa_KAO9BbBXY06JT) for tilt.
+- 2 x [Bearing 30mm x 55mm x 13mm](https://www.amazon.es/dp/B00TX2VJ60/) for pan.
+- 1 x [Bearing 16mm x 5mm x 5mm](https://www.amazon.com/Bearing-Shielded-Miniature-Bearings-VXB/dp/B002BBCNG0) for tilt.
 - 1 x [Battery 3S 11.1v 1800 mah XT60 plug](https://www.banggood.com/Charsoon-11_1V-1800mAh-50C-3S-Lipo-Battery-XT60-Plug-With-Strap-p-1124938.html?p=LH07161453356201504A)
 - 1 x [XT60 female connector](https://www.banggood.com/2Pcs-XT60-500V-30A-Male-Female-Bullet-Connectors-Plug-Sockets-p-1257166.html?p=LH07161453356201504A)
 - 1 x USB cable
