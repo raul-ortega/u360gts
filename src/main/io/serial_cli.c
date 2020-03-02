@@ -224,7 +224,7 @@ static const char * const sensorHardwareNames[4][11] = {
     { "", "None", "MPU6050", "L3G4200D", "MPU3050", "L3GD20", "MPU6000", "MPU6500", "FAKE", NULL },
     { "", "None", "ADXL345", "MPU6050", "MMA845x", "BMA280", "LSM303DLHC", "MPU6000", "MPU6500", "FAKE", NULL },
     { "", "None", "BMP085", "MS5611", "BMP280", NULL },
-    { "", "None", "HMC5883", "AK8975", NULL }
+    { "", "None", "HMC5883", "AK8975", "QMC5883", NULL }
 };
 #endif
 
@@ -2432,6 +2432,8 @@ static void cliStatus(char *cmdline)
             if (mask == SENSOR_ACC && acc.revisionCode) {
                 printf(".%c", acc.revisionCode);
             }
+
+            printf("%d", heading);
         }
     }
 #endif
