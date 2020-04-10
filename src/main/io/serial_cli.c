@@ -648,9 +648,9 @@ const clivalue_t valueTable[] = {
     { "baro_noise_lpf",             VAR_FLOAT  | PROFILE_VALUE | MODE_LOOKUP, &masterConfig.profile[0].barometerConfig.baro_noise_lpf, .config.lookup = { TABLE_OFF_ON } },
     { "baro_cf_vel",                VAR_FLOAT  | PROFILE_VALUE | MODE_LOOKUP, &masterConfig.profile[0].barometerConfig.baro_cf_vel, .config.lookup = { TABLE_OFF_ON } },
     { "baro_cf_alt",                VAR_FLOAT  | PROFILE_VALUE | MODE_LOOKUP, &masterConfig.profile[0].barometerConfig.baro_cf_alt, .config.lookup = { TABLE_OFF_ON } },
-    { "baro_hardware",              VAR_UINT8  | MASTER_VALUE,  &masterConfig.baro_hardware, .config.minmax = { 0,  BARO_MAX } },
+    { "baro_hardware",              VAR_UINT8  | MASTER_VALUE,  &masterConfig.baro_hardware, .config.minmax = { 0,  BARO_MAX } },*/
 
-    { "mag_hardware",               VAR_UINT8  | MASTER_VALUE,  &masterConfig.mag_hardware, .config.minmax = { 0,  MAG_MAX } },*/
+    { "mag_hardware",               VAR_UINT8  | MASTER_VALUE,  &masterConfig.mag_hardware, .config.minmax = { 0,  MAG_MAX } },
 
   /*{ "pid_controller",             VAR_UINT8  | PROFILE_VALUE | MODE_LOOKUP, &masterConfig.profile[0].pidProfile.pidController, .config.lookup = { TABLE_PID_CONTROLLER } },
 

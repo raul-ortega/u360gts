@@ -328,6 +328,7 @@ NAZE_SRC = startup_stm32f10x_md_gcc.S \
 		   drivers/bus_spi.c \
 		   drivers/bus_i2c_stm32f10x.c \
 		   drivers/compass_hmc5883l.c \
+		   drivers/compass_qmc5883l.c \
 		   drivers/display_ug2864hsweg01.h \
 		   drivers/flash_m25p16.c \
 		   drivers/gpio_stm32f10x.c \
@@ -359,6 +360,7 @@ BLUEPILL_SRC = startup_stm32f10x_md_gcc.S \
 		   drivers/bus_spi.c \
 		   drivers/bus_i2c_stm32f10x.c \
 		   drivers/compass_hmc5883l.c \
+		   drivers/compass_qmc5883l.c \
 		   drivers/display_ug2864hsweg01.h \
 		   drivers/flash_m25p16.c \
 		   drivers/gpio_stm32f10x.c \
@@ -485,6 +487,7 @@ CC3D_SRC = \
 		   drivers/bus_spi.c \
 		   drivers/bus_i2c_stm32f10x.c \
 		   drivers/compass_hmc5883l.c \
+		   drivers/compass_qmc5883l.c \
 		   drivers/display_ug2864hsweg01.c \
 		   drivers/flash_m25p16.c \
 		   drivers/gpio_stm32f10x.c \
