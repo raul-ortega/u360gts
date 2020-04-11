@@ -53,6 +53,7 @@
 
 #include "drivers/compass.h"
 #include "drivers/compass_hmc5883l.h"
+#include "drivers/compass_qmc5883l.h"
 #include "drivers/compass_ak8975.h"
 
 #include "drivers/sonar_hcsr04.h"
@@ -522,6 +523,23 @@ static void detectMag(magSensor_e magHardwareToUse)
 {
     magSensor_e magHardware;
 
+#ifdef USE_MAG_QMC5883L
+    const qmc5883lConfig_t *qmc5883lConfig = 0;
+    #ifdef SPRACINGF3
+        static const qmc5883lConfig_t spRacingF3Qmc5883lConfig = {
+            .gpioAHBPeripherals = RCC_AHBPeriph_GPIOC,
+            .gpioPin = Pin_14,
+            .gpioPort = GPIOC,
+            .exti_port_source = EXTI_PortSourceGPIOC,
+            .exti_pin_source = EXTI_PinSource14,
+            .exti_line = EXTI_Line14,
+            .exti_irqn = EXTI15_10_IRQn
+        };
+
+        qmc5883lConfig = &spRacingF3Qmc5883lConfig;
+    #endif
+#endif
+
 #ifdef USE_MAG_HMC5883
     const hmc5883Config_t *hmc5883Config = 0;
 
@@ -576,6 +594,18 @@ retry:
 
     switch(magHardwareToUse) {
         case MAG_DEFAULT:
+            ; // fallthrough
+
+        case MAG_QMC5883L:
+#ifdef USE_MAG_QMC5883L
+            if (qmc5883lDetect(&mag, qmc5883lConfig)) {
+#ifdef MAG_QMC5883L_ALIGN
+                magAlign = MAG_QMC5883L_ALIGN;
+#endif
+                magHardware = MAG_QMC5883L;
+                break;
+            }
+#endif
             ; // fallthrough
 
         case MAG_HMC5883:
