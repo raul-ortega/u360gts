@@ -46,3 +46,5 @@ While the aircraft is within those limits, the menu and home buttons function as
 By default, the antenna tracker has feature NOPID enabled. It works out of the box, and it is more than probability that it is not necessary to configure any of its parameters. With NOPID control enabled the tracking will experience a slight lag with respect the aircraft, especially if it receives position packets at a low frequency.
 
 Yo can use NOPID control for simulations and first real flights. But if you want more precision you will have to properly configure the PID for pan servo. The will get into action once feature NOPID is disabled.
+
+[<< Go back](README.md)

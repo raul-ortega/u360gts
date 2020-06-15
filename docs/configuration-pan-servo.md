@@ -77,3 +77,5 @@ And finally the minimun increment to start moving:
 	min_pan_speed = (1530 - 1513) / 2 = 8.5
 
 	Rounded min_pan_speed = 9
+
+[<< Go back](README.md)
