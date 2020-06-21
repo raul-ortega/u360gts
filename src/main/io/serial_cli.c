@@ -2586,6 +2586,7 @@ static void cliDumpTracker() {
 
 	cliPrint("\r\n\r\n# parameters\r\n");
 
+	dumpValues(MASTER_VALUE);
 	dumpValues(TRACKER_VALUE);
 
 	cliPrint("\r\n\r\n# dump finished\r\n");
