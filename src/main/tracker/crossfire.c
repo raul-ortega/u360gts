@@ -37,7 +37,7 @@ uint8_t telemetryRxBuffer[TELEMETRY_RX_PACKET_SIZE];   // Receive buffer. 9 byte
 uint8_t telemetryRxBufferCount = 0;
 uint8_t posCount = 0;
 
-//Voltage sensor = voltage
+//VFAS sensor = voltage
 int16_t telemetry_voltage;
 
 bool checkCrossfireTelemetryFrameCRC()
@@ -69,27 +69,18 @@ void processCrossfireTelemetryFrame()
     return;
   }
 
-
 	telemetry_fixtype = 1;
-    if (telemetry_sats < 5)
-        telemetry_fixtype = 2;
-    else
-        telemetry_fixtype = 3;
-        
+	if (telemetry_sats < 5) {
+	   telemetry_fixtype = 2;
+	   }
+	else {
+	   telemetry_fixtype = 3;
+	   } 
         
   uint8_t id = telemetryRxBuffer[2];
   int32_t value;
   switch(id) {
     case GPS_ID:
-// 0x02 GPS
-// Payload:
-// int32_t     Latitude ( degree / 10.000.000 )
-// int32_t     Longitude (degree / 10.000.000 )
-// uint16_t    Groundspeed ( km/h / 10 )
-// uint16_t    GPS heading ( degree / 100 )
-// uint16      Altitude ( meter ­1000m offset )
-// uint8_t     Satellites in use ( counter )
-
       if (getCrossfireTelemetryValue(4, 3, &value)){
         telemetry_lat = value / 10;
         if(posCount == 0) posCount++;
@@ -110,15 +101,8 @@ void processCrossfireTelemetryFrame()
         telemetry_sats = (uint16_t) value;
       break;
       case BAT_ID:
-// 0x08 Battery sensor
-// Payload:
-// uint16_t    Voltage ( mV * 100 )
-// uint16_t    Current ( mA * 100 )
-// uint24_t    Capacity ( mAh )
-// uint8_t     Battery remaining ( percent )
-
-      if (getCrossfireTelemetryValue(1, 3, &value))
-        telemetry_voltage = (uint16_t) value;
+      if (getCrossfireTelemetryValue(2, 3, &value))
+        telemetry_voltage = (uint16_t) (value * 10);
       break;
     }
   if(posCount == 2 ) {
