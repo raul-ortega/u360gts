@@ -69,8 +69,10 @@ void processCrossfireTelemetryFrame()
     return;
   }
 
-	telemetry_fixtype = 1;
-	if (telemetry_sats < 5) && (telemetry_sats > 0) {
+	if (telemetry_sats == 0) { 
+	telemetry_fixtype = 0; 
+	}
+	else if (telemetry_sats < 5 && telemetry_sats > 0) {
 	   telemetry_fixtype = 2;
 	   }
 	else {
