@@ -73,6 +73,7 @@ extern int16_t telemetry_sats;
 extern uint8_t telemetry_failed_cs;
 extern uint8_t telemetry_fixtype;
 extern uint8_t telemetry_frequency;
+extern int16_t telemetry_voltage;
 extern positionVector_t targetPosition;
 extern positionVector_t trackerPosition;
 extern bool gotFix;
@@ -724,7 +725,8 @@ void showTelemetryPage(void){
     	if(telemetry_sats>99)
     		telemetry_sats = 99;
 
-    	tfp_sprintf(lineBuffer, "Hz : %d",telemetry_frequency);
+    	tfp_sprintf(lineBuffer, "Hz : %d  V:%d.%d",telemetry_frequency, telemetry_voltage/100, telemetry_voltage%100);
+		// tfp_sprintf(lineBuffer, "Hz : %d",telemetry_frequency);
     	padLineBuffer();
     	i2c_OLED_set_line(rowIndex++);
     	i2c_OLED_send_string(lineBuffer);
