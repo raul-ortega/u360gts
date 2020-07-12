@@ -24,4 +24,4 @@ Other alternatives are available for this project:
 - [u360gts Mini Case, by Albert Kravcov](https://www.thingiverse.com/thing:4108944)
 
 
-[<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
+[<< Go back](README.md)

@@ -39,4 +39,4 @@ Download first the firmware [latest release](https://github.com/raul-ortega/u360
 
 After this you are ready to connect and enter CLI Mode in order to configure the new features.
 
-[<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
+[<< Go back](README.md)

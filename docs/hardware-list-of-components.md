@@ -36,4 +36,4 @@ This list of components is suitable for the [u360gts official 3d printted frame]
 - 1 x [8 Pin Aviation Connector Male Female ](https://www.amazon.com/dp/B077485NWB) 
 - 1 x [Female panel power jack dc 5,5 x 2,1 mm-Electronics, Arduino](https://www.ebay.com/itm/2-x-Conector-Hembra-Panel-Power-Jack-DC-5-5-x-2-1-mm-Electronica-arduino/181943263506)
 
-[<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
+[<< Go back](README.md)

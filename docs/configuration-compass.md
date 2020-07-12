@@ -75,4 +75,4 @@ To change magnetic declination you have to set correct declination of your spesi
 
 If your magnetic declination readings are e.g. +3° 34' , the value entered in the u360gts configurator is 334. For west declination, use a minus value, e.g. for 1° 32' W, the value entered in the u360gts configurator is -132. In all cases (both CLI and GUI), the least significant digits are minutes, not decimal degrees.
 
-[<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
+[<< Go back](README.md)

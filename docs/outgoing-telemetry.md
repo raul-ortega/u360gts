@@ -70,4 +70,4 @@ These applications have been tested:
 * Oruxmpas (NMEA)
 * EZ-GUI (LTME)
 
-[<< Go back](https://github.com/raul-ortega/u360gts/blob/master/wiki/index.md)
+[<< Go back](README.md)
