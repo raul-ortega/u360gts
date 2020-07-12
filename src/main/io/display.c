@@ -116,6 +116,48 @@ static char lineBuffer[SCREEN_CHARACTER_COLUMN_COUNT + 1];
 #define HALF_SCREEN_CHARACTER_COLUMN_COUNT (SCREEN_CHARACTER_COLUMN_COUNT / 2)
 #define IS_SCREEN_CHARACTER_COLUMN_COUNT_ODD (SCREEN_CHARACTER_COLUMN_COUNT & 1)
 
+static uint8_t u360gts_logo[] = { 128, 32,
+    '\x00','\x00','\x07','\x80','\xc0','\xe0','\xf0','\xf8', // 0x0008
+    '\xf8','\x02','\xe0','\xe0','\x04','\xc0','\xc0','\x02', // 0x0010
+    '\x80','\x80','\x02','\x00','\x00','\x6b','\xe0','\xe0', // 0x0018
+    '\x03','\x02','\x07','\x07','\x02','\x1e','\x3c','\x38', // 0x0020
+    '\xe1','\xe1','\x03','\xf1','\xf3','\xb8','\xb8','\x02', // 0x0028
+    '\xf8','\xf0','\xe1','\x01','\x03','\x07','\x0f','\x3c', // 0x0030
+    '\xf8','\xf0','\x80','\x00','\x00','\x04','\xf0','\xf0', // 0x0038
+    '\x04','\x00','\x00','\x04','\xf0','\xf0','\x03','\x00', // 0x0040
+    '\x1c','\x1e','\x1e','\x04','\x9e','\x9e','\x05','\xfe', // 0x0048
+    '\xfe','\x04','\x00','\xfc','\xfe','\xfe','\x04','\x9e', // 0x0050
+    '\x9e','\x08','\x1e','\x18','\xfe','\xfe','\x04','\x1e', // 0x0058
+    '\x1e','\x06','\xfe','\xfe','\x04','\x00','\xf0','\xf0', // 0x0060
+    '\x04','\x70','\x70','\x09','\x60','\x60','\x02','\x70', // 0x0068
+    '\x70','\x04','\xf0','\xf0','\x04','\x70','\x70','\x05', // 0x0070
+    '\x00','\xf0','\xf0','\x03','\x70','\x70','\x08','\xff', // 0x0078
+    '\xff','\x02','\xe0','\x00','\x00','\x04','\x3e','\x7f', // 0x0080
+    '\x77','\xf7','\xf7','\x02','\xf8','\xfd','\xfe','\xff', // 0x0088
+    '\xbf','\x1f','\x0f','\x00','\x00','\x04','\x80','\xff', // 0x0090
+    '\xff','\x02','\x3f','\x00','\x00','\x04','\xff','\xff', // 0x0098
+    '\x04','\xc0','\xc0','\x04','\xff','\xff','\x03','\x00', // 0x00a0
+    '\xc0','\xc0','\x05','\xcf','\xcf','\x05','\xff','\xff', // 0x00a8
+    '\x04','\x00','\xff','\xff','\x05','\xc7','\xcf','\xcf', // 0x00b0
+    '\x04','\xff','\xff','\x04','\xfe','\xff','\xff','\x04', // 0x00b8
+    '\xc0','\xc0','\x06','\xff','\xff','\x04','\x00','\xff', // 0x00c0
+    '\xff','\x04','\xc0','\xc2','\xc6','\xc6','\x02','\xce', // 0x00c8
+    '\xce','\x03','\xfe','\xfe','\x03','\x00','\x00','\x05', // 0x00d0
+    '\xff','\xff','\x04','\x00','\x00','\x06','\xcf','\xcf', // 0x00d8
+    '\x03','\xce','\xce','\x04','\xfe','\xfe','\x04','\x00', // 0x00e0
+    '\x01','\x07','\x0f','\x1e','\x3c','\x38','\x70','\x70', // 0x00e8
+    '\x02','\xe7','\xe7','\x03','\xc7','\xc7','\x03','\xe7', // 0x00f0
+    '\xe7','\x03','\x70','\x70','\x02','\x38','\x1c','\x1e', // 0x00f8
+    '\x0f','\x07','\x01','\x00','\x00','\x05','\x01','\x01', // 0x0100
+    '\x02','\x03','\x03','\x08','\x01','\x00','\x00','\x02', // 0x0108
+    '\x01','\x03','\x03','\x0b','\x01','\x00','\x01','\x03', // 0x0110
+    '\x03','\x0c','\x01','\x00','\x01','\x03','\x03','\x0c', // 0x0118
+    '\x01','\x00','\x01','\x01','\x02','\x03','\x03','\x0a', // 0x0120
+    '\x01','\x01','\x02','\x00','\x00','\x05','\x03','\x03', // 0x0128
+    '\x04','\x00','\x00','\x06','\x01','\x03','\x03','\x09', // 0x0130
+    '\x01',
+};
+
 static const char* const pageTitles[] = {
     "U360GTS",
     "ARMED",
@@ -429,7 +471,9 @@ void showTitle()
 void handlePageChange(void)
 {
     i2c_OLED_clear_display_quick();
-    showTitle();
+    if (pageState.pageId != PAGE_WELCOME) {
+        showTitle();
+    }
 }
 
 void drawRxChannel(uint8_t channelIndex, uint8_t width)
@@ -463,35 +507,55 @@ void showRxPage(void)
     }
 }
 
+// Bitmap format: RLE, 128 width, vertical orientation, MSB first, 8 pixel/byte, size included, compressed.
+static void renderRLEBitmap(uint8_t *bitmap)
+{
+    uint8_t data = 0, count = 0;
+    uint16_t i;
+    uint8_t width = *bitmap;
+    bitmap++;
+    uint8_t height = *bitmap;
+    bitmap++;
+    uint16_t bitmapSize = (width * height) / 8;
+    for (i = 0; i < bitmapSize; i++) {
+        if (count == 0) {
+            data = *bitmap;
+            bitmap++;
+            if (data == *bitmap) {
+                bitmap++;
+                count = *bitmap;
+                bitmap++;
+            }
+            else {
+                count = 1;
+            }
+        }
+        count--;
+        i2c_OLED_send_byte(data);
+    }
+}
+
 void showWelcomePage(void)
 {
-    uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
+    // Draw the logo
+    i2c_OLED_set_line(2);
+    renderRLEBitmap(u360gts_logo);
+
+    // Draw the rest of the text around it
+    uint8_t rowIndex = 0;
 
     tfp_sprintf(lineBuffer, "v%s (%s)", FC_VERSION_STRING, shortGitRevision);
-    i2c_OLED_set_line(rowIndex++);
+    i2c_OLED_set_line(rowIndex);
     i2c_OLED_send_string(lineBuffer);
 
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(targetName);
+    tfp_sprintf(lineBuffer, "TARGET: %s", targetName);
+    i2c_OLED_set_line(++rowIndex);
+    i2c_OLED_send_string(lineBuffer);
 
-    //tfp_sprintf(lineBuffer, "   WWW.U360GTS.COM");
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_set_line(rowIndex++);
-    for(uint8_t i=0;i<3;i++) i2c_OLED_send_char(50+37);
-    i2c_OLED_send_char('.'+2-2);
-    i2c_OLED_send_char('U');
-    i2c_OLED_send_char('0'+3);
-    i2c_OLED_send_char('5'+1);
-    i2c_OLED_send_char(-1+'0'+1);
-    i2c_OLED_send_char('E'+2);
-    i2c_OLED_send_char('Q'+3);
-    i2c_OLED_send_char('S');
-    i2c_OLED_send_char('.'-1+1);
-    i2c_OLED_send_char('A'+2);
-    i2c_OLED_send_char('R'-3);
-    i2c_OLED_send_char('O'-2);
-
+    rowIndex += 6;
+    i2c_OLED_set_line(rowIndex);
+    tfp_sprintf(lineBuffer, "   WWW.U360GTS.COM");
+    i2c_OLED_send_string(lineBuffer);
 }
 
 void showCalibratingMagPage(void)
@@ -859,6 +923,12 @@ void showBatteryPage(void)
         i2c_OLED_set_line(rowIndex++);
         i2c_OLED_send_string(lineBuffer);
 
+        uint16_t averageCellVoltage = ((float) vbat / batteryCellCount) * 10;
+        tfp_sprintf(lineBuffer, "Avg. Cell: %d.%02dv", averageCellVoltage / 100, averageCellVoltage % 100);
+        padLineBuffer();
+        i2c_OLED_set_line(rowIndex++);
+        i2c_OLED_send_string(lineBuffer);
+
         uint8_t batteryPercentage = calculateBatteryPercentage();
         i2c_OLED_set_line(rowIndex++);
         drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, batteryPercentage);
@@ -1120,7 +1190,9 @@ void updateDisplay(void)
         updateRxStatus();
         updateTicker();
     }*/
-    updateTicker();
+    if (pageState.pageId != PAGE_WELCOME) {
+        updateTicker();
+    }
 
 
 
