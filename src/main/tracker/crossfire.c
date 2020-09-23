@@ -2,7 +2,7 @@
  * This file is part of u360gts, aka amv-open360tracker 32bits:
  * https://github.com/raul-ortega/amv-open360tracker-32bits
  *
- * The code below is an adaptation by Raúl Ortega of the original code of OpenTX
+ * The code below is an adaptation by RaË™l Ortega of the original code of OpenTX
  * https://github.com/opentx/opentx
  *
  * u360gts is free software: you can redistribute it and/or modify
@@ -26,13 +26,19 @@
 #define BROADCAST_ADDRESS              0x00
 #define RADIO_ADDRESS                  0xEA
 #define GPS_ID                         0x02
+#define BAT_ID                         0x08 
 #define TELEMETRY_RX_PACKET_SIZE       128
+
+
 
 uint8_t crc8(const uint8_t * ptr, uint32_t len);
 
 uint8_t telemetryRxBuffer[TELEMETRY_RX_PACKET_SIZE];   // Receive buffer. 9 bytes (full packet), worst case 18 bytes with byte-stuffing (+1)
 uint8_t telemetryRxBufferCount = 0;
 uint8_t posCount = 0;
+
+//VFAS sensor = voltage
+int16_t telemetry_voltage;
 
 bool checkCrossfireTelemetryFrameCRC()
 {
@@ -63,6 +69,16 @@ void processCrossfireTelemetryFrame()
     return;
   }
 
+	if (telemetry_sats == 0) { 
+	telemetry_fixtype = 0; 
+	}
+	else if (telemetry_sats < 5 && telemetry_sats > 0) {
+	   telemetry_fixtype = 2;
+	   }
+	else {
+	   telemetry_fixtype = 3;
+	   } 
+        
   uint8_t id = telemetryRxBuffer[2];
   int32_t value;
   switch(id) {
@@ -85,6 +101,10 @@ void processCrossfireTelemetryFrame()
       }
       if (getCrossfireTelemetryValue(1, 17, &value))
         telemetry_sats = (uint16_t) value;
+      break;
+      case BAT_ID:
+      if (getCrossfireTelemetryValue(2, 3, &value))
+        telemetry_voltage = (uint16_t) (value * 10);
       break;
     }
   if(posCount == 2 ) {

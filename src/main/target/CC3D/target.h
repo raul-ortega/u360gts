@@ -65,6 +65,7 @@
 // External I2C MAG
 #define MAG
 #define USE_MAG_HMC5883
+#define USE_MAG_QMC5883L
 
 #define INVERTER
 #define BEEPER
