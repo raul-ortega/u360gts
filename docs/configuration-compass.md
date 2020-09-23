@@ -9,7 +9,7 @@ In the moment of writing this document, u360gts supports HMC5883L and QMC5583L c
 
 <!-- img src="img/supported_mag.jpg" width="525" /-->
 
-u360gts firmware can detect the compass. To check if the compass of your board (or the external one) is the supported one, in CLI window of configurator type the command "status". The response will show HMC5883 if it is detected.
+u360gts firmware can detect the compass. To check if the compass of your board (or the external one) is supported, in CLI window of configurator type the command "status". The response will show HMC5883 or QMC5883 if detected.
 
 <img src="img/CLI_status_mag.jpg" width="433" />
 
