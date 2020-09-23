@@ -13,7 +13,7 @@ This list of components is suitable for the [u360gts official 3d printted frame]
 ## Mandatory parts:
 
 - 1 x CONTROLLER: [Naze32 rev5 acro](http://www.surveilzone.com/NAZE-32-Full-6DOF-REV-5-Flight-Controller-Board-g-1462) (if used with external magnetometer / [Naze32 rev5 full]() / [Flip32 10dof]() / [Spracing F3]() **waiting for real flight tests**
-- 1 x [I2C 2.42" 128x64 Graphic OLED Yellow Display SSD1306/SSD1309(Arduino/PIC/Multi-wii)](https://www.ebay.es/itm/I2C-2-42-128x64-Graphic-OLED-Yellow-Display-SSD1309-Arduino-PIC-Multi-wii/201468080188?hash=item2ee86ef03c:g:Rc4AAOSw5ZBWQxoj).
+- 1 x [I2C 2.42" 128x64 OLED Display SSD1306/SSD1309(Arduino/PIC/Multi-wii)](https://a.aliexpress.com/_BTcMTr).
 - 1 x TILT SERVO: [TowerPro MG996R](https://www.banggood.com/TowerPro-MG996R-Metal-Gear-Digital-High-Torque-Servo-55g-p-982287.html?p=LH07161453356201504A)
 - 1 x PAN SERVO : [TowerPro MG996R](https://www.banggood.com/TowerPro-MG996R-Metal-Gear-Digital-High-Torque-Servo-55g-p-982287.html?p=LH07161453356201504A) (You have to convert it to 360º)
 - 2 x [Momentary Push Button Switch ](https://www.banggood.com/5Pcs-DC-50V-0_5A-Red-Knob-Momentary-Push-Button-Switch-p-1114676.html?p=LH07161453356201504A)
