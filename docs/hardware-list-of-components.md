@@ -6,9 +6,9 @@ This list of components is suitable for the [u360gts official 3d printted frame]
 
 **Note:** Other alternatives to this list are possible for other frames, please contact the community of users to get more information. 
 
-<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/u360_gts_official_frame_list_of_components.jpeg" width="320" />
+<img src="img/u360_gts_official_frame_list_of_components.jpeg" width="320" />
 
-<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/u360_gts_official_frame_list_of_components.jpeg" width="640" />
+<img src="img/u360_gts_official_frame_list_of_components.jpeg" width="640" />
 
 ## Mandatory parts:
 
