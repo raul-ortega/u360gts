@@ -158,11 +158,12 @@ void servosInit(void);
 
 //EASING
 int16_t _lastTilt;
+int16_t tilt;
 bool _servo_tilt_has_arrived = true;
 uint8_t _tilt_pos = 0;
 float _servo_tilt_must_move = -1;
 float easingout = 0.0f;
-uint8_t tiltTarget = 0;
+float tiltTarget;
 
 //TIMER/CALIB
 unsigned long time;
@@ -497,7 +498,7 @@ void calcTilt(void) {
     targetPosition.distance = 1;
   }
 
-  tiltTarget = (uint8_t)toDeg(atan((float)(targetPosition.alt - trackerPosition.alt) / targetPosition.distance));
+  tiltTarget = toDeg(atan((float)(targetPosition.alt - trackerPosition.alt) / targetPosition.distance));
 
   if (tiltTarget < 0)
     tiltTarget = 0;
@@ -508,13 +509,13 @@ void calcTilt(void) {
 
   if(feature(FEATURE_EASING)) {
 	if(_servo_tilt_has_arrived){
-		_servo_tilt_must_move = (float)tiltTarget;
+		_servo_tilt_must_move = tiltTarget;
 		_servo_tilt_has_arrived = false;
 		_tilt_pos = 0;
 	}
   }
   else {
-	pwmTilt = (uint16_t) map((uint16_t)tiltTarget,0,90,masterConfig.tilt0, masterConfig.tilt90);
+	pwmTilt = (uint16_t) map(tiltTarget,0,90,masterConfig.tilt0, masterConfig.tilt90);
     pwmWriteServo(masterConfig.tilt_pin,pwmTilt);
   }
 }
@@ -776,8 +777,11 @@ void updateServoTest(void){
 				  _servo_tilt_must_move = SERVOTEST_TILT;
 				  _servo_tilt_has_arrived = false;
 			}
-		    pwmTilt = map((uint16_t)SERVOTEST_TILT, 0, 90, masterConfig.tilt0, masterConfig.tilt90);
-			pwmWriteServo(masterConfig.tilt_pin,pwmTilt);
+			else
+			{
+				tilt = map(SERVOTEST_TILT, 0, 90, masterConfig.tilt0, masterConfig.tilt90);
+				pwmWriteServo(masterConfig.tilt_pin,tilt);
+			}
 			DISABLE_SERVO(SERVOTILT_MOVE);
 		}
 	}
