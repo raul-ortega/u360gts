@@ -5,9 +5,9 @@ u360gts requires a compass sensor for tracking. When a compass is pressent, is c
 
 ## Supported Sensors
 
-In the moment of writting this document, u360gts supports only HMC5883L compass sensor. Supported boards with built in mag are HMC5883L. But if you need to install an external compass, you must select products with the chip marked as L883. Avoid buying sensors with chip marked as AD because they are not supported yet. To be sure about what you are buying you must ask the seller, because he might be providing not supported chips while in the product description is specified HMC5883L.
+In the moment of writing this document, u360gts supports HMC5883L and QMC5583L compass sensors. To be sure about what you are buying you must ask the seller, because he might be providing not supported chips while in the product description is specified the supported ones.
 
-<img src="img/supported_mag.jpg" width="525" />
+<!-- img src="img/supported_mag.jpg" width="525" /-->
 
 u360gts firmware can detect the compass. To check if the compass of your board (or the external one) is the supported one, in CLI window of configurator type the command "status". The response will show HMC5883 if it is detected.
 
