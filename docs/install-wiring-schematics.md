@@ -26,9 +26,3 @@ Naze32 Rev6 boards might fail to receive telemetry due to the USB-Serial chip bl
 ## SP Racing F3
 
 ![](img/u360gts_spracingf3_wiring_schematics.png)
-
-## Crius SE
-
-![](img/Crius-SE_wiring.png)
-
-[<< Go back](README.md)
