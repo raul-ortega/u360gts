@@ -1,6 +1,6 @@
 # Oficial 3D printed frame
 
-<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/u360gts_frame_3d_view.png" width="640" />
+<img src="img/u360gts_frame_3d_view.png" width="640" />
 
 As a quick start point you can print the official u360gts [3D printed frame](https://www.thingiverse.com/thing:3203850) of the project.
 
