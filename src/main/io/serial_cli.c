@@ -2511,7 +2511,7 @@ static void cliMovePanServo(char *cmdline)
     } else {
     	degrees=atoi(cmdline);
     	if(degrees>=0 && degrees<=360 ) {
-			printf("Moving pan servo to %u º\r\n", degrees);
+			printf("Moving pan servo to %u deg.\r\n", degrees);
 			SERVOTEST_HEADING=degrees;
 			ENABLE_SERVO(SERVOPAN_MOVE);
     	}
@@ -2530,7 +2530,7 @@ static void cliMoveTiltServo(char *cmdline)
     } else {
     	degrees=atoi(cmdline);
     	if(degrees >=0 && degrees <= 90 ) {
-			printf("Moving tilt servo to %u º\r\n", degrees);
+			printf("Moving tilt servo to %u deg.\r\n", degrees);
 			SERVOTEST_TILT = degrees;
 			ENABLE_SERVO(SERVOTILT_MOVE);
     	}
