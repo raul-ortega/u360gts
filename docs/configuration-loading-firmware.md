@@ -15,17 +15,22 @@ Please, follow this instructions for firmware flashing:
 2.- Launch the application after installation.
 3.- Jumper the boot pins of the board.
 4.- Connect the usb cable to your computer.
-	If STM32 drivers for the board are already installed, the new COM port will be shown and selected in the dropdown ports list.
+	If [STM32 drivers](https://zadig.akeo.ie/) for the board are already installed, the new COM port will be shown and selected in the dropdown ports list.
 5.- Click on **Flash Firmware** tab of left panel.
 6.- **Choose** your **board**.
 7.- **Choose** the lastest **firmware version** available.
-8.- Click on **Load Firmware Online**.	
-	During firmware downloading process the button will be disabled, once downloaded the button will be back to orange again and release info will be shown (read it carefully).
+8.- Click on **Load Firmware Online**.
+
+   During firmware downloading process the button will be disabled, once downloaded the button will be back to orange again and release info will be shown (read it carefully).
+	
 9.- Enable **Full chip erase** option.
 10.- Enable **Manual baud rate** and select **115200**.
 11.- Click on **Flash Firmware** button.
-	The proggress bar animation will start and will show **Flashing** while loading the firmware to the board. After that **Verifying** will be shown and finally, if everything went well, **Programming successful** message will apear on the bar.
-	If something went wrong an error message will be shown on the bar. Please read carefully **Warning** and **Recovery/Lost communication** notes on screen to get it solved.
+
+   The proggress bar animation will start and will show **Flashing** while loading the firmware to the board. After that **Verifying** will be shown and finally, if everything went well, **Programming successful** message will apear on the bar.
+   
+   If something went wrong an error message will be shown on the bar. Please read carefully **Warning** and **Recovery/Lost communication** notes on screen to get it solved.
+   
 12.- Disconnect the usb cable.
 13.- **Remove the jumper** from the boot pins.
 
@@ -34,19 +39,22 @@ Please, follow this instructions for firmware flashing:
 Please, follow this instructions for connecting to the board from u360gts configurator:
 
 1.- Connect the **usb cable** to your computer.
-	If STM32 drivers for the board are already installed, the new COM port will be shown and selected in the dropdown ports list.
+
+   If [STM32 drivers](https://zadig.akeo.ie/) for the board are already installed, the new COM port will be shown and selected in the dropdown ports list.
+   
 2.- Select **115200** baud rate from the dropdwon list.
 3.- Click on **Connect** button (top right corner).
-	If everything went well **Configuration tab** will be shown, and board name, firmware version and date/time will be shown on the *Log* window.
 
-### Alternative tools :
+   If everything went well **Configuration tab** will be shown, and board name, firmware version and date/time will be shown on the *Log* window. You are ready for configuring your u360gts antenna tracker.
+
+### Alternative Flashing Methods.
 
 - Using the STM Micro Electronics tool [Flash Loader Demonsrator](https://www.st.com/en/development-tools/flasher-stm32.html)
 - Using Betaflight configurator or iNav configurator.
 
-In this cases you must download first u360gts firmware for your board 
+In this cases you must [download](https://github.com/raul-ortega/u360gts/releases/latest) first u360gts firmware for your board.
 
-#### Flash Loader Demonsrator
+#### FLASH LOADER DEMONSTRATOR
 
 #### Flashing for the First Time
 
@@ -56,22 +64,6 @@ In this cases you must download first u360gts firmware for your board
 4. Select port, baud rate, and next.
 5. Browse and select the hex file, select Global Erase and Jump to user program options, and next.
 6. After flashing close Flash Loader Demonstrator.
-7. Run u360gts configurator, select 115200 bauds, press Connect and  CLI ENTER buttons.
-
-#### Upgrading from previous version
-
-1. Download the hex file for your controller board from [here](https://github.com/raul-ortega/u360gts/releases/latest).
-2. Select baud rate, connect and press CLI ENTER button
-3. Go to Cli Mode tab, press BACKUP Config and save the configuration file.
-4. Press BOOT MODE button.
-5. Run Flash Loader Demonstrator (download from [here](https://www.st.com/en/development-tools/flasher-stm32.html).)
-6. Select port, baud rate, and next.
-7. Browse and select the hex file, select Global Erase and Jump to user program options, and next.
-8. After flashing close Flash Loader Demonstrator.
-9. Go to u360gts configurator, select 115200 bauds, press Connect and  CLI ENTER buttons.
-10. Go to Cli Mode tab and press RESTORE CONFIG.
-11. Save and you are done.
-
-After this you are ready to connect and enter CLI Mode in order to configure the new features.
+7. Run u360gts configurator, select 115200 bauds, and press Connect button.
 
 [<< Go back](README.md)
