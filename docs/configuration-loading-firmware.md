@@ -1,6 +1,6 @@
 ## Loading the Firmware
 
-**u360gts configurator** is the official tool for supported boardas, it can be downloaded from [releases page](https://github.com/raul-ortega/u360gts-configurator/releases/latest).
+**u360gts configurator** is the official tool for supported boards, it can be downloaded from [releases page](https://github.com/raul-ortega/u360gts-configurator/releases/latest).
 It is a crossplatform tool that can be run on Windows, MacOS and Linux machines, and **standalone application** 
 
 Download the binaries for your operating system and install it following the wizard instructions (Linux users must follow nw.js [instructions](https://github.com/nwjs/nw.js#documents) in order to build and/or run the configurator source code).
