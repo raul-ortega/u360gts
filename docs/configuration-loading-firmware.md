@@ -15,7 +15,9 @@ Please, follow this instructions for firmware flashing:
 2.- Launch the application after installation.
 3.- Jumper the boot pins of the board.
 4.- Connect the usb cable to your computer.
-	If [STM32 drivers](https://zadig.akeo.ie/) for the board are already installed, the new COM port will be shown and selected in the dropdown ports list.
+
+   If [STM32 drivers](https://zadig.akeo.ie/) for the board are already installed, the new COM port will be shown and selected in the dropdown ports list.
+   
 5.- Click on **Flash Firmware** tab of left panel.
 6.- **Choose** your **board**.
 7.- **Choose** the lastest **firmware version** available.
