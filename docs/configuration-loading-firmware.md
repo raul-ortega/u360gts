@@ -2,7 +2,7 @@
 
 ### Configurator Tool
 
-**u360gts configurator** is the official tool for supported boardas, it can be downloaded from [release page](https://github.com/raul-ortega/u360gts-configurator/releases/latest).
+**u360gts configurator** is the official tool for supported boardas, it can be downloaded from [releases page](https://github.com/raul-ortega/u360gts-configurator/releases/latest).
 It is a crossplatform tool that can be run on Windows, MacOS and Linux machines, and **standalone application** 
 
 Download the binaries for your operating system and install it following the wizard instructions (Linux users must follow nw.js [instructions](https://github.com/nwjs/nw.js#documents) in order to build and/or run the configurator source code).
@@ -11,9 +11,9 @@ Download the binaries for your operating system and install it following the wiz
 
 Please, follow this instructions for firmware flashing:
 
-1. Download and isntall u360gts configurator.
-2. Launch the application after installation.
-3. Jumper the boot pins of the board.
+1. **Download** and **install** u360gts configurator.
+2. **Launch** the application after installation.
+3. **Jumper** the **boot pins** of the board.
 4. Connect the usb cable to your computer.
 
    If [STM32 drivers](https://zadig.akeo.ie/) for the board are already installed, the new COM port will be shown and selected in the dropdown ports list.
