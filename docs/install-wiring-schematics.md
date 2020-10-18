@@ -14,7 +14,7 @@ Naze32 Rev6 boards might fail to receive telemetry due to the USB-Serial chip bl
 
 ![](img/flip32_wiring.png)
 
-![](img/flip3210dof_schema.png)
+![](img/flip32_wiring_full_schema.png)
 
 ## Bluepill
 
