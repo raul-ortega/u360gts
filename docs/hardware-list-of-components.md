@@ -16,7 +16,7 @@ This list of components is suitable for the [u360gts official 3d printted frame]
 - 1 x [I2C 2.42" 128x64 OLED Display SSD1306/SSD1309(Arduino/PIC/Multi-wii)](https://a.aliexpress.com/_BTcMTr).
 - 1 x TILT SERVO: [TowerPro MG996R](https://www.banggood.com/TowerPro-MG996R-Metal-Gear-Digital-High-Torque-Servo-55g-p-982287.html?p=LH07161453356201504A)
 - 1 x PAN SERVO : [TowerPro MG996R](https://www.banggood.com/TowerPro-MG996R-Metal-Gear-Digital-High-Torque-Servo-55g-p-982287.html?p=LH07161453356201504A) (You have to convert it to 360º)
-- 2 x [Momentary Push Button Switch ](https://www.banggood.com/5Pcs-DC-50V-0_5A-Red-Knob-Momentary-Push-Button-Switch-p-1114676.html?p=LH07161453356201504A)
+- 2 x [Momentary Push Button Switch ](https://www.banggood.com/10pcs-Momentary-Button-Switches-ON-or-OFF-Push-Button-Mini-Switches-250V-0_5A-p-1046059.html?p=LH07161453356201504A)
 - 1 x [5V 3A BEC](https://www.banggood.com/HENGE-UBEC-6V-6A-2-6S-Lipo-NiMh-Battery-Switch-Mode-BEC-p-1099336.html?p=LH07161453356201504A)
 - 1 X [Bluetooth module HC-05](https://www.banggood.com/5Pcs-HC-05-Wireless-Bluetooth-Serial-Transceiver-Module-For-Arduino-p-959211.html?p=LH07161453356201504A)
 - 2 x [Bearing 30mm x 55mm x 13mm](https://www.amazon.es/dp/B00TX2VJ60/) for pan.
