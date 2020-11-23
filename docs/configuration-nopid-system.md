@@ -18,3 +18,5 @@ For big angles the tracker moves fast, and in the same way, and for small angles
 Also has to be taken into account the following parameter:
 
 - **min_pan_speed**: Minimum increment (microseconds) of pan0 pulse in order to start the movement.
+
+[<< Go back](README.md)
