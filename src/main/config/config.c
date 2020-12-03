@@ -405,9 +405,9 @@ static void resetConf(void)
     masterConfig.mixerMode = MIXER_QUADX;
 #endif
     featureClearAll();
-    //////// Nueva Líneas
+    //////// Nueva Lï¿½neas
     featureSet(FEATURE_SERVO_TILT);
-    //////// Fin Nuevas Líneas
+    //////// Fin Nuevas Lï¿½neas
 #if defined(CJMCU) || defined(SPARKY) || defined(COLIBRI_RACE) || defined(MOTOLAB)
     //featureSet(FEATURE_RX_PPM);
 #endif
@@ -748,7 +748,7 @@ static void resetConf(void)
    	masterConfig.telemetry_provider = 0;
 
     //Display
-   	//featureSet(FEATURE_DISPLAY);
+   	featureSet(FEATURE_DISPLAY);
 
    	//GPS
    	featureClear(FEATURE_GPS);
