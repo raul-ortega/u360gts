@@ -748,7 +748,7 @@ static void resetConf(void)
    	masterConfig.telemetry_provider = 0;
 
     //Display
-   	featureSet(FEATURE_DISPLAY);
+   	//featureSet(FEATURE_DISPLAY);
 
    	//GPS
    	featureClear(FEATURE_GPS);
