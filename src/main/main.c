@@ -115,7 +115,7 @@ void rxInit(rxConfig_t *rxConfig, modeActivationCondition_t *modeActivationCondi
 void gpsInit(serialConfig_t *serialConfig, gpsConfig_t *initialGpsConfig);
 void navigationInit(gpsProfile_t *initialGpsProfile, pidProfile_t *pidProfile);
 void imuInit(void);
-void displayInit(rxConfig_t *intialRxConfig,uint16_t telemetry_protocol);
+void displayInit(rxConfig_t *intialRxConfig,uint16_t telemetry_protocol, uint8_t oled_type);
 //void ledStripInit(ledConfig_t *ledConfigsToUse, hsvColor_t *colorsToUse);
 //void loop(void);
 void spektrumBind(rxConfig_t *rxConfig);
@@ -379,7 +379,7 @@ void init(void)
 
 #ifdef DISPLAY
     if (feature(FEATURE_DISPLAY)) {
-        displayInit(&masterConfig.rxConfig,masterConfig.telemetry_protocol);
+        displayInit(&masterConfig.rxConfig,masterConfig.telemetry_protocol,masterConfig.oled_type);
     }
 #endif
 
