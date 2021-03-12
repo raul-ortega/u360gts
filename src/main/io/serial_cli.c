@@ -764,7 +764,8 @@ const clivalue_t valueTable[] = {
 	{ "eps_frequency",     			VAR_UINT16 | MASTER_VALUE, &masterConfig.eps_frequency, .config.minmax = { 100,  1000 } },
     { "eps_interpolation",   	    VAR_UINT8 | MASTER_VALUE | MODE_LOOKUP, &masterConfig.eps_interpolation, .config.lookup = { TABLE_OFF_ON } },
 	{ "eps_interpolation_points",   VAR_UINT8 | MASTER_VALUE, &masterConfig.eps_interpolation_points, .config.minmax = { 2,  10 } },
-	{ "max_speed_filter",   	    VAR_UINT8 | MASTER_VALUE, &masterConfig.max_speed_filter, .config.minmax = { 0,  255 } }
+	{ "max_speed_filter",   	    VAR_UINT8 | MASTER_VALUE, &masterConfig.max_speed_filter, .config.minmax = { 0,  255 } },
+	{ "oled_type",   	            VAR_UINT8 | MASTER_VALUE, &masterConfig.oled_type, .config.minmax = { 0,  1 } }
 };
 
 #define VALUE_COUNT (sizeof(valueTable) / sizeof(clivalue_t))
