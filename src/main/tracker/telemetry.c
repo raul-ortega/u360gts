@@ -106,6 +106,10 @@ void encodeTargetData(uint8_t c) {
 	    crossfire_encodeTargetData(c);
 	else if(PROTOCOL(TP_PITLAB))
 		pitlab_encodeTargetData(c);
+
+	if(forwardEnabled()){
+	    forwardTelemetry(c);
+	}
 }
 
 void gps_encodeTargetData(uint8_t c) {

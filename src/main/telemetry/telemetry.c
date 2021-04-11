@@ -45,6 +45,7 @@
 #include "telemetry/nmea.h"
 #include "telemetry/ltm.h"
 #include "telemetry/position_estimation_log.h"
+#include "telemetry/forward.h"
 
 static telemetryConfig_t *telemetryConfig;
 
@@ -64,7 +65,7 @@ void telemetryInit(void)
     initNMEATelemetry(telemetryConfig);
     initLtmTelemetry(telemetryConfig);
     initPOSESTTelemetry(telemetryConfig);
-
+    initForwardTelemetry(telemetryConfig);
     telemetryCheckState();
 }
 
@@ -93,6 +94,7 @@ void telemetryCheckState(void)
     checkNMEATelemetryState();
     checkLtmTelemetryState();
     checkPOSESTTelemetryState();
+    checkForwardTelemetryState();
 }
 
 void telemetryProcess(rxConfig_t *rxConfig, uint16_t deadband3d_throttle)
@@ -106,6 +108,7 @@ void telemetryProcess(rxConfig_t *rxConfig, uint16_t deadband3d_throttle)
     handleNMEATelemetry();
     handleLtmTelemetry();
     handlePOSESTTelemetry();
+    handleForwardTelemetry();
 }
 
 #endif
