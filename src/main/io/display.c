@@ -18,6 +18,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "platform.h"
@@ -96,12 +97,13 @@ extern uint16_t EPS_DISTANCE_GAIN;
 extern uint16_t EPS_FREQUENCY;
 
 int16_t master_telemetry_protocol;
+uint8_t display_type;
 
 controlRateConfig_t *getControlRateConfig(uint8_t profileIndex);
 
 #define MICROSECONDS_IN_A_SECOND (1000 * 1000)
 
-#define DISPLAY_UPDATE_FREQUENCY (MICROSECONDS_IN_A_SECOND / 5)
+#define DISPLAY_UPDATE_FREQUENCY 5000 //(MICROSECONDS_IN_A_SECOND / 5)
 #define PAGE_CYCLE_FREQUENCY (MICROSECONDS_IN_A_SECOND * 5)
 #define PAGE_TOGGLE_FREQUENCY (MICROSECONDS_IN_A_SECOND / 2)
 
@@ -329,7 +331,7 @@ uint8_t menuState = 0;
 extern uint16_t rssi;
 
 void resetDisplay(void) {
-    displayPresent = ug2864hsweg01InitI2C();
+    displayPresent = ug2864hsweg01InitI2C(display_type);
 }
 
 void LCDprint(uint8_t i) {
@@ -513,33 +515,37 @@ static void renderRLEBitmap(uint8_t *bitmap)
 {
     uint8_t data = 0, count = 0;
     uint16_t i;
-    uint8_t width = *bitmap;
+    //uint8_t width = *bitmap;
     bitmap++;
     uint8_t height = *bitmap;
     bitmap++;
-    uint16_t bitmapSize = (width * height) / 8;
-    for (i = 0; i < bitmapSize; i++) {
-        if (count == 0) {
-            data = *bitmap;
-            bitmap++;
-            if (data == *bitmap) {
+    //uint16_t bitmapSize = (width * height) / 8;
+    for (i = 0; i < height / 8; i++) {
+        i2c_OLED_set_line(2+i);	// Set hi col addr
+
+        for (uint16_t j = 128; j > 0; j--)
+        {
+            if (count == 0) {
+                data = *bitmap;
                 bitmap++;
-                count = *bitmap;
-                bitmap++;
+                if (data == *bitmap) {
+                    bitmap++;
+                    count = *bitmap;
+                    bitmap++;
+                }
+                else {
+                    count = 1;
+                }
             }
-            else {
-                count = 1;
-            }
+            count--;
+            i2c_OLED_write_byte(data);
         }
-        count--;
-        i2c_OLED_send_byte(data);
     }
 }
 
 void showWelcomePage(void)
 {
     // Draw the logo
-    i2c_OLED_set_line(2);
     renderRLEBitmap(u360gts_logo);
 
     // Draw the rest of the text around it
@@ -1196,7 +1202,7 @@ void updateDisplay(void)
         updateTicker();
     }
 
-
+    display();
 
 }
 
@@ -1206,13 +1212,14 @@ void displaySetPage(pageId_e pageId)
     pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
 }
 
-void displayInit(rxConfig_t *rxConfigToUse,uint16_t telemetry_protocol)
+void displayInit(rxConfig_t *rxConfigToUse,uint16_t telemetry_protocol, uint8_t oled_type)
 {
     delay(200);
     resetDisplay();
     delay(200);
 
     rxConfig = rxConfigToUse;
+    display_type = oled_type;
 
     master_telemetry_protocol = telemetry_protocol;
 
