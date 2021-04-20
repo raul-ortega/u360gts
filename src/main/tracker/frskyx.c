@@ -177,7 +177,20 @@ void processHubPacket(uint8_t id, uint16_t value)
   }
 }
 
-static uint8_t checkSportPacket(uint8_t * packet)
+bool checkSportPacket_V1(uint8_t *packet)
+{
+    short crc = 0;
+      for (int i = 1; i < FRSKY_RX_PACKET_SIZE; i++) {
+        crc += packet[i]; //0-1FF
+        crc += crc >> 8; //0-100
+        crc &= 0x00ff;
+        crc += crc >> 8; //0-0FF
+        crc &= 0x00ff;
+      }
+      return (crc == 0x00ff);
+}
+
+static uint8_t checkSportPacket_V2(uint8_t * packet)
 {
   short crc = 0;
   for (int i=1; i<FRSKY_RX_PACKET_SIZE-1; ++i) {
@@ -198,7 +211,7 @@ void processSportPacket(uint8_t *packet)
   uint8_t  prim   = packet[1];
   uint16_t appId  = *((uint16_t *)(packet + 2));
 
-	if (!checkSportPacket(packet)){
+	if (!checkSportPacket_V1(packet) && !checkSportPacket_V2(packet)){
 		  	telemetry_failed_cs++;
 			return;
   	}
