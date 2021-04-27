@@ -318,7 +318,7 @@ void tracker_setup(void)
   protocolInit(masterConfig.telemetry_protocol);
 
   if(feature(FEATURE_AUTODETECT))
-	  enableProtocolDetection();
+	  enableProtocolDetection(masterConfig.telemetry_protocol);
 
   trackingInit();
 
@@ -829,7 +829,8 @@ void updateTelemetryLost(void){
 		lostTelemetry = true;
 		if(feature(FEATURE_AUTODETECT)){
 			showAutodetectingTitle(0);
-			enableProtocolDetection();
+			enableProtocolDetection(masterConfig.telemetry_protocol);
+			detection_title_updated = false;
 		}
 	}
 }
@@ -1556,28 +1557,27 @@ void updateEPSParams(){
 void updateProtocolDetection(void){
 	uint16_t detected_protocol;
 
-	if(!feature(FEATURE_AUTODETECT) || cliMode)
+	if(!feature(FEATURE_AUTODETECT) || cliMode || !isProtocolDetectionEnabled())
 		return;
 
 	detected_protocol = getProtocol();
 
-	if(detected_protocol == 0 && !detection_title_updated ){
-		detection_title_updated = true;
-		updateDisplayProtocolTitle(detected_protocol);
-		return;
-	}
-
-
-	if(detected_protocol > 0 && isProtocolDetectionEnabled()){
-	    updateDisplayProtocolTitle(detected_protocol);
-	    detection_title_updated = false;
-	    protocolInit(detected_protocol);
-	    if(!homeSet){
+    if(detected_protocol > 0 ) {
+        protocolInit(detected_protocol);
+        if(!homeSet){
             trackingInit();
             if(PROTOCOL(TP_MFD))
                 settingHome = true;
         }
-	}
+        disableProtocolDetection();
+        detection_title_updated = false;
+    }
+
+    if(detection_title_updated == false){
+        updateDisplayProtocolTitle(detected_protocol);
+        detection_title_updated = true;
+    }
+
 }
 
 void protocolInit(uint16_t protocol){

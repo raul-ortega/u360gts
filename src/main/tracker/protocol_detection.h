@@ -24,9 +24,15 @@
 
 */
 #include <stdint.h>
+#include <stdbool.h>
 
-void enableProtocolDetection(void);
+#ifndef PROTOCOL_DETECTION_H_
+#define PROTOCOL_DETECTION_H_
+
 void disableProtocolDetection(void);
 void protocolDetectionParser(uint8_t c);
 uint16_t getProtocol(void);
 bool isProtocolDetectionEnabled(void);
+void enableProtocolDetection(uint16_t default_protocol);
+
+#endif /* PROTOCOL_DETECTION_H_ */
