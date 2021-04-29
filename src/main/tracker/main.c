@@ -827,7 +827,7 @@ void updateTelemetryLost(void){
 
 	if(!gotTelemetry && (millis() - lostTelemetry_timer > 3000)){
 		lostTelemetry = true;
-		if(feature(FEATURE_AUTODETECT)){
+		if(feature(FEATURE_AUTODETECT) && !isProtocolDetectionEnabled()){
 			showAutodetectingTitle(0);
 			enableProtocolDetection(masterConfig.telemetry_protocol);
 			detection_title_updated = false;
