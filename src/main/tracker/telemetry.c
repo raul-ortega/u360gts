@@ -167,8 +167,4 @@ int32_t gpsToLong(int8_t neg, uint16_t bp, uint16_t ap) {
   return ((int32_t)(first + second) * (uint32_t)neg);
 }
 
-void setTelemetryHome(int32_t lat, int32_t lon, int16_t alt){
-	telemetry_home_lat = lat;
-	telemetry_home_lon = lon;
-	telemetry_home_alt = alt;
-}
+

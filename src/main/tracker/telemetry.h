@@ -68,7 +68,5 @@ int32_t getTargetLon();
 uint16_t getSats();
 uint16_t getDistance();
 uint16_t getAzimuth();
-void disableProtocolDetection(void);
-void setTelemetryHome(int32_t lat, int32_t lon, int16_t alt);
 
 #endif

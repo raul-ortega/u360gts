@@ -151,6 +151,10 @@ typedef struct master_t {
 	uint8_t max_speed_filter;
 	uint8_t altitude_priority;
 	uint8_t pan_inverted;
+	uint8_t restore_last_home;
+	int32_t home_lat;
+	int32_t home_lon;
+	int16_t home_alt;
 } master_t;
 
 extern master_t masterConfig;
