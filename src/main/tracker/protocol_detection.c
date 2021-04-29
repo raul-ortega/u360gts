@@ -51,7 +51,6 @@ static const uint16_t protocols[] = {
 void enableProtocolDetection(uint16_t default_protocol) {
 	protocolDetected = 0;
 	detectionIsEnabled = true;
-	protocolDetectionTimer = millis();
 	protocol_fixes = 0;
 	current_protocol=0;
 
@@ -62,6 +61,8 @@ void enableProtocolDetection(uint16_t default_protocol) {
 	        break;
 	    }
 	}
+
+	protocolDetectionTimer = 0;
 }
 
 void disableProtocolDetection(void){
@@ -81,6 +82,8 @@ void protocolDetectionParser(uint8_t c)
 {
     if(!detectionIsEnabled)
             return;
+    if(protocolDetectionTimer == 0)
+        protocolDetectionTimer = millis();
 
     if(millis() - protocolDetectionTimer >= 3000){
       current_protocol ++;
