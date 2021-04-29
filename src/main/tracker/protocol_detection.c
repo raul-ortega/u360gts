@@ -124,9 +124,11 @@ void protocolDetectionParser(uint8_t c)
 
     if(gotFix){
         protocol_fixes ++;
-        if(protocol_fixes > 2) {
+        if(protocol_fixes > 1) {
             protocolDetected = protocols[current_protocol];
+            return;
         }
         gotFix = false;
+
     }
 }
