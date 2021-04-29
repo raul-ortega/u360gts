@@ -80,8 +80,7 @@ uint16_t getProtocol(void){
 
 void protocolDetectionParser(uint8_t c)
 {
-    if(!detectionIsEnabled)
-            return;
+
     if(protocolDetectionTimer == 0)
         protocolDetectionTimer = millis();
 

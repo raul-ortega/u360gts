@@ -86,30 +86,33 @@ void encodeTargetData(uint8_t c) {
 	uint16_t chars = 0;
 	uint8_t sentences = 0;
 
-	protocolDetectionParser(c);
-
-	if(PROTOCOL(TP_MFD))
-		mfd_encodeTargetData(c);
-	else if(PROTOCOL(TP_GPS_TELEMETRY))
-		gps_encodeTargetData(c);
-	else if(PROTOCOL(TP_MAVLINK))
-		mavlink_encodeTargetData(c);
-	else if(PROTOCOL(TP_RVOSD))
-		rvosd_encodeTargetData(c);
-	else if(PROTOCOL(TP_FRSKY_D))
-		frskyd_encodeTargetData(c);
-	else if(PROTOCOL(TP_FRSKY_X))
-		frskyx_encodeTargetData(c);
-	else if(PROTOCOL(TP_LTM))
-		ltm_encodeTargetData(c);
-	else if(PROTOCOL(TP_CROSSFIRE))
-	    crossfire_encodeTargetData(c);
-	else if(PROTOCOL(TP_PITLAB))
-		pitlab_encodeTargetData(c);
-
-	if(forwardEnabled()){
-	    forwardTelemetry(c);
+	if(isProtocolDetectionEnabled()) {
+	    protocolDetectionParser(c);
+	    return;
 	}
+
+    if(PROTOCOL(TP_MFD))
+        mfd_encodeTargetData(c);
+    else if(PROTOCOL(TP_GPS_TELEMETRY))
+        gps_encodeTargetData(c);
+    else if(PROTOCOL(TP_MAVLINK))
+        mavlink_encodeTargetData(c);
+    else if(PROTOCOL(TP_RVOSD))
+        rvosd_encodeTargetData(c);
+    else if(PROTOCOL(TP_FRSKY_D))
+        frskyd_encodeTargetData(c);
+    else if(PROTOCOL(TP_FRSKY_X))
+        frskyx_encodeTargetData(c);
+    else if(PROTOCOL(TP_LTM))
+        ltm_encodeTargetData(c);
+    else if(PROTOCOL(TP_CROSSFIRE))
+        crossfire_encodeTargetData(c);
+    else if(PROTOCOL(TP_PITLAB))
+        pitlab_encodeTargetData(c);
+
+    if(forwardEnabled()){
+        forwardTelemetry(c);
+    }
 }
 
 void gps_encodeTargetData(uint8_t c) {
