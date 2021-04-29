@@ -87,7 +87,7 @@ void protocolDetectionParser(uint8_t c)
 
     if(millis() - protocolDetectionTimer >= 3000){
       current_protocol ++;
-      if(current_protocol >= sizeof(protocols) / sizeof(uint8_t)) current_protocol = 0;
+      if(current_protocol >= sizeof(protocols) / sizeof(uint16_t)) current_protocol = 0;
       protocolDetectionTimer = millis();
       gotFix = false;
     }
