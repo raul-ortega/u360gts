@@ -715,7 +715,7 @@ void setHomeByTelemetry(positionVector_t *tracker, positionVector_t *target) {
 }
 
 bool shouldRestoreHome(void){
-    return(!homeSet && masterConfig.restore_last_home == true && masterConfig.home_lat != 0 &&  masterConfig.home_lon != 0);
+    return(!homeSet  && !homeSet_BY_LAST && !homeReset && masterConfig.restore_last_home == true && masterConfig.home_lat != 0 &&  masterConfig.home_lon != 0);
 }
 
 void setTelemetryHome(int32_t lat, int32_t lon, int16_t alt, bool save){
