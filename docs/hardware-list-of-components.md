@@ -2,7 +2,7 @@
 
 **Please, take into account that the frame is still a work in progress and this list might change**.
 
-This list of components is suitable for the [u360gts official 3d printted frame](https://github.com/raul-ortega/u360gts/blob/master/wiki/hardware-frame.md).
+This list of components is suitable for the [u360gts official 3d printted frame](hardware-frame.md).
 
 **Note:** Other alternatives to this list are possible for other frames, please contact the community of users to get more information. 
 
