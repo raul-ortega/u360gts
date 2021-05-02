@@ -71,7 +71,7 @@ CW270FLIP
 
 ### Magnetic Declination
 
-To change magnetic declination you have to set correct declination of your spesific location, which can be found [here](www.magnetic-declination.com).
+To change magnetic declination you have to set correct declination of your spesific location, which can be found [here](http://www.magnetic-declination.com).
 
 If your magnetic declination readings are e.g. +3° 34' , the value entered in the u360gts configurator is 334. For west declination, use a minus value, e.g. for 1° 32' W, the value entered in the u360gts configurator is -132. In all cases (both CLI and GUI), the least significant digits are minutes, not decimal degrees.
 
