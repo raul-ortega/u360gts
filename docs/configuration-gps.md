@@ -10,16 +10,16 @@ Two GPS protocols are supported. NMEA text and UBLOX binary.
 
 Enable the GPS as follows:
 
-1. Connect your GPS to the serial port for GPS.
-1. [Configure a serial port to use for GPS.](configuration-serial.md)
-1. Enable the `feature GPS`
-1. Set your GPS baud rate
-1. set the `GPS provider`
-1. save and reboot.
+1. Connect your GPS to the desired serial port for GPS.
+2. [Configure serial port to be used by GPS.](configuration-serial.md)
+3. Enable the `feature GPS`
+4. Set your GPS baud rate
+5. set the `GPS provider`
+6. save and reboot.
 
 Note:  GPS packet loss has been observed at 115200.  Try lower baud rate if you experience this.
 
-For the connections step check the [wiring documentation](hardware-wiring-schematics.md) for pins and port numbers.
+For the connections step check the [wiring documentation](install-wiring-schematics.md) for pins and port numbers.
 
 ### GPS Provider
 
