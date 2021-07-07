@@ -791,7 +791,9 @@ void updateReadTelemetry(void){
 	if (serialRxBytesWaiting(trackerSerial)>1){
 		uint8_t c = serialRead(trackerSerial);
 
+		if (homeSet != true) {
 		evaluateOtherData(trackerSerial,c);
+		}
 
 		LED0_ON;
 
