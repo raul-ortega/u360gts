@@ -56,4 +56,6 @@ typedef struct {
 #define meter2feet(value) value * 3.2808399
 #define feet2meter(value) value * 0.3048
 
+#define MICROSECONDS_IN_A_SECOND    (1000 * 1000)
+
 #endif
