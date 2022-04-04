@@ -246,10 +246,10 @@ void i2c_OLED_clear_display_quick(void)
     clearDisplay();
 }
 
-void i2c_OLED_set_xy(uint8_t col, uint8_t row)
+void i2c_OLED_set_xy(uint8_t column, uint8_t row)
 {
     line_no = row;
-    col = col;
+    col = column * CHARACTER_WIDTH_TOTAL;
 }
 
 void i2c_OLED_write_byte(uint8_t byte)
