@@ -718,7 +718,6 @@ static void showTelemetryPage(void)
         uint16_t lat_a = abs(targetPosition.lat / 1000000);
         uint32_t lat_b = abs(targetPosition.lat % 1000000);
 
-        tfp_sprintf(lineBuffer, "Lat: ");
         if (targetPosition.lat < 0)
             tfp_sprintf(lineBuffer, "Lat: -%d.%06d  ", lat_a, lat_b);
         else
@@ -730,7 +729,6 @@ static void showTelemetryPage(void)
         uint16_t lon_a = abs(targetPosition.lon / 1000000);
         uint32_t lon_b = abs(targetPosition.lon % 1000000);
 
-        tfp_sprintf(lineBuffer, "Lon: ");
         if (targetPosition.lon < 0)
             tfp_sprintf(lineBuffer, "Lon: -%d.%06d  ", lon_a, lon_b);
         else
@@ -743,9 +741,9 @@ static void showTelemetryPage(void)
     {
         //
     }
-    char altSgn = (targetPosition.alt < 0) ? '-' : '\0';
-    targetPosition.alt = (targetPosition.alt < 0) ? -1 * targetPosition.alt : targetPosition.alt;
-    tfp_sprintf(lineBuffer, "Alt:%s%d Dis: %d  ", altSgn, targetPosition.alt, targetPosition.distance);
+    char altSgn = (targetPosition.alt < 0) ? '-' : ' ';
+    int16_t displayedAlt = (targetPosition.alt < 0) ? -1 * targetPosition.alt : targetPosition.alt;
+    tfp_sprintf(lineBuffer, "Alt:%c%d Dis: %d  ", altSgn, displayedAlt, targetPosition.distance);
     padLineBuffer();
     OLED_set_line(rowIndex++);
     OLED_send_string(lineBuffer);
