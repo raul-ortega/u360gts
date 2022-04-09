@@ -28,7 +28,6 @@
 
 #include "drivers/serial.h"
 #include "drivers/system.h"
-#include "drivers/display_ug2864hsweg01.h"
 #include "drivers/sensor.h"
 #include "drivers/accgyro.h"
 #include "drivers/compass.h"
@@ -40,16 +39,14 @@
 
 #ifdef DISPLAY
 
+#include "display_lib.h"
 #include "sensors/battery.h"
 #include "sensors/sensors.h"
 #include "sensors/compass.h"
 #include "sensors/acceleration.h"
 #include "sensors/gyro.h"
-
 #include "rx/rx.h"
-
 #include "io/rc_controls.h"
-
 #include "flight/pid.h"
 #include "flight/imu.h"
 #include "flight/failsafe.h"
@@ -60,12 +57,10 @@
 #endif
 
 #include "config/runtime_config.h"
-
 #include "config/config.h"
-
 #include "display.h"
-
 #include "tracker/defines.h"
+
 
 extern int32_t telemetry_lat;
 extern int32_t telemetry_lon;
@@ -83,41 +78,42 @@ extern bool lostTelemetry;
 extern bool homeSet_BY_GPS;
 extern bool homeSet;
 extern bool homeReset;
-
 extern uint16_t pwmPan;
 extern uint16_t pwmTilt;
 extern uint8_t SERVOTEST_TILT;
-
 extern int8_t OFFSET_TRIM;
-
 extern uint8_t OFFSET_TRIM_STATE;
-
 extern uint8_t EPS_MODE;
 extern uint16_t EPS_DISTANCE_GAIN;
 extern uint16_t EPS_FREQUENCY;
+extern uint16_t rssi;
 
-int16_t master_telemetry_protocol;
-uint8_t display_type;
+#define DISPLAY_UPDATE_PERIOD_US    (MICROSECONDS_IN_A_SECOND / 5)
+#define PAGE_CYCLE_PERIOD_US        (MICROSECONDS_IN_A_SECOND * 5)
+#define PAGE_TOGGLE_PERIOD_US       (MICROSECONDS_IN_A_SECOND / 2)
 
-controlRateConfig_t *getControlRateConfig(uint8_t profileIndex);
+#define PAGE_TITLE_LINE_COUNT                   1
+#define HALF_SCREEN_CHARACTER_COLUMN_COUNT      (SCREEN_CHARACTER_COLUMN_COUNT / 2)
+#define IS_SCREEN_CHARACTER_COLUMN_COUNT_ODD    (SCREEN_CHARACTER_COLUMN_COUNT & 1)
+#define RX_CHANNELS_PER_PAGE_COUNT              14
 
-#define MICROSECONDS_IN_A_SECOND (1000 * 1000)
+typedef enum {
+    PAGE_STATE_FLAG_NONE = 0,
+    PAGE_STATE_FLAG_CYCLE_ENABLED = (1 << 0),
+    PAGE_STATE_FLAG_FORCE_PAGE_CHANGE = (1 << 1)
+} pageFlags_e;
 
-#define DISPLAY_UPDATE_FREQUENCY 5000 //(MICROSECONDS_IN_A_SECOND / 5)
-#define PAGE_CYCLE_FREQUENCY (MICROSECONDS_IN_A_SECOND * 5)
-#define PAGE_TOGGLE_FREQUENCY (MICROSECONDS_IN_A_SECOND / 2)
+typedef struct pageState_s {
+    bool pageChanging;
+    pageId_e pageId;
+    pageId_e pageIdBeforeArming;
+    uint8_t pageFlags;
+    uint8_t cycleIndex;
+    uint32_t nextPageAt;
+    uint32_t nextToggleAt;
+    uint8_t toggleCounter;
+} pageState_t;
 
-static uint32_t nextDisplayUpdateAt = 0;
-static bool displayPresent = false;
-
-static rxConfig_t *rxConfig;
-
-#define PAGE_TITLE_LINE_COUNT 1
-
-static char lineBuffer[SCREEN_CHARACTER_COLUMN_COUNT + 1];
-
-#define HALF_SCREEN_CHARACTER_COLUMN_COUNT (SCREEN_CHARACTER_COLUMN_COUNT / 2)
-#define IS_SCREEN_CHARACTER_COLUMN_COUNT_ODD (SCREEN_CHARACTER_COLUMN_COUNT & 1)
 
 static uint8_t u360gts_logo[] = { 128, 32,
     '\x00','\x00','\x07','\x80','\xc0','\xe0','\xf0','\xf8', // 0x0008
@@ -177,9 +173,7 @@ static const char* const pageTitles[] = {
 	,"MAIN MENU"
 };
 
-#define PAGE_COUNT (PAGE_RX + 1)
-
-const pageId_e cyclePageIds[] = {
+static const pageId_e cyclePageIds[] = {
     PAGE_TELEMETRY,
 #ifdef GPS
     PAGE_GPS,
@@ -189,32 +183,6 @@ const pageId_e cyclePageIds[] = {
     ,PAGE_DEBUG,
 #endif
 };
-
-
-
-#define CYCLE_PAGE_ID_COUNT (sizeof(cyclePageIds) / sizeof(cyclePageIds[0]))
-
-static const char* tickerCharacters = "|/-\\"; // use 2/4/8 characters so that the divide is optimal.
-#define TICKER_CHARACTER_COUNT (sizeof(tickerCharacters) / sizeof(char))
-
-typedef enum {
-    PAGE_STATE_FLAG_NONE = 0,
-    PAGE_STATE_FLAG_CYCLE_ENABLED = (1 << 0),
-    PAGE_STATE_FLAG_FORCE_PAGE_CHANGE = (1 << 1)
-} pageFlags_e;
-
-typedef struct pageState_s {
-    bool pageChanging;
-    pageId_e pageId;
-    pageId_e pageIdBeforeArming;
-    uint8_t pageFlags;
-    uint8_t cycleIndex;
-    uint32_t nextPageAt;
-    uint32_t nextToggleAt;
-    uint8_t toggleCounter;
-} pageState_t;
-
-static pageState_t pageState;
 
 static const char* const telemetry_protocols_Titles[]={
 	"SERVOTEST     ",
@@ -230,9 +198,12 @@ static const char* const telemetry_protocols_Titles[]={
 	"CROSSFIRE     "
 };
 
+static const char* tickerCharacters = "|/-\\"; // use 2/4/8 characters so that the divide is optimal.
+
+#define CYCLE_PAGE_ID_COUNT (sizeof(cyclePageIds) / sizeof(cyclePageIds[0]))
+#define TICKER_CHARACTER_COUNT (sizeof(tickerCharacters) / sizeof(char))
+
 // Menu
-
-
 const char* const rootMenu[] = {
 	"CALIBRATE    ",
   	"BATTERY      ",
@@ -245,7 +216,6 @@ const char* const rootMenu[] = {
 	"SOFTSERIAL   ",*/
     "SAVE         "
 };
-
 
 static const char * const telemetryMenu[] = {
 	"PROTOCOL     ",
@@ -324,41 +294,56 @@ static const char* const telemetryFixType[] = {
 	"ppp  "
 };
 
+
+int16_t master_telemetry_protocol;
+uint8_t display_type;
+static uint32_t nextDisplayUpdateAt = 0;
+static bool displayPresent = false;
+static rxConfig_t *rxConfig;
+static char lineBuffer[SCREEN_CHARACTER_COLUMN_COUNT + 1];
+static pageState_t pageState;
 uint8_t indexMenuOption = 0;
-uint8_t maxMenuOptions = 5;
+static uint8_t maxMenuOptions = 5;
 uint8_t menuState = 0;
 
-extern uint16_t rssi;
 
-void resetDisplay(void) {
-    displayPresent = ug2864hsweg01InitI2C(display_type);
+controlRateConfig_t *getControlRateConfig(uint8_t profileIndex);
+
+
+static void resetDisplay(void) 
+{
+    displayPresent = OLED_init(display_type);
 }
 
-void LCDprint(uint8_t i) {
-   i2c_OLED_send_char(i);
+static void LCDprint(uint8_t i) 
+{
+   OLED_send_char(i);
 }
 
-void padLineBuffer(void)
+static void padLineBuffer(void)
 {
     uint8_t length = strlen(lineBuffer);
-    while (length < sizeof(lineBuffer) - 1) {
+    while (length < sizeof(lineBuffer) - 1)
+    {
         lineBuffer[length++] = ' ';
     }
     lineBuffer[length] = 0;
 }
 
-void padHalfLineBuffer(void)
+static void padHalfLineBuffer(void)
 {
     uint8_t halfLineIndex = sizeof(lineBuffer) / 2;
     uint8_t length = strlen(lineBuffer);
-    while (length < halfLineIndex - 1) {
+    while (length < halfLineIndex - 1)
+    {
         lineBuffer[length++] = ' ';
     }
     lineBuffer[length] = 0;
 }
 
 // LCDbar(n,v) : draw a bar graph - n number of chars for width, v value in % to display
-void drawHorizonalPercentageBar(uint8_t width,uint8_t percent) {
+static void drawHorizonalPercentageBar(uint8_t width, uint8_t percent)
+{
     uint8_t i, j;
 
     if (percent > 100)
@@ -379,43 +364,46 @@ void drawHorizonalPercentageBar(uint8_t width,uint8_t percent) {
 #if 0
 void fillScreenWithCharacters()
 {
-    for (uint8_t row = 0; row < SCREEN_CHARACTER_ROW_COUNT; row++) {
-        for (uint8_t column = 0; column < SCREEN_CHARACTER_COLUMN_COUNT; column++) {
-            i2c_OLED_set_xy(column, row);
-            i2c_OLED_send_char('A' + column);
+    for (uint8_t row = 0; row < SCREEN_CHARACTER_ROW_COUNT; row++) 
+    {
+        for (uint8_t column = 0; column < SCREEN_CHARACTER_COLUMN_COUNT; column++) 
+        {
+            OLED_set_xy(column, row);
+            OLED_send_char('A' + column);
         }
     }
 }
 #endif
 
-
-void updateTicker(void)
+static void updateTicker(void)
 {
     static uint8_t tickerIndex = 0;
-    i2c_OLED_set_xy(SCREEN_CHARACTER_COLUMN_COUNT - 1, 0);
-    i2c_OLED_send_char(tickerCharacters[tickerIndex]);
+    OLED_set_xy(SCREEN_CHARACTER_COLUMN_COUNT - 1, 0);
+    OLED_send_char(tickerCharacters[tickerIndex]);
     if(!lostTelemetry || PROTOCOL(TP_CALIBRATING_MAG)){
 		tickerIndex++;
 		tickerIndex = tickerIndex % TICKER_CHARACTER_COUNT;
     }
 }
 
-void updateRxStatus(void)
+static void updateRxStatus(void)
 {
-    i2c_OLED_set_xy(SCREEN_CHARACTER_COLUMN_COUNT - 2, 0);
+    OLED_set_xy(SCREEN_CHARACTER_COLUMN_COUNT - 2, 0);
     char rxStatus = '!';
     if (rxIsReceivingSignal()) {
         rxStatus = 'r';
     } if (rxAreFlightChannelsValid()) {
         rxStatus = 'R';
     }
-    i2c_OLED_send_char(rxStatus);
+    OLED_send_char(rxStatus);
 }
 
-/*void updateFailsafeStatus(void)
+#if 0
+void updateFailsafeStatus(void)
 {
     char failsafeIndicator = '?';
-    switch (failsafePhase()) {
+    switch (failsafePhase()) 
+    {
         case FAILSAFE_IDLE:
             failsafeIndicator = '-';
             break;
@@ -435,641 +423,636 @@ void updateRxStatus(void)
             failsafeIndicator = 'r';
             break;
     }
-    i2c_OLED_set_xy(SCREEN_CHARACTER_COLUMN_COUNT - 3, 0);
-    i2c_OLED_send_char(failsafeIndicator);
-}*/
+    OLED_set_xy(SCREEN_CHARACTER_COLUMN_COUNT - 3, 0);
+    OLED_send_char(failsafeIndicator);
+}
+#endif
 
-void showTitle()
+static void showTitle(void)
 {
-    i2c_OLED_set_line(0);
-    //i2c_OLED_send_string(pageTitles[pageState.pageId]);
-	if(pageState.pageId==PAGE_TELEMETRY) {
+    OLED_set_line(0);
+    // OLED_send_string(pageTitles[pageState.pageId]);
+    if (pageState.pageId == PAGE_TELEMETRY)
+    {
         int16_t i;
-    	for(i=0;i < OP_CROSSFIRE + 3;i++) {
-    		if(master_telemetry_protocol & (1<<i)) {
-    			i2c_OLED_send_string(telemetry_protocols_Titles[i]);
-    			if(feature(FEATURE_EPS) && !PROTOCOL(TP_MFD)){
-    				tfp_sprintf(lineBuffer, " EPS%d",EPS_MODE);
-    				i2c_OLED_send_string(lineBuffer);
-    			}
-    			else
-    				i2c_OLED_send_string("      ");
-    			break;
-    		}
-    	}
-    	if(master_telemetry_protocol == 0 && feature(FEATURE_AUTODETECT)){
-			tfp_sprintf(lineBuffer, "Auto detecting");
-			i2c_OLED_send_string(lineBuffer);
-		}
-    } else if(pageState.pageId==PAGE_MENU){
-    	return;
-    } else if(pageState.pageId==PAGE_BATTERY) {
-    	if(feature(FEATURE_VBAT))
-    		i2c_OLED_send_string(pageTitles[pageState.pageId]);
-    } else {
-    	i2c_OLED_send_string(pageTitles[pageState.pageId]);
+        for (i = 0; i < OP_CROSSFIRE + 3; i++)
+        {
+            if (master_telemetry_protocol & (1 << i))
+            {
+                OLED_send_string(telemetry_protocols_Titles[i]);
+                if (feature(FEATURE_EPS) && !PROTOCOL(TP_MFD))
+                {
+                    tfp_sprintf(lineBuffer, " EPS%d", EPS_MODE);
+                    OLED_send_string(lineBuffer);
+                }
+                else
+                    OLED_send_string("      ");
+                break;
+            }
+        }
+        if (master_telemetry_protocol == 0 && feature(FEATURE_AUTODETECT))
+        {
+            tfp_sprintf(lineBuffer, "Auto detecting");
+            OLED_send_string(lineBuffer);
+        }
+    }
+    else if (pageState.pageId == PAGE_MENU)
+    {
+        return;
+    }
+    else if (pageState.pageId == PAGE_BATTERY)
+    {
+        if (feature(FEATURE_VBAT))
+            OLED_send_string(pageTitles[pageState.pageId]);
+    }
+    else
+    {
+        OLED_send_string(pageTitles[pageState.pageId]);
     }
 }
 
-void handlePageChange(void)
+static void handlePageChange(void)
 {
-    i2c_OLED_clear_display_quick();
-    if (pageState.pageId != PAGE_WELCOME) {
+    OLED_clear_display();
+    if (pageState.pageId != PAGE_WELCOME) 
+    {
         showTitle();
     }
 }
 
-void drawRxChannel(uint8_t channelIndex, uint8_t width)
+static void drawRxChannel(uint8_t channelIndex, uint8_t width)
 {
     uint32_t percentage;
-
     LCDprint(rcChannelLetters[channelIndex]);
-
     percentage = (constrain(rcData[channelIndex], PWM_RANGE_MIN, PWM_RANGE_MAX) - PWM_RANGE_MIN) * 100 / (PWM_RANGE_MAX - PWM_RANGE_MIN);
     drawHorizonalPercentageBar(width - 1, percentage);
 }
 
-#define RX_CHANNELS_PER_PAGE_COUNT 14
-void showRxPage(void)
+static void displaySetPage(pageId_e pageId)
 {
+    pageState.pageId = pageId;
+    pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
+}
 
-    for (uint8_t channelIndex = 0; channelIndex < rxRuntimeConfig.channelCount && channelIndex < RX_CHANNELS_PER_PAGE_COUNT; channelIndex += 2) {
-        i2c_OLED_set_line((channelIndex / 2) + PAGE_TITLE_LINE_COUNT);
-
+static void showRxPage(void)
+{
+    for (uint8_t channelIndex = 0; channelIndex < rxRuntimeConfig.channelCount && channelIndex < RX_CHANNELS_PER_PAGE_COUNT; channelIndex += 2) 
+    {
+        OLED_set_line((channelIndex / 2) + PAGE_TITLE_LINE_COUNT);
         drawRxChannel(channelIndex, HALF_SCREEN_CHARACTER_COLUMN_COUNT);
-
-        if (channelIndex >= rxRuntimeConfig.channelCount) {
+        if (channelIndex >= rxRuntimeConfig.channelCount) 
+        {
             continue;
         }
-
-        if (IS_SCREEN_CHARACTER_COLUMN_COUNT_ODD) {
+        if (IS_SCREEN_CHARACTER_COLUMN_COUNT_ODD) 
+        {
             LCDprint(' ');
         }
-
         drawRxChannel(channelIndex + PAGE_TITLE_LINE_COUNT, HALF_SCREEN_CHARACTER_COLUMN_COUNT);
     }
 }
 
-// Bitmap format: RLE, 128 width, vertical orientation, MSB first, 8 pixel/byte, size included, compressed.
-static void renderRLEBitmap(uint8_t *bitmap)
-{
-    uint8_t data = 0, count = 0;
-    uint16_t i;
-    //uint8_t width = *bitmap;
-    bitmap++;
-    uint8_t height = *bitmap;
-    bitmap++;
-    //uint16_t bitmapSize = (width * height) / 8;
-    for (i = 0; i < height / 8; i++) {
-        i2c_OLED_set_line(2+i);	// Set hi col addr
 
-        for (uint16_t j = 128; j > 0; j--)
-        {
-            if (count == 0) {
-                data = *bitmap;
-                bitmap++;
-                if (data == *bitmap) {
-                    bitmap++;
-                    count = *bitmap;
-                    bitmap++;
-                }
-                else {
-                    count = 1;
-                }
-            }
-            count--;
-            i2c_OLED_write_byte(data);
-        }
-    }
-}
 
-void showWelcomePage(void)
+static void showWelcomePage(void)
 {
     // Draw the logo
-    renderRLEBitmap(u360gts_logo);
+    OLED_Render_RLE_Bitmap(u360gts_logo);
 
     // Draw the rest of the text around it
     uint8_t rowIndex = 0;
 
     tfp_sprintf(lineBuffer, "v%s (%s)", FC_VERSION_STRING, shortGitRevision);
-    i2c_OLED_set_line(rowIndex);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex);
+    OLED_send_string(lineBuffer);
 
     tfp_sprintf(lineBuffer, "TARGET: %s", targetName);
-    i2c_OLED_set_line(++rowIndex);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(++rowIndex);
+    OLED_send_string(lineBuffer);
 
     rowIndex += 6;
-    i2c_OLED_set_line(rowIndex);
+    OLED_set_line(rowIndex);
     tfp_sprintf(lineBuffer, "   WWW.U360GTS.COM");
-    i2c_OLED_send_string(lineBuffer);
+    OLED_send_string(lineBuffer);
 }
 
-void showCalibratingMagPage(void)
+static void showCalibratingMagPage(void)
 {
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
-    i2c_OLED_set_line(rowIndex++);
+    OLED_set_line(rowIndex++);
     tfp_sprintf(lineBuffer, "Calibrating mag ...");
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
-
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 }
 
-void showBootModePage(void)
+static void showBootModePage(void)
 {
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
-    i2c_OLED_set_line(rowIndex++);
+    OLED_set_line(rowIndex++);
     tfp_sprintf(lineBuffer, "Boot mode ...");
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
-
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 }
 
-void showArmedPage(void)
+static void showArmedPage(void)
 {
 }
 
-void showMainMenuPage(){
+void showMainMenuPage()
+{
+    const char *const(*currentMenu);
+    uint8_t menuItems;
+    uint8_t maxItems = maxMenuOptions;
+    uint8_t menuTitleIndex;
 
-	const char* const (*currentMenu);
-	uint8_t menuItems;
-	uint8_t maxItems = maxMenuOptions;
-	uint8_t menuTitleIndex;
+    switch (menuState)
+    {
+        case MENU_ROOT:
+            currentMenu = rootMenu;
+            menuItems = OP_EXIT + 1;
+            break;
+        case MENU_TELEMETRY:
+            currentMenu = telemetryMenu;
+            menuItems = OP_TELMETRY_EXIT + 1;
+            menuTitleIndex = MENU_TELEMETRY - 1;
+            break;
+        case MENU_TELEMETRY_PROTOCOL:
+            currentMenu = telemetryProtocolMenu;
+            menuItems = OP_TELEMETRY_PROTOCOL_EXIT + 1;
+            menuTitleIndex = MENU_TELEMETRY - 1;
+            break;
+        case MENU_TELEMETRY_BAUDRATE:
+            currentMenu = telemetryBaudrateMenu;
+            menuItems = OP_TELEMETRY_BAUDRATE_EXIT + 1;
+            menuTitleIndex = MENU_TELEMETRY - 1;
+            break;
+        case MENU_BATTERY:
+            currentMenu = enableDisableMenu;
+            menuItems = OP_ENABLEDISABLE_EXIT + 1;
+            menuTitleIndex = MENU_BATTERY - 1;
+            break;
+        case MENU_GPS:
+            currentMenu = enableDisableMenu;
+            menuItems = OP_ENABLEDISABLE_EXIT + 1;
+            menuTitleIndex = MENU_GPS - 1;
+            break;
+        case MENU_EPS:
+            currentMenu = epsMenu;
+            menuItems = OP_EPS_EXIT + 1;
+            menuTitleIndex = MENU_EPS - 1;
+            break;
+        case MENU_EPS_MODE:
+            currentMenu = epsModeMenu;
+            menuItems = OP_EPS_MODE_EXIT + 1;
+            menuTitleIndex = MENU_EPS - 1;
+            break;
+        case MENU_EPS_DISTANCEGAIN:
+            currentMenu = epsParamIncreaseDecrease;
+            menuItems = OP_INCREASEDECREASE_EXIT + 1;
+            menuTitleIndex = MENU_EPS - 1;
+            break;
+        case MENU_EPS_FREQUENCY:
+            currentMenu = epsParamIncreaseDecrease;
+            menuItems = OP_INCREASEDECREASE_EXIT + 1;
+            menuTitleIndex = MENU_EPS - 1;
+            break;
+        case MENU_EASING:
+            currentMenu = enableDisableMenu;
+            menuItems = OP_ENABLEDISABLE_EXIT + 1;
+            menuTitleIndex = MENU_EASING - 1;
+            break;
+        default:
+            return;
+    }
 
-	switch(menuState) {
-		case MENU_ROOT:
-			currentMenu = rootMenu;
-			menuItems = OP_EXIT+1;
-			break;
-		case MENU_TELEMETRY:
-			currentMenu = telemetryMenu;
-			menuItems = OP_TELMETRY_EXIT+1;
-			menuTitleIndex = MENU_TELEMETRY-1;
-			break;
-		case MENU_TELEMETRY_PROTOCOL:
-			currentMenu = telemetryProtocolMenu;
-			menuItems = OP_TELEMETRY_PROTOCOL_EXIT+1;
-			menuTitleIndex = MENU_TELEMETRY-1;
-			break;
-		case MENU_TELEMETRY_BAUDRATE:
-			currentMenu = telemetryBaudrateMenu;
-			menuItems = OP_TELEMETRY_BAUDRATE_EXIT+1;
-			menuTitleIndex = MENU_TELEMETRY-1;
-			break;
-		case MENU_BATTERY:
-			currentMenu = enableDisableMenu;
-			menuItems = OP_ENABLEDISABLE_EXIT+1;
-			menuTitleIndex = MENU_BATTERY-1;
-			break;
-		case MENU_GPS:
-			currentMenu = enableDisableMenu;
-			menuItems = OP_ENABLEDISABLE_EXIT+1;
-			menuTitleIndex = MENU_GPS-1;
-			break;
-		case MENU_EPS:
-			currentMenu = epsMenu;
-			menuItems = OP_EPS_EXIT+1;
-			menuTitleIndex = MENU_EPS-1;
-			break;
-		case MENU_EPS_MODE:
-			currentMenu = epsModeMenu;
-			menuItems = OP_EPS_MODE_EXIT+1;
-			menuTitleIndex = MENU_EPS-1;
-			break;
-		case MENU_EPS_DISTANCEGAIN:
-			currentMenu = epsParamIncreaseDecrease;
-			menuItems = OP_INCREASEDECREASE_EXIT+1;
-			menuTitleIndex = MENU_EPS-1;
-			break;
-		case MENU_EPS_FREQUENCY:
-			currentMenu = epsParamIncreaseDecrease;
-			menuItems = OP_INCREASEDECREASE_EXIT+1;
-			menuTitleIndex = MENU_EPS-1;
-			break;
-		case MENU_EASING:
-			currentMenu = enableDisableMenu;
-			menuItems = OP_ENABLEDISABLE_EXIT+1;
-			menuTitleIndex = MENU_EASING-1;
-			break;
-		default:
-			return;
-	}
+    // Show Title
+    OLED_set_line(0);
+    if (menuState > 1)
+        tfp_sprintf(lineBuffer, "SETUP > %s", rootMenu[menuTitleIndex - 1]);
+    else
+        tfp_sprintf(lineBuffer, "SETUP MAIN      ");
+    OLED_send_string(lineBuffer);
 
+    uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
 
-	//Show Title
-	i2c_OLED_set_line(0);
-	if(menuState > 1)
-		tfp_sprintf(lineBuffer, "SETUP > %s",rootMenu[menuTitleIndex-1]);
-	else
-		tfp_sprintf(lineBuffer, "SETUP MAIN      ");
-	i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    tfp_sprintf(lineBuffer, "-------------------");     // 19 chars
+    OLED_send_string(lineBuffer);
 
-	uint8_t rowIndex =PAGE_TITLE_LINE_COUNT;
+    OLED_set_line(rowIndex++);
 
-	i2c_OLED_set_line(rowIndex++);
-    tfp_sprintf(lineBuffer, "-------------------");
-    i2c_OLED_send_string(lineBuffer);
+    if (menuItems < maxMenuOptions)
+        maxItems = menuItems;
 
-    i2c_OLED_set_line(rowIndex++);
+    for (uint8_t i = 0; i < maxItems; i++)
+    {
+        OLED_set_line(rowIndex++);
+        if (i == 0)
+        {
+            tfp_sprintf(lineBuffer, "> %s <", currentMenu[(i + indexMenuOption) % (menuItems)]);
+            // OLED_send_stringH(lineBuffer,true);
+        }
+        else
+        {
+            tfp_sprintf(lineBuffer, "  %s  ", currentMenu[(i + indexMenuOption) % (menuItems)]);
+            // OLED_send_string(lineBuffer);
+        }
+        OLED_send_string(lineBuffer);
+    }
 
-    if(menuItems < maxMenuOptions) maxItems = menuItems;
-
-	for(uint8_t i=0;i<maxItems;i++){
-		i2c_OLED_set_line(rowIndex++);
-		if(i==0) {
-			tfp_sprintf(lineBuffer, "> %s <",currentMenu[(i+indexMenuOption)%(menuItems)]);
-			//i2c_OLED_send_stringH(lineBuffer,true);
-		} else {
-			tfp_sprintf(lineBuffer, "  %s  ",currentMenu[(i+indexMenuOption)%(menuItems)]);
-			//i2c_OLED_send_string(lineBuffer);
-		}
-		i2c_OLED_send_string(lineBuffer);
-	}
-
-	if(currentMenu == epsParamIncreaseDecrease){
-		i2c_OLED_set_line(rowIndex++);
-		if(menuState == MENU_EPS_DISTANCEGAIN)
-			tfp_sprintf(lineBuffer, "Dist. gain: %d", EPS_DISTANCE_GAIN);
-		else
-			tfp_sprintf(lineBuffer, "Frequency: %d", EPS_FREQUENCY);
-		i2c_OLED_send_string(lineBuffer);
-
-	}
+    if (currentMenu == epsParamIncreaseDecrease)
+    {
+        OLED_set_line(rowIndex++);
+        if (menuState == MENU_EPS_DISTANCEGAIN)
+            tfp_sprintf(lineBuffer, "Dist. gain: %d", EPS_DISTANCE_GAIN);
+        else
+            tfp_sprintf(lineBuffer, "Frequency: %d", EPS_FREQUENCY);
+        OLED_send_string(lineBuffer);
+    }
 }
 
-
-
-void showCliModePage(void)
+static void showCliModePage(void)
 {
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
 
-    i2c_OLED_set_line(rowIndex++);
-    tfp_sprintf(lineBuffer, "H: %03d A:%03d  ", trackerPosition.heading/10,targetPosition.heading/10);
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    tfp_sprintf(lineBuffer, "H: %03d A:%03d  ", trackerPosition.heading / 10, targetPosition.heading / 10);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 
     tfp_sprintf(lineBuffer, "T: %03d  ", SERVOTEST_TILT);
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 
-    i2c_OLED_set_line(rowIndex++);
+    OLED_set_line(rowIndex++);
 
     tfp_sprintf(lineBuffer, "PWM PAN:  %04d uS", pwmPan);
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 
     tfp_sprintf(lineBuffer, "PWM TILT: %04d uS", pwmTilt);
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
-
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 }
 
-void showTelemetryPage(void){
+static void showTelemetryPage(void)
+{
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
-	//i2c_OLED_set_line(rowIndex++);
-    if(!PROTOCOL(TP_MFD)) {
-    	if(telemetry_sats>99)
-    		telemetry_sats = 99;
+    // OLED_set_line(rowIndex++);
+    if (!PROTOCOL(TP_MFD))
+    {
+        if (telemetry_sats > 99)
+            telemetry_sats = 99;
 
-    	tfp_sprintf(lineBuffer, "Hz : %d  V:%d.%d",telemetry_frequency, telemetry_voltage/100, telemetry_voltage%100);
-		// tfp_sprintf(lineBuffer, "Hz : %d",telemetry_frequency);
-    	padLineBuffer();
-    	i2c_OLED_set_line(rowIndex++);
-    	i2c_OLED_send_string(lineBuffer);
+        tfp_sprintf(lineBuffer, "Hz : %d  V:%d.%d", telemetry_frequency, telemetry_voltage / 100, telemetry_voltage % 100);
+        // tfp_sprintf(lineBuffer, "Hz : %d",telemetry_frequency);
+        padLineBuffer();
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
 
-    	tfp_sprintf(lineBuffer, "Sat: %02d %s FCS:%d", telemetry_sats, telemetryFixType[telemetry_fixtype], telemetry_failed_cs);
-		padLineBuffer();
-		i2c_OLED_set_line(rowIndex++);
-		i2c_OLED_send_string(lineBuffer);
+        tfp_sprintf(lineBuffer, "Sat: %02d %s FCS:%d", telemetry_sats, telemetryFixType[telemetry_fixtype], telemetry_failed_cs);
+        padLineBuffer();
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
 
-		uint16_t lat_a = abs(targetPosition.lat / 1000000);
-		uint32_t lat_b = abs(targetPosition.lat % 1000000);
+        uint16_t lat_a = abs(targetPosition.lat / 1000000);
+        uint32_t lat_b = abs(targetPosition.lat % 1000000);
 
-		tfp_sprintf(lineBuffer, "Lat: ");
-		if (targetPosition.lat < 0)
-			tfp_sprintf(lineBuffer, "Lat: -%d.%06d  ",lat_a,lat_b);
-		else
-			tfp_sprintf(lineBuffer, "Lat: %d.%06d  ",lat_a,lat_b);
-		padLineBuffer();
-		i2c_OLED_set_line(rowIndex++);
-		i2c_OLED_send_string(lineBuffer);
+        if (targetPosition.lat < 0)
+            tfp_sprintf(lineBuffer, "Lat: -%d.%06d  ", lat_a, lat_b);
+        else
+            tfp_sprintf(lineBuffer, "Lat: %d.%06d  ", lat_a, lat_b);
+        padLineBuffer();
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
 
-		uint16_t lon_a = abs(targetPosition.lon / 1000000);
-		uint32_t lon_b = abs(targetPosition.lon % 1000000);
+        uint16_t lon_a = abs(targetPosition.lon / 1000000);
+        uint32_t lon_b = abs(targetPosition.lon % 1000000);
 
-		tfp_sprintf(lineBuffer, "Lon: ");
-		if(targetPosition.lon < 0)
-			tfp_sprintf(lineBuffer, "Lon: -%d.%06d  ",lon_a,lon_b);
-		else
-			tfp_sprintf(lineBuffer, "Lon: %d.%06d  ",lon_a,lon_b);
-		padLineBuffer();
-		i2c_OLED_set_line(rowIndex++);
-		i2c_OLED_send_string(lineBuffer);
-    } else {
-    	//
+        if (targetPosition.lon < 0)
+            tfp_sprintf(lineBuffer, "Lon: -%d.%06d  ", lon_a, lon_b);
+        else
+            tfp_sprintf(lineBuffer, "Lon: %d.%06d  ", lon_a, lon_b);
+        padLineBuffer();
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
     }
-    char altSgn = (targetPosition.alt < 0) ? '-' : '\0';
-    targetPosition.alt = (targetPosition.alt < 0)? -1 * targetPosition.alt : targetPosition.alt;
-    tfp_sprintf(lineBuffer, "Alt:%s%d Dis: %d  ", altSgn,targetPosition.alt,targetPosition.distance);
-    padLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
-    if(OFFSET_TRIM_STATE)
-    	tfp_sprintf(lineBuffer, "H: %03d A:%03d Of: %d  ", trackerPosition.heading/10,targetPosition.heading/10,OFFSET_TRIM);
     else
-    	tfp_sprintf(lineBuffer, "H: %03d A:%03d Of:<%d> ", trackerPosition.heading/10,targetPosition.heading/10,OFFSET_TRIM);
+    {
+        //
+    }
+    char altSgn = (targetPosition.alt < 0) ? '-' : ' ';
+    int16_t displayedAlt = (targetPosition.alt < 0) ? -1 * targetPosition.alt : targetPosition.alt;
+    tfp_sprintf(lineBuffer, "Alt:%c%d Dis: %d  ", altSgn, displayedAlt, targetPosition.distance);
+    padLineBuffer();
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
+    if (OFFSET_TRIM_STATE)
+        tfp_sprintf(lineBuffer, "H: %03d A:%03d Of: %d  ", trackerPosition.heading / 10, targetPosition.heading / 10, OFFSET_TRIM);
+    else
+        tfp_sprintf(lineBuffer, "H: %03d A:%03d Of:<%d> ", trackerPosition.heading / 10, targetPosition.heading / 10, OFFSET_TRIM);
 
     padLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 
-    if(!PROTOCOL(TP_MFD)) {
-    	if(homeSet_BY_GPS && homeSet)
-    		tfp_sprintf(lineBuffer, "HOME SET <GPS>");
-    	else if(!homeSet_BY_GPS && homeSet)
-    		tfp_sprintf(lineBuffer, "HOME SET <AIRCRAFT>");
-    	else if(!homeSet || homeReset)
-    		tfp_sprintf(lineBuffer, "HOME NOT SET");
-		padLineBuffer();
-		i2c_OLED_set_line(rowIndex++);
-		i2c_OLED_send_string(lineBuffer);
+    if (!PROTOCOL(TP_MFD))
+    {
+        if (homeSet_BY_GPS && homeSet)
+            tfp_sprintf(lineBuffer, "HOME SET <GPS>");
+        else if (!homeSet_BY_GPS && homeSet)
+            tfp_sprintf(lineBuffer, "HOME SET <AIRCRAFT>");
+        else if (!homeSet || homeReset)
+            tfp_sprintf(lineBuffer, "HOME NOT SET");
+        padLineBuffer();
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
     }
 
-    if(!feature(FEATURE_GPS) && !feature(FEATURE_VBAT) && !feature(FEATURE_RSSI_ADC) && !(rxConfig->rssi_channel > 0))
-    	displayDisablePageCycling();
+    if (!feature(FEATURE_GPS) && !feature(FEATURE_VBAT) && !feature(FEATURE_RSSI_ADC) && !(rxConfig->rssi_channel > 0))
+        displayDisablePageCycling();
 }
 
-void showProfilePage(void)
+static void showProfilePage(void)
 {
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
 
     tfp_sprintf(lineBuffer, "Profile: %d", getCurrentProfile());
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 
     uint8_t currentRateProfileIndex = getCurrentControlRateProfile();
     tfp_sprintf(lineBuffer, "Rate profile: %d", currentRateProfileIndex);
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 
     controlRateConfig_t *controlRateConfig = getControlRateConfig(currentRateProfileIndex);
 
     tfp_sprintf(lineBuffer, "RCE: %d, RCR: %d",
-        controlRateConfig->rcExpo8,
-        controlRateConfig->rcRate8
-    );
+                controlRateConfig->rcExpo8,
+                controlRateConfig->rcRate8);
     padLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 
     tfp_sprintf(lineBuffer, "RR:%d PR:%d YR:%d",
-        controlRateConfig->rates[FD_ROLL],
-        controlRateConfig->rates[FD_PITCH],
-        controlRateConfig->rates[FD_YAW]
-    );
+                controlRateConfig->rates[FD_ROLL],
+                controlRateConfig->rates[FD_PITCH],
+                controlRateConfig->rates[FD_YAW]);
     padLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 }
+
+#ifdef GPS
+
 #define SATELLITE_COUNT (sizeof(GPS_svinfo_cno) / sizeof(GPS_svinfo_cno[0]))
 #define SATELLITE_GRAPH_LEFT_OFFSET ((SCREEN_CHARACTER_COLUMN_COUNT - SATELLITE_COUNT) / 2)
 
-#ifdef GPS
-void showGpsPage() {
+static void showGpsPage(void)
+{
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
 
     static uint8_t gpsTicker = 0;
     static uint32_t lastGPSSvInfoReceivedCount = 0;
-    if (GPS_svInfoReceivedCount != lastGPSSvInfoReceivedCount) {
+    if (GPS_svInfoReceivedCount != lastGPSSvInfoReceivedCount)
+    {
         lastGPSSvInfoReceivedCount = GPS_svInfoReceivedCount;
         gpsTicker++;
         gpsTicker = gpsTicker % TICKER_CHARACTER_COUNT;
     }
 
-    i2c_OLED_set_xy(0, rowIndex);
-    i2c_OLED_send_char(tickerCharacters[gpsTicker]);
+    OLED_set_xy(0, rowIndex);
+    OLED_send_char(tickerCharacters[gpsTicker]);
 
-    i2c_OLED_set_xy(MAX(0, SATELLITE_GRAPH_LEFT_OFFSET), rowIndex++);
+    OLED_set_xy(MAX(0, SATELLITE_GRAPH_LEFT_OFFSET), rowIndex++);
 
     uint32_t index;
-    for (index = 0; index < SATELLITE_COUNT && index < SCREEN_CHARACTER_COLUMN_COUNT; index++) {
-        uint8_t bargraphOffset = ((uint16_t) GPS_svinfo_cno[index] * VERTICAL_BARGRAPH_CHARACTER_COUNT) / (GPS_DBHZ_MAX - 1);
+    for (index = 0; index < SATELLITE_COUNT && index < SCREEN_CHARACTER_COLUMN_COUNT; index++)
+    {
+        uint8_t bargraphOffset = ((uint16_t)GPS_svinfo_cno[index] * VERTICAL_BARGRAPH_CHARACTER_COUNT) / (GPS_DBHZ_MAX - 1);
         bargraphOffset = MIN(bargraphOffset, VERTICAL_BARGRAPH_CHARACTER_COUNT - 1);
-        i2c_OLED_send_char(VERTICAL_BARGRAPH_ZERO_CHARACTER + bargraphOffset);
+        OLED_send_char(VERTICAL_BARGRAPH_ZERO_CHARACTER + bargraphOffset);
     }
-
 
     char fixChar = STATE(GPS_FIX) ? 'Y' : 'N';
     tfp_sprintf(lineBuffer, "Sat: %d Fix: %c", GPS_numSat, fixChar);
     padLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 
     tfp_sprintf(lineBuffer, "Pos: %d/%d Hdop:%d", GPS_coord[LAT] / GPS_DEGREES_DIVIDER, GPS_coord[LON] / GPS_DEGREES_DIVIDER, GPS_hdop);
     padLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 
     tfp_sprintf(lineBuffer, "Spd: %d", GPS_speed);
     padHalfLineBuffer();
-    i2c_OLED_set_line(rowIndex);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex);
+    OLED_send_string(lineBuffer);
 
     tfp_sprintf(lineBuffer, "GC: %d", GPS_ground_course);
     padHalfLineBuffer();
-    i2c_OLED_set_xy(HALF_SCREEN_CHARACTER_COLUMN_COUNT, rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_xy(HALF_SCREEN_CHARACTER_COLUMN_COUNT, rowIndex++);
+    OLED_send_string(lineBuffer);
 
     tfp_sprintf(lineBuffer, "RX: %d", GPS_packetCount);
     padHalfLineBuffer();
-    i2c_OLED_set_line(rowIndex);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex);
+    OLED_send_string(lineBuffer);
 
     tfp_sprintf(lineBuffer, "ERRs: %d", gpsData.errors, gpsData.timeouts);
     padHalfLineBuffer();
-    i2c_OLED_set_xy(HALF_SCREEN_CHARACTER_COLUMN_COUNT, rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_xy(HALF_SCREEN_CHARACTER_COLUMN_COUNT, rowIndex++);
+    OLED_send_string(lineBuffer);
 
     tfp_sprintf(lineBuffer, "Dt: %d", gpsData.lastMessage - gpsData.lastLastMessage);
     padHalfLineBuffer();
-    i2c_OLED_set_line(rowIndex);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex);
+    OLED_send_string(lineBuffer);
 
     tfp_sprintf(lineBuffer, "TOs: %d", gpsData.timeouts);
     padHalfLineBuffer();
-    i2c_OLED_set_xy(HALF_SCREEN_CHARACTER_COLUMN_COUNT, rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_xy(HALF_SCREEN_CHARACTER_COLUMN_COUNT, rowIndex++);
+    OLED_send_string(lineBuffer);
 
     strncpy(lineBuffer, gpsPacketLog, GPS_PACKET_LOG_ENTRY_COUNT);
     padHalfLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 
 #ifdef GPS_PH_DEBUG
     tfp_sprintf(lineBuffer, "Angles: P:%d R:%d", GPS_angle[PITCH], GPS_angle[ROLL]);
     padLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 #endif
 
 #if 0
     tfp_sprintf(lineBuffer, "%d %d %d %d", debug[0], debug[1], debug[2], debug[3]);
     padLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 #endif
 }
 #endif
 
-void showBatteryPage(void)
+static void showBatteryPage(void)
 {
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
 
-    if (feature(FEATURE_VBAT)) {
+    if (feature(FEATURE_VBAT))
+    {
         tfp_sprintf(lineBuffer, "Volts: %d.%1d Cells: %d", vbat / 10, vbat % 10, batteryCellCount);
         padLineBuffer();
-        i2c_OLED_set_line(rowIndex++);
-        i2c_OLED_send_string(lineBuffer);
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
 
-        uint16_t averageCellVoltage = ((float) vbat / batteryCellCount) * 10;
+        uint16_t averageCellVoltage = ((float)vbat / batteryCellCount) * 10;
         tfp_sprintf(lineBuffer, "Avg. Cell: %d.%02dv", averageCellVoltage / 100, averageCellVoltage % 100);
         padLineBuffer();
-        i2c_OLED_set_line(rowIndex++);
-        i2c_OLED_send_string(lineBuffer);
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
 
         uint8_t batteryPercentage = calculateBatteryPercentage();
-        i2c_OLED_set_line(rowIndex++);
+        OLED_set_line(rowIndex++);
         drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, batteryPercentage);
     }
 
-    if (feature(FEATURE_CURRENT_METER)) {
+    if (feature(FEATURE_CURRENT_METER))
+    {
         tfp_sprintf(lineBuffer, "Amps: %d.%2d mAh: %d", amperage / 100, amperage % 100, mAhDrawn);
         padLineBuffer();
-        i2c_OLED_set_line(rowIndex++);
-        i2c_OLED_send_string(lineBuffer);
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
 
         uint8_t capacityPercentage = calculateBatteryCapacityRemainingPercentage();
-        i2c_OLED_set_line(rowIndex++);
+        OLED_set_line(rowIndex++);
         drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, capacityPercentage);
     }
 
-    if (feature(FEATURE_RSSI_ADC) || (rxConfig->rssi_channel > 0)) {
-    	if(feature(FEATURE_VBAT))
-    		i2c_OLED_set_line(rowIndex++);
+    if (feature(FEATURE_RSSI_ADC) || (rxConfig->rssi_channel > 0))
+    {
+        if (feature(FEATURE_VBAT))
+            OLED_set_line(rowIndex++);
 
-		tfp_sprintf(lineBuffer, "RSSI");
-		i2c_OLED_set_line(rowIndex++);
-		i2c_OLED_send_string(lineBuffer);
+        tfp_sprintf(lineBuffer, "RSSI");
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
 
-		uint8_t rssiPercentage1 = calculateRssiPercentage();
-		uint8_t rssiPercentage2 = ((uint32_t)rssiPercentage1 * 100) / rxConfig->rssi_zoom;
-		/*uint8_t rssiA = calculateRssiVoltage() / 10;
-		uint8_t rssiB = calculateRssiVoltage() % 10;
+        uint8_t rssiPercentage1 = calculateRssiPercentage();
+        uint8_t rssiPercentage2 = ((uint32_t)rssiPercentage1 * 100) / rxConfig->rssi_zoom;
+        /*uint8_t rssiA = calculateRssiVoltage() / 10;
+        uint8_t rssiB = calculateRssiVoltage() % 10;
 
         tfp_sprintf(lineBuffer, "Value: %drssi_zoom.%d v %d %%", rssiA, rssiB, rssiPercentage1);*/
         tfp_sprintf(lineBuffer, "Value: %d %%", rssiPercentage1);
 
         padLineBuffer();
-        i2c_OLED_set_line(rowIndex++);
-        i2c_OLED_send_string(lineBuffer);
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
 
-        i2c_OLED_set_line(rowIndex++);
+        OLED_set_line(rowIndex++);
         drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, rssiPercentage1);
 
-        if(rssiPercentage1 > rxConfig->rssi_zoom)
-        	rssiPercentage2 = 100;
+        if (rssiPercentage1 > rxConfig->rssi_zoom)
+            rssiPercentage2 = 100;
 
-		i2c_OLED_set_line(rowIndex++);
-		drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, rssiPercentage2);
+        OLED_set_line(rowIndex++);
+        drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, rssiPercentage2);
     }
 }
 
-void showSensorsPage(void)
+static void showSensorsPage(void)
 {
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
     static const char *format = "%s %5d %5d %5d";
 
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string("        X     Y     Z");
+    OLED_set_line(rowIndex++);
+    OLED_send_string("        X     Y     Z");
 
-    if (sensors(SENSOR_ACC)) {
+    if (sensors(SENSOR_ACC))
+    {
         tfp_sprintf(lineBuffer, format, "ACC", accSmooth[X], accSmooth[Y], accSmooth[Z]);
         padLineBuffer();
-        i2c_OLED_set_line(rowIndex++);
-        i2c_OLED_send_string(lineBuffer);
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
     }
 
-    if (sensors(SENSOR_GYRO)) {
+    if (sensors(SENSOR_GYRO))
+    {
         tfp_sprintf(lineBuffer, format, "GYR", gyroADC[X], gyroADC[Y], gyroADC[Z]);
         padLineBuffer();
-        i2c_OLED_set_line(rowIndex++);
-        i2c_OLED_send_string(lineBuffer);
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
     }
 
 #ifdef MAG
-    if (sensors(SENSOR_MAG)) {
+    if (sensors(SENSOR_MAG))
+    {
         tfp_sprintf(lineBuffer, format, "MAG", magADC[X], magADC[Y], magADC[Z]);
         padLineBuffer();
-        i2c_OLED_set_line(rowIndex++);
-        i2c_OLED_send_string(lineBuffer);
+        OLED_set_line(rowIndex++);
+        OLED_send_string(lineBuffer);
     }
 #endif
 
     tfp_sprintf(lineBuffer, format, "I&H", inclination.values.rollDeciDegrees, inclination.values.pitchDeciDegrees, heading);
     padLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 
     uint8_t length;
 
     ftoa(EstG.A[X], lineBuffer);
     length = strlen(lineBuffer);
-    while (length < HALF_SCREEN_CHARACTER_COLUMN_COUNT) {
+    while (length < HALF_SCREEN_CHARACTER_COLUMN_COUNT)
+    {
         lineBuffer[length++] = ' ';
-        lineBuffer[length+1] = 0;
+        lineBuffer[length + 1] = 0;
     }
     ftoa(EstG.A[Y], lineBuffer + length);
     padLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 
     ftoa(EstG.A[Z], lineBuffer);
     length = strlen(lineBuffer);
-    while (length < HALF_SCREEN_CHARACTER_COLUMN_COUNT) {
+    while (length < HALF_SCREEN_CHARACTER_COLUMN_COUNT)
+    {
         lineBuffer[length++] = ' ';
-        lineBuffer[length+1] = 0;
+        lineBuffer[length + 1] = 0;
     }
     ftoa(smallAngle, lineBuffer + length);
     padLineBuffer();
-    i2c_OLED_set_line(rowIndex++);
-    i2c_OLED_send_string(lineBuffer);
-
+    OLED_set_line(rowIndex++);
+    OLED_send_string(lineBuffer);
 }
 
 #ifdef ENABLE_DEBUG_OLED_PAGE
-
 void showDebugPage(void)
 {
     uint8_t rowIndex;
-
     for (rowIndex = 0; rowIndex < 4; rowIndex++) {
         tfp_sprintf(lineBuffer, "%d = %5d", rowIndex, debug[rowIndex]);
         padLineBuffer();
-        i2c_OLED_set_line(rowIndex + PAGE_TITLE_LINE_COUNT);
-        i2c_OLED_send_string(lineBuffer);
+        OLED_set_line(rowIndex + PAGE_TITLE_LINE_COUNT);
+        OLED_send_string(lineBuffer);
     }
 }
 #endif
 
-void showAutodetectingTitle(uint16_t protocol){
-	master_telemetry_protocol = protocol;
-	showTitle();
+void showAutodetectingTitle(uint16_t protocol)
+{
+    master_telemetry_protocol = protocol;
+    showTitle();
 }
 
-void updateDisplayProtocolTitle(uint16_t protocol){
-	master_telemetry_protocol = protocol;
-	telemetry_failed_cs = 0;
-	handlePageChange();
+void updateDisplayProtocolTitle(uint16_t protocol)
+{
+    master_telemetry_protocol = protocol;
+    telemetry_failed_cs = 0;
+    handlePageChange();
 }
 
 void updateDisplay(void)
@@ -1078,51 +1061,56 @@ void updateDisplay(void)
     static uint8_t previousArmedState = 0;
 
     bool updateNow = (int32_t)(now - nextDisplayUpdateAt) >= 0L;
-    if (!updateNow) {
+    if (!updateNow)
+    {
         return;
     }
 
-    nextDisplayUpdateAt = now + DISPLAY_UPDATE_FREQUENCY;
+    nextDisplayUpdateAt = now + DISPLAY_UPDATE_PERIOD_US;
 
     /*//////
-	pageState.pageId=PAGE_TELEMETRY;
-	showTitle();
-	showTelemetryPage();
-	updateTicker();
-	return;
+    pageState.pageId=PAGE_TELEMETRY;
+    showTitle();
+    showTelemetryPage();
+    updateTicker();
+    return;
     //////*/
-
 
     bool armedState = ARMING_FLAG(ARMED) ? true : false;
     bool armedStateChanged = armedState != previousArmedState;
     previousArmedState = armedState;
-/**/
-    if (armedState) {
-        if (!armedStateChanged) {
+    if (armedState)
+    {
+        if (!armedStateChanged)
+        {
             return;
         }
         pageState.pageIdBeforeArming = pageState.pageId;
         pageState.pageId = PAGE_ARMED;
         pageState.pageChanging = true;
-    } else {
-        if (armedStateChanged) {
+    }
+    else
+    {
+        if (armedStateChanged)
+        {
             pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
             pageState.pageId = pageState.pageIdBeforeArming;
         }
-/**/
         pageState.pageChanging = (pageState.pageFlags & PAGE_STATE_FLAG_FORCE_PAGE_CHANGE) ||
-                (((int32_t)(now - pageState.nextPageAt) >= 0L && (pageState.pageFlags & PAGE_STATE_FLAG_CYCLE_ENABLED)));
-        if (pageState.pageChanging && (pageState.pageFlags & PAGE_STATE_FLAG_CYCLE_ENABLED)) {
+                                 (((int32_t)(now - pageState.nextPageAt) >= 0L && (pageState.pageFlags & PAGE_STATE_FLAG_CYCLE_ENABLED)));
+        if (pageState.pageChanging && (pageState.pageFlags & PAGE_STATE_FLAG_CYCLE_ENABLED))
+        {
             pageState.cycleIndex++;
             pageState.cycleIndex = pageState.cycleIndex % CYCLE_PAGE_ID_COUNT;
             pageState.pageId = cyclePageIds[pageState.cycleIndex];
         }
-/**/ }
+    }
 
-    if (pageState.pageChanging) {
+    if (pageState.pageChanging)
+    {
         pageState.pageFlags &= ~PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
-        pageState.nextPageAt = now + PAGE_CYCLE_FREQUENCY;
-        pageState.nextToggleAt = now + PAGE_TOGGLE_FREQUENCY;
+        pageState.nextPageAt = now + PAGE_CYCLE_PERIOD_US;
+        pageState.nextToggleAt = now + PAGE_TOGGLE_PERIOD_US;
         pageState.toggleCounter = 0;
 
         // Some OLED displays do not respond on the first initialisation so refresh the display
@@ -1130,86 +1118,93 @@ void updateDisplay(void)
         // user to power off/on the display or connect it while powered.
         resetDisplay();
 
-        if (!displayPresent) {
+        if (!displayPresent)
+        {
             return;
         }
         handlePageChange();
-	}
+    }
 
-	if (!displayPresent) {
-		return;
-	}
+    if (!displayPresent)
+    {
+        return;
+    }
 
-	if ((int32_t)(now - pageState.nextToggleAt) >= 0L) {
-		pageState.toggleCounter++;
-		pageState.nextToggleAt += PAGE_TOGGLE_FREQUENCY;
-	}
+    if ((int32_t)(now - pageState.nextToggleAt) >= 0L)
+    {
+        pageState.toggleCounter++;
+        pageState.nextToggleAt += PAGE_TOGGLE_PERIOD_US;
+    }
 
-    switch(pageState.pageId) {
+    switch (pageState.pageId)
+    {
         case PAGE_WELCOME:
             showWelcomePage();
             break;
         case PAGE_BATTERY:
-            if(feature(FEATURE_VBAT) || feature(FEATURE_RSSI_ADC) || (rxConfig->rssi_channel > 0)) {
-            	showBatteryPage();
-		   } else {
-			   pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
-		   }
-		   break;
-        case PAGE_TELEMETRY:
-            //showProfilePage();
-            showTelemetryPage();
-            break;
-#ifdef GPS
-        case PAGE_GPS:
-            if (feature(FEATURE_GPS) && !PROTOCOL(TP_MFD)) {
-                showGpsPage();
-            } else {
+            if (feature(FEATURE_VBAT) || feature(FEATURE_RSSI_ADC) || (rxConfig->rssi_channel > 0))
+            {
+                showBatteryPage();
+            }
+            else
+            {
                 pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
             }
             break;
-#endif
-#ifdef ENABLE_DEBUG_OLED_PAGE
+        case PAGE_TELEMETRY:
+            // showProfilePage();
+            showTelemetryPage();
+            break;
+        #ifdef GPS
+        case PAGE_GPS:
+            if (feature(FEATURE_GPS) && !PROTOCOL(TP_MFD))
+            {
+                showGpsPage();
+            }
+            else
+            {
+                pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
+            }
+            break;
+        #endif
+        #ifdef ENABLE_DEBUG_OLED_PAGE
         case PAGE_DEBUG:
             showDebugPage();
             break;
-#endif
+        #endif
         case PAGE_CALIBRATING_MAG:
-        	if(PROTOCOL(TP_CALIBRATING_MAG)){
-        		showCalibratingMagPage();
-        	} else {
+            if (PROTOCOL(TP_CALIBRATING_MAG))
+            {
+                showCalibratingMagPage();
+            }
+            else
+            {
                 pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
             }
-        	break;
+            break;
         case PAGE_CLI_MODE:
-        		showCliModePage();
-        	break;
+            showCliModePage();
+            break;
         case PAGE_MENU:
-        		showMainMenuPage();
-        	break;
+            showMainMenuPage();
+            break;
         case PAGE_BOOT_MODE:
-        		showBootModePage();
-        	break;
+            showBootModePage();
+            break;
         default:
-        	break;
+            break;
     }
     /*if (!armedState) {
         updateFailsafeStatus();
         updateRxStatus();
         updateTicker();
     }*/
-    if (pageState.pageId != PAGE_WELCOME) {
+    if (pageState.pageId != PAGE_WELCOME)
+    {
         updateTicker();
     }
 
-    display();
-
-}
-
-void displaySetPage(pageId_e pageId)
-{
-    pageState.pageId = pageId;
-    pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
+    OLED_flush();
 }
 
 void displayInit(rxConfig_t *rxConfigToUse,uint16_t telemetry_protocol, uint8_t oled_type)
@@ -1220,12 +1215,10 @@ void displayInit(rxConfig_t *rxConfigToUse,uint16_t telemetry_protocol, uint8_t 
 
     rxConfig = rxConfigToUse;
     display_type = oled_type;
-
     master_telemetry_protocol = telemetry_protocol;
 
     memset(&pageState, 0, sizeof(pageState));
     displaySetPage(PAGE_WELCOME);
-
     updateDisplay();
 
     displaySetNextPageChangeAt(micros() + (1000 * 1000 * 5));
@@ -1240,8 +1233,6 @@ void displayShowFixedPage(pageId_e pageId)
     }
 }
 
-
-
 void displaySetNextPageChangeAt(uint32_t futureMicros)
 {
     pageState.nextPageAt = futureMicros;
@@ -1255,7 +1246,6 @@ void displayEnablePageCycling(void)
 void displayResetPageCycling(void)
 {
     pageState.cycleIndex = CYCLE_PAGE_ID_COUNT - 1; // start at first page
-
 }
 
 void displayDisablePageCycling(void)
