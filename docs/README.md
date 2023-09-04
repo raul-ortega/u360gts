@@ -43,6 +43,7 @@
 
 - Description and operation
 - Enable/Disable display
+- [GPS screen](display-gps.md)
 
 ## Local GPS
 
