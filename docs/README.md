@@ -44,6 +44,7 @@
 - Description and operation
 - Enable/Disable display
 - [GPS screen](display-gps.md)
+- [Telemetry screen](display-telemetry.md)
 
 ## Local GPS
 
