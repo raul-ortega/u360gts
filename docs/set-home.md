@@ -27,3 +27,11 @@ The procedure to set home automatically is described bellow:
 3. User checks information displayed on his ground control software or OSD data.
 4. User thiks that he has a good and stable gps signal and decide that it is a good moment to power on the tracker system.
 5. The tracker receives telemetry data from the aircraft and if the "min number of sats" condition is overcome it will use the next lat/lon data arrived as home position.
+
+## Restore Last Known Home Position
+
+If enabled, the antenna tracker will store the home position in the non volatile memory once it has been established. If durin tracking a power reset ocurrs (e.g the users replaces the battery), the home position will be restored (HOME SET LAST will be shown on display) and tracking will continue normally without the need of landing.
+
+This functionality may be enabled by setting **restore_last_home** parameter to ON. After enabled, home_lat, home_lon and home_alt provide 0 values by default. Once home position is set, either from telemetry, gps or by pressing the home button, the antenna tracker will store the home position values on those parameters. After a power reset, the antenna tracker will read the stored values and restore the home position.
+
+**Note:** stored lat/lon/alt values may be changed if desired before flying from a different location, the user may press home button for more than 3 seconds in order to get a new home position from the incoming telemetry stream or from local gps.
