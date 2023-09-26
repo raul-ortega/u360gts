@@ -108,3 +108,5 @@ If enabled, the antenna tracker will store the home position in the non volatile
 This functionality may be enabled by setting **restore_last_home** parameter to ON. After enabled, home_lat, home_lon and home_alt provide 0 values by default. Once home position is set, either from telemetry, gps or by pressing the home button, the antenna tracker will store the home position values on those parameters. After a power reset, the antenna tracker will read the stored values and restore the home position.
 
 **Note:** stored lat/lon/alt values may be changed if desired before flying from a different location, the user may press home button for more than 3 seconds in order to get a new home position from the incoming telemetry stream or from local gps.
+
+[<< Go back](README.md)
