@@ -50,7 +50,7 @@
 
 - Installation
 - Settings
-- Set HOME position
+- [Set HOME position](set-home.md)
 
 ## Outgoing Telemetry
 
