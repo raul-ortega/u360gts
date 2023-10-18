@@ -18,7 +18,7 @@
 - [Configurator](https://github.com/raul-ortega/u360gts-configurator)
 - [Magnetometer](configuration-compass.md)
 - [Pan servo](configuration-pan-servo.md)
-- Tilt servo
+- [Tilt servo](configuration-tilt-servo.md)
 - OFFSET setting
 - [PID Control](configuration-pid-controller.md)
 - [NOPID control system](configuration-nopid-system.md)
