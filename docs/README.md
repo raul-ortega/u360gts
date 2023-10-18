@@ -17,7 +17,7 @@
 - [Loading the firmware](configuration-loading-firmware.md)
 - [Configurator](https://github.com/raul-ortega/u360gts-configurator)
 - [Magnetometer](configuration-compass.md)
-- Pan servo
+- [Pan servo](configuration-pan-servo.md)
 - Tilt servo
 - OFFSET setting
 - [PID Control](configuration-pid-controller.md)
