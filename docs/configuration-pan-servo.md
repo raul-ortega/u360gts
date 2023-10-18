@@ -27,7 +27,7 @@ Here are the configuration parameters that allow you to customize the pan servo'
 - **calibration_pulse**
    - **Type:** Integer
    - **Valid Range:** Customizable
-   - **Description:** The calibration pulse represents the signal sent to the servo during calibration. By default, it is set to 1400, but it may need adjustment based on your hardware's central stop pulse.
+   - **Description:** The calibration pulse represents the signal sent to move the pan servo during calibration. By default, it is set to 1400, but it may need adjustment based on your hardware's central stop pulse.
 
 - **pan0**
    - **Type:** Integer
