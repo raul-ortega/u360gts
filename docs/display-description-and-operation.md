@@ -32,5 +32,5 @@ The display presents information on different pages, which can remain fixed or c
 - Telemetry Page (input)
 - Local GPS Status
 - Battery Monitoring
-- 
+  
 [<< Go back](README.md)
