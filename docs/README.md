@@ -19,7 +19,7 @@
 - [Magnetometer](configuration-compass.md)
 - [Pan servo](configuration-pan-servo.md)
 - [Tilt servo](configuration-tilt-servo.md)
-- OFFSET setting
+- [OFFSET setting](configuration-offset.md)
 - [PID Control](configuration-pid-controller.md)
 - [NOPID control system](configuration-nopid-system.md)
 - [GPS](configuration-gps.md)
