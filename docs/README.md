@@ -27,7 +27,7 @@
 ## Incoming Telemetry
 
 - Supported protocols
-- Configuring serial 0 (UART1)
+- [Configuring serial 0 (UART1)](configuration-serial0.md)
 - Protocol selection
 
 ##  CLI mode
