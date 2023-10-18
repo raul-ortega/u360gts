@@ -40,9 +40,8 @@
 - Full list of parameters
 
 ## Display
-
-- Description and operation
-- Enable/Disable display
+- [Supported hardware](display-supported-hardware.md)
+- [Description and operation](display-description-and-operation.md)
 - [GPS screen](display-gps.md)
 - [Telemetry screen](display-telemetry.md)
 
