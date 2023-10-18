@@ -1,6 +1,8 @@
 # Display: Telemetry screen
 
-The Telemetry screen will show information about telemtry packets recieved from the aircraft/drone.
+The Telemetry screen will show information about telemtry packets recieved from the aircraft/drone:
+
+![Image 2](assets/images/display-telemetry.jpg)
 
 - **Hz:** is the frequency at witch telemetry packets with data position are received. 0 means that frequency is under 1 Hz.
 - **Sat:** number of satellites
