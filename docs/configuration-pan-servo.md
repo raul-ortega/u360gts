@@ -1,3 +1,23 @@
+## Pan Servo Configuration
+
+Here are the configuration parameters that allow you to customize the pan servo's operation:
+
+- **calibration_pulse**
+   - **Type:** Integer
+   - **Valid Range:** Customizable
+   - **Description:** The calibration pulse represents the signal sent to the servo during calibration. By default, it is set to 1400, but it may need adjustment based on your hardware's central stop pulse.
+
+- **pan0**
+   - **Type:** Integer
+   - **Valid Range:** Customizable
+   - **Description:** The central stop pulse (Pan0) is calculated as the midpoint between the lower and upper limits of the stop pulse range (min_pan0 and max_pan0).
+
+- **min_pan_speed**
+   - **Type:** Integer
+   - **Valid Range:** Customizable
+   - **Description:** Min Pan Speed is calculated as half of the difference between max_pan0 and pan0. It determines the minimum speed at which the servo starts moving.
+
+
 ## Automatic Pan Servo Calibration
 
 For automatic pan servo calibration process, the magnetometer sensor is required, and also a value for calibration pulse, which should be lower than the spected stop pulse. By default calibration pulse is 1400 because we spect a value arround 1500 for the central stop pulse. If you suspect that you have a central stop pulse different than the default one, you may change it to a more properly value. If your servo has a high dynamic range, then try set the calibration pulse not too far away from the suspected central stop pulse, in this way your servo will spin slower but during less time than with a  further calibration pulse value (passing through the whole dynamic range is not needed for this calibration process).
