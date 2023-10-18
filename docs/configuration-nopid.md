@@ -35,3 +35,5 @@ In addition, please take note of the following parameter:
 - `min_pan_speed`: The minimum amount in milliseconds by which the pan0 pulse must be increased to make the servo move.
 
 Note: The `min_pan_speed` parameter is common to both control systems and serves the same function.
+
+[<< Go back](README.md)
