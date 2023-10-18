@@ -1,6 +1,28 @@
-## Pan Servo Configuration
+# Pan Servo Configuration
+
+It's time to connect the servos and the serial adapter through which telemetry will be received, for example, the Bluetooth module.
+
+Connect the battery to the tracker, initiating the startup sequence.
+
+If you configured the init_servos parameter to a value of 1, the tracker will rotate for no more than a second, and not very fast. It should stop just when the blue LED becomes steady, indicating that the startup sequence has completed.
+
+If you configured the **init_servos** parameter to a value of 0, none of the servos should move during the startup sequence.
+
+In any case, if the tracker continues to rotate after the startup sequence, it should not do so very quickly, as we have set the pan0 parameter with a value of 1500 as the stop pulse. You may need to adjust this value.
+
+The adjustment of the PAN0 value can be done in two different ways:
+
+- Manually
+- Automatically (starting from version 6.6.x or higher).
+
+## Parameters
 
 Here are the configuration parameters that allow you to customize the pan servo's operation:
+
+- **init_servos**
+   - **Type:** Integer
+   - **Valid Range:** 0 or 1
+   - **Description:** This parameter controls the behavior of the servos during the tracker's startup sequence. If set to 1, the tracker will rotate for a brief period, no longer than a second, at a moderate speed. It will automatically stop when the blue LED remains steadily on, indicating that the startup sequence has completed. If set to 0, none of the servos should move during the startup sequence. It's essential to note that if the tracker continues to rotate after the startup sequence, it should not do so at a high speed. This is because the `pan0` parameter has been configured with a value of 1500 as the stop pulse, and this value may require adjustment.
 
 - **calibration_pulse**
    - **Type:** Integer
