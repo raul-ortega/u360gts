@@ -43,6 +43,8 @@ In case of not using Local GPS, and avoiding to use buttons to set home position
 Min Sats: 6 minimum, the higher, if your GPS takes many satellites, the better.
 Home: AUTO (From telemetry).
 
+[Read more...](set-home.md)
+
 8.- **Configure start traking** parameters.
 
 The default values for distance and altitude might be a bit high. Try 5 for distance and 2 for altitude. Remember that tracking will start when the aircraft has overcome that fence. Once it lands and returns within those limits, the tracking ends.
