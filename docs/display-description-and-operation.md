@@ -6,7 +6,7 @@ Additionally, you can interact with the antenna tracker for basic configuration 
 
 ### Installation
 
-Please refer to the connection diagram in the Installation section to connect the OLED Display to the controller.
+Please refer to the connection diagram in the [wiring schematics](install-wiring-schematics.md) section to connect the OLED Display to the controller.
 
 ### Configuration
 
@@ -32,3 +32,5 @@ The display presents information on different pages, which can remain fixed or c
 - Telemetry Page (input)
 - Local GPS Status
 - Battery Monitoring
+- 
+[<< Go back](README.md)
