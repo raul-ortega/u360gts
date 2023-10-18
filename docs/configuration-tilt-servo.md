@@ -34,7 +34,7 @@ The u360gts firmware provides a smoothing effect for the tilt servo's movement, 
 
 The image below illustrates the smoothing effect for the "Easing Out Quart" function, one of the available options.
 
-![Easing Out Quart](assets/images/outquarteasing-1400x1011-74.jpg)
+![Image 2](assets/images/outquarteasing-1400x1011-74.jpg)
 
 ### Activate the Easing Effect
 To activate the Easing smoothing effect, use the following command:
@@ -73,6 +73,8 @@ The following parameters allow you to adjust the smoothing of the tilt servo's m
 ## Easing Functions
 
 The u360gts firmware provides several easing functions that allow you to control the smoothing effect applied to the tilt servo's movement. These functions affect the rate of change of the tilt angle during tracking. Below are the available easing functions:
+
+![Image 3](assets/images/easing-1400x1160-27.png)
 
 - **Ease Out Quart (1)**
   - This easing function produces a smooth deceleration effect towards the end of the tilt servo's movement. It results in a damping effect.
