@@ -13,7 +13,7 @@
 - [Wiring schematics](install-wiring-schematics.md)
 
 ## Configuration
-- [Quick Start Guide](configuration-quick-start-guied.md)
+- [Quick Start Guide](configuration-quick-start-guide.md)
 - [Loading the firmware](configuration-loading-firmware.md)
 - [Configurator](https://github.com/raul-ortega/u360gts-configurator)
 - [Magnetometer](configuration-compass.md)
