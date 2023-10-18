@@ -26,7 +26,7 @@
 
 ## Incoming Telemetry
 
-- Supported protocols
+- [Supported protocols](incomming-telemetry-protocols.md)
 - [Configuring serial 0 (UART1)](configuration-serial0.md)
 - Protocol selection
 
