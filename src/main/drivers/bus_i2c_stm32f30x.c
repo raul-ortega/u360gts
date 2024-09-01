@@ -272,6 +272,17 @@ bool i2cWrite(uint8_t addr_, uint8_t reg, uint8_t data)
     return true;
 }
 
+bool i2cWriteBuffer(uint8_t addr_, uint8_t reg_, uint8_t len_, uint8_t *data)
+{
+    bool status = true;
+
+    for (uint8_t i = 0; i < len_; i++) {
+        status &= i2cWrite(addr_, reg_ + i, data[i]);
+    }
+
+    return status;
+}
+
 bool i2cRead(uint8_t addr_, uint8_t reg, uint8_t len, uint8_t* buf)
 {
     addr_ <<= 1;

@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "platform.h": "c",
+        "bus_i2c.h": "c"
+    }
+}
