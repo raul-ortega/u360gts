@@ -103,7 +103,7 @@ controlRateConfig_t *getControlRateConfig(uint8_t profileIndex);
 
 #define MICROSECONDS_IN_A_SECOND (1000 * 1000)
 
-#define DISPLAY_UPDATE_FREQUENCY 5000 //(MICROSECONDS_IN_A_SECOND / 5)
+#define DISPLAY_UPDATE_FREQUENCY (MICROSECONDS_IN_A_SECOND / 5)
 #define PAGE_CYCLE_FREQUENCY (MICROSECONDS_IN_A_SECOND * 5)
 #define PAGE_TOGGLE_FREQUENCY (MICROSECONDS_IN_A_SECOND / 2)
 
@@ -744,7 +744,7 @@ void showTelemetryPage(void){
 		uint16_t lat_a = abs(targetPosition.lat / 1000000);
 		uint32_t lat_b = abs(targetPosition.lat % 1000000);
 
-		tfp_sprintf(lineBuffer, "Lat: ");
+		//tfp_sprintf(lineBuffer, "Lat: ");
 		if (targetPosition.lat < 0)
 			tfp_sprintf(lineBuffer, "Lat: -%d.%06d  ",lat_a,lat_b);
 		else
@@ -756,7 +756,7 @@ void showTelemetryPage(void){
 		uint16_t lon_a = abs(targetPosition.lon / 1000000);
 		uint32_t lon_b = abs(targetPosition.lon % 1000000);
 
-		tfp_sprintf(lineBuffer, "Lon: ");
+		//tfp_sprintf(lineBuffer, "Lon: ");
 		if(targetPosition.lon < 0)
 			tfp_sprintf(lineBuffer, "Lon: -%d.%06d  ",lon_a,lon_b);
 		else
@@ -767,9 +767,9 @@ void showTelemetryPage(void){
     } else {
     	//
     }
-    char altSgn = (targetPosition.alt < 0) ? '-' : '\0';
-    targetPosition.alt = (targetPosition.alt < 0)? -1 * targetPosition.alt : targetPosition.alt;
-    tfp_sprintf(lineBuffer, "Alt:%s%d Dis: %d  ", altSgn,targetPosition.alt,targetPosition.distance);
+    char altSgn = (targetPosition.alt < 0) ? '-' : ' ';
+    int16_t displayedAlt = (targetPosition.alt < 0) ? -1 * targetPosition.alt : targetPosition.alt;
+    tfp_sprintf(lineBuffer, "Alt:%c%d Dis: %d  ", altSgn, displayedAlt, targetPosition.distance);
     padLineBuffer();
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
@@ -1211,7 +1211,7 @@ void displayInit(rxConfig_t *rxConfigToUse,uint16_t telemetry_protocol, uint8_t 
 
     rxConfig = rxConfigToUse;
     display_type = oled_type;
-    
+
     master_telemetry_protocol = telemetry_protocol;
 
     memset(&pageState, 0, sizeof(pageState));

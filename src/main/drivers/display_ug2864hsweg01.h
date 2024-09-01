@@ -36,7 +36,7 @@
 
 bool ug2864hsweg01InitI2C(uint8_t oled_type);
 
-void i2c_OLED_set_xy(uint8_t col, uint8_t row);
+void i2c_OLED_set_xy(uint8_t column, uint8_t row);
 void i2c_OLED_set_line(uint8_t row);
 void i2c_OLED_send_char(unsigned char ascii);
 void i2c_OLED_send_string(const char *string);
