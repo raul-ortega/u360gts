@@ -2,7 +2,7 @@
  * This file is part of u360gts, aka amv-open360tracker 32bits:
  * https://github.com/raul-ortega/amv-open360tracker-32bits
  *
- * The code below is an adaptation by Raúl Ortega of the original code written by Samuel Brucksch:
+ * The code below is an adaptation by RaÃºl Ortega of the original code written by Samuel Brucksch:
  * https://github.com/SamuelBrucksch/open360tracker
  *
  * u360gts is free software: you can redistribute it and/or modify
@@ -22,7 +22,6 @@
 
 #include "config.h"
 #include "telemetry.h"
-#include <math.h>
 
 void processFrskyPacket(uint8_t *packet);
 void parseTelemHubByte(uint8_t c);
@@ -46,7 +45,7 @@ int32_t coordToLong(int8_t neg, uint16_t bp, uint16_t ap);
 #define GPS_LAT_AP_ID      0x1B
 #define GPS_LONG_EW_ID     0x22
 #define GPS_LAT_NS_ID      0x23
-#define FRSKY_LAST_ID      0x3f
+#define FRSKY_LAST_ID      0x3F
 //used for sats and fix type
 #define TEMP2              0x05
 
@@ -56,10 +55,8 @@ int32_t coordToLong(int8_t neg, uint16_t bp, uint16_t ap);
 #define bitmask(X,Y) (((1 << X) -1) << Y)
 
 // FrSky new DATA IDs (2 bytes)
-#define VFAS_FIRST_ID			0x0210
-#define VFAS_LAST_ID			0x021f
-#define ALT_FIRST_ID       		0x0100
-#define ALT_LAST_ID        		0x010f
+#define ALT_FIRST_ID       0x0100
+#define ALT_LAST_ID        0x010f
 #define T2_FIRST_ID             0x0410
 #define T2_LAST_ID              0x041f
 #define GPS_LONG_LATI_FIRST_ID  0x0800
@@ -75,7 +72,7 @@ int32_t coordToLong(int8_t neg, uint16_t bp, uint16_t ap);
 #define TELEMETRY_OK      1
 #define TELEMETRY_KO      2
 
-#define FRSKY_RX_PACKET_SIZE 8
+#define FRSKY_RX_PACKET_SIZE 9
 
 #define FRSKYX_LATLON_DIVIDER 1000000
 
@@ -95,9 +92,6 @@ uint16_t lat_bp;
 uint16_t lon_bp;
 uint16_t lat_ap;
 uint16_t lon_ap;
-
-//VFAS sensor = voltage
-int16_t telemetry_voltage;
 
 int32_t frskyx_setLat() {
   int32_t value = coordToLong(NS == 'N' ? 1 : -1, lat_bp, lat_ap);
@@ -151,20 +145,6 @@ void processHubPacket(uint8_t id, uint16_t value)
 			fix = value % 10;
 	  } else if (telemetry_provider == TELEMETRY_PROVIDER_INAV){
 			sats = value % 100;
-			
-			if ((value >= 1000) && (value < 2000))  {
-			telemetry_fixtype = 1;
-			}
-			else if ((value >= 2000) && (value < 3000)) {
-			 telemetry_fixtype = 2;
-			}
-			else if (value >= 3000) {
-			 telemetry_fixtype = 3;
-			}
-			else {
-			telemetry_fixtype = 0;
-			}
-			
 	  } else
 			sats = value;
       break;
@@ -193,12 +173,14 @@ bool checkSportPacket_V1(uint8_t *packet)
 static uint8_t checkSportPacket_V2(uint8_t * packet)
 {
   short crc = 0;
-  for (int i=1; i<FRSKY_RX_PACKET_SIZE-1; ++i) {
-    crc += packet[i]; // 0-1FE
-    crc += crc >> 8;  // 0-1FF
-    crc &= 0x00ff;    // 0-FF
+  for (int i = 1; i < FRSKY_RX_PACKET_SIZE; i++) {
+    crc += packet[i]; //0-1FF
+    crc += crc >> 8; //0-100
+    crc &= 0x00ff;
+    crc += crc >> 8; //0-0FF
+    crc &= 0x00ff;
   }
-  return 0x00ff - crc;
+  return (crc == 0x00ff);
 }
 
 #define SPORT_DATA_U8(packet)   (packet[4])
@@ -227,34 +209,17 @@ void processSportPacket(uint8_t *packet)
         uint16_t value = HUB_DATA_U16(packet);
         processHubPacket(id, value);
       }
-       else if (appId >= VFAS_FIRST_ID && appId <= VFAS_LAST_ID) {
-        telemetry_voltage = SPORT_DATA_S32(packet); //get voltage
-      }
       else if (appId >= T2_FIRST_ID && appId <= T2_LAST_ID) {
 		if(telemetry_provider == TELEMETRY_PROVIDER_DIY_GPS){
 			sats = SPORT_DATA_S32(packet) / 10;
 			//fix = SPORT_DATA_S32(packet) % 10;
 		} else if (telemetry_provider == TELEMETRY_PROVIDER_INAV){
 			sats = SPORT_DATA_S32(packet) % 100;
-			if ((SPORT_DATA_S32(packet) >= 1000) && (SPORT_DATA_S32(packet) < 2000)) {
-			telemetry_fixtype = 1;
-			}
-			else if ((SPORT_DATA_S32(packet) >= 2000) && (SPORT_DATA_S32(packet) < 3000)) {
-			 telemetry_fixtype = 2;
-			}
-			else if (SPORT_DATA_S32(packet) >= 3000) {
-			telemetry_fixtype = 3;
-			}
-			else {
-			telemetry_fixtype = 0;
-			}
 		} else {
 			//we assume that other systems just send the sats over temp2 and fix over temp1
 			sats = SPORT_DATA_S32(packet);
 		}
       }
-   
-      
       else if (appId >= GPS_SPEED_FIRST_ID && appId <= GPS_SPEED_LAST_ID) {
         //frskyData.hub.gpsSpeed_bp = (uint16_t) (SPORT_DATA_U32(packet) / 1000);
       }
@@ -266,7 +231,6 @@ void processSportPacket(uint8_t *packet)
         telemetry_alt = alt;
         gotAlt = true;
       }
-     
       else if (appId >= GPS_LONG_LATI_FIRST_ID && appId <= GPS_LONG_LATI_LAST_ID) {
         uint32_t gps_long_lati_data = SPORT_DATA_U32(packet);
         uint32_t gps_long_lati_b1w, gps_long_lati_a1w;

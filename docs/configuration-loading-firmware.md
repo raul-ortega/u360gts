@@ -1,42 +1,72 @@
-## Loading firmware
+## Loading the Firmware
 
-In this moment the u360gts-configurator tools can not be used to flash the firmware on the board, but it can help to force the board into boot mode.
+**u360gts configurator** is the official tool for supported boards, it can be downloaded from [releases page](https://github.com/raul-ortega/u360gts-configurator/releases/latest).
+It is a crossplatform tool that can be run on Windows, MacOS and Linux machines, and **standalone application** 
 
-There are serveral options:
+Download the binaries for your operating system and install it following the wizard instructions (Linux users must follow nw.js [instructions](https://github.com/nwjs/nw.js#documents) in order to build and/or run the configurator source code).
 
-- Using the STM Micro electronics tool [Flash Loader Demonsrator](https://www.st.com/en/development-tools/flasher-stm32.html)
-- Using Betaflight/iNav configurator.
+### Flashing the Firmware
 
-**Note: This wiki will focuse only on STM Micro electronics tool.**
+Please, follow this instructions for firmware flashing:
 
-Please, follow this instructions in orther to install the firmware on the board with success.
+1. **Download** and **install** u360gts configurator.
+2. **Launch** the application after installation.
+3. **Jumper** the **boot pins** of the board.
+4. Connect the usb cable to your computer.
 
-Download first the firmware [latest release](https://github.com/raul-ortega/u360gts/releases/latest).
+If [STM32 drivers](https://zadig.akeo.ie/) for the board are already installed, the new COM port will be shown and selected in the dropdown ports list.
+   
+5. Click on **Flash Firmware** tab of left panel.
+6. **Choose** your **board**.
+7. **Choose** the lastest **firmware version** available.
+8.Click on **Load Firmware Online**.
 
-### Flashing for the first time
+During firmware downloading process the button will be disabled, once downloaded the button will be back to orange again and release info will be shown (read it carefully).
+	
+9. Enable **Full chip erase** option.
+10. Enable **Manual baud rate** option and select **115200**.
+11. Click on **Flash Firmware** button.
 
-1. Download the hex file for your controller board.
-2. Turn on your controller board in "boot mode". For NAZE32/Flip32 you have to bridge boot pins before giving power.
-3. Run Flash Loader Demonstrator (download from [here](https://www.st.com/en/development-tools/flasher-stm32.html).)
+The proggress bar animation will start and will show **Flashing** while loading the firmware to the board. After that **Verifying** will be shown and finally, if everything went well, **Programming successful** message will apear on the bar.
+   
+If something went wrong an error message will be shown on the bar. Please read carefully **Warning** and **Recovery/Lost communication** notes on screen to get it solved.
+   
+12. Disconnect the usb cable.
+13. **Remove the jumper** from the boot pins.
+
+### Connecting for the First Time.
+
+Please, follow this instructions for connecting to the board from u360gts configurator:
+
+1.- Connect the **usb cable** to your computer.
+
+If [STM32 drivers](https://zadig.akeo.ie/) for the board are already installed, the new COM port will be shown and selected in the dropdown ports list.
+   
+2.- Select **115200** baud rate from the dropdwon list.
+
+3.- Click on **Connect** button (top right corner).
+
+If everything went well **Configuration tab** will be shown, and board name, firmware version and date/time will be shown on the *Log* window. You are ready for configuring your u360gts antenna tracker.
+
+### Alternative Flashing Methods.
+
+- Using the STM Micro Electronics tool [Flash Loader Demonsrator](https://www.st.com/en/development-tools/flasher-stm32.html)
+- Using Betaflight configurator or iNav configurator.
+
+In this cases you must [download](https://github.com/raul-ortega/u360gts/releases/latest) first u360gts firmware for your board.
+
+#### Flash Loader Demonstrator
+
+Instructions:
+
+1. Download the hex file for your controller board from [here](https://github.com/raul-ortega/u360gts/releases/latest).
+2. Turn on your controller board in "boot mode". For NAZE32, Flip32 and SP Racinfg F3 boards you have to bridge boot pins before giving power.
+3. Run Flash Loader Demonstrator (download from [here](https://www.st.com/en/development-tools/flasher-stm32.html)).
 4. Select port, baud rate, and next.
 5. Browse and select the hex file, select Global Erase and Jump to user program options, and next.
 6. After flashing close Flash Loader Demonstrator.
-7. Run u360gts configurator, select 115200 bauds, press Connect and  CLI ENTER buttons.
+7. Run u360gts configurator, select 115200 bauds, and press Connect button.
 
-### Upgrading from previous version
-
-1. Download the hex file for your controller board.
-2. Select baud rate, connect and press CLI ENTER button
-3. Go to Cli Mode tab, press BACKUP Config and save the configuration file.
-4. Press BOOT MODE button.
-5. Run Flash Loader Demonstrator (download from [here](https://www.st.com/en/development-tools/flasher-stm32.html).)
-6. Select port, baud rate, and next.
-7. Browse and select the hex file, select Global Erase and Jump to user program options, and next.
-8. After flashing close Flash Loader Demonstrator.
-9. Go to u360gts configurator, select 115200 bauds, press Connect and  CLI ENTER buttons.
-10. Go to Cli Mode tab and press RESTORE CONFIG.
-11. Save and you are done.
-
-After this you are ready to connect and enter CLI Mode in order to configure the new features.
+You can also take a look to this [video](https://www.youtube.com/watch?v=VDNJUsWvI0o).
 
 [<< Go back](README.md)

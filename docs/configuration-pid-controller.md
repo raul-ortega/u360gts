@@ -1,14 +1,6 @@
 ## PID Control
 
-El firmware u360gs utiliza un sistema de control PID para calcular el pulso que debe suministrar al servo PAN para
-
-Los valores de P, I y D por defecto, al igual que el resto de parámetros de configuración, están ajustados para un servo TowerPro MG996R modificado para que gire 360º. Éstos valores van a depender de muchos factores: las resistencias que hayamos usado, la mecánica usada en el tracker, cuan ajustados estén todos los elementos, holguras, etc...
-
-Si tu tracker oscila para alcancar el objetivo, se pasa del objetivo ligeramente, o no llega necesitas ajustar estos parámetros.
-
-A continuación se muestra una explicación práctica de como ajustar los PIDs (gracais al  compañero Simba):
-
-u360gts provides a PID control system in order to calculate the pwm pulses sent to pan servo. It makes possible that the antenna tracker to point towards the target with precisión and speed.
+u360gts provides a PID control system in order to calculate the pwm pulses sent to pan servo. It makes possible the antenna tracker to point towards the target with precisión and speed.
 
 
 **Disabling NOPID**

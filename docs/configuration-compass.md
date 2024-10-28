@@ -5,18 +5,18 @@ u360gts requires a compass sensor for tracking. When a compass is pressent, is c
 
 ## Supported Sensors
 
-In the moment of writting this document, u360gts supports only HMC5883L compass sensor. Supported boards with built in mag are HMC5883L. But if you need to install an external compass, you must select products with the chip marked as L883. Avoid buying sensors with chip marked as AD because they are not supported yet. To be sure about what you are buying you must ask the seller, because he might be providing not supported chips while in the product description is specified HMC5883L.
+In the moment of writing this document, u360gts supports HMC5883L and QMC5583L compass sensors. To be sure about what you are buying you must ask the seller, because he might be providing not supported chips while in the product description is specified the supported ones.
 
-<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/supported_mag.jpg" width="525" />
+<!-- img src="img/supported_mag.jpg" width="525" /-->
 
-u360gts firmware can detect the compass. To check if the compass of your board (or the external one) is the supported one, in CLI window of configurator type the command "status". The response will show HMC5883 if it is detected.
+u360gts firmware can detect the compass. To check if the compass of your board (or the external one) is supported, in CLI window of configurator type the command "status". The response will show HMC5883 or QMC5883 if detected.
 
-<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/CLI_status_mag.jpg" width="433" />
+<img src="img/CLI_status_mag.jpg" width="433" />
 
 
 ## Wiring
 
-Take a look to [wiring schematics](https://github.com/raul-ortega/u360gts/blob/master/wiki/install-wiring-schematics.md) to get more information about how to connect an external mag.
+Take a look to [wiring schematics](install-wiring-schematics.md) to get more information about how to connect an external mag.
 
 
 ## Configuration
@@ -25,11 +25,11 @@ Take a look to [wiring schematics](https://github.com/raul-ortega/u360gts/blob/m
 
 u360gts locks pan servo movement if the compass is not pressent or if its not calibrated. You may calibrate the compass at home for the first time, but some times might be necesary to calibrate it again in the flight field.
 
-Note: Before mag calibration you should [configure the pan servo](https://github.com/raul-ortega/u360gts/blob/master/wiki/configuration-pan-servo.md).
+Note: Before mag calibration you should [configure the pan servo](configuration-pan-servo.md).
 
 To calibrate the compass from configurator go to Configuration -> Mag, and clic on Calibrate Mag button.
 
-<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/mag_configuration.jpg" width="527" />
+<img src="img/mag_configuration.jpg" width="527" />
 
 The controller will send the calibration pulse to the servo, and it will start spinning. During 10 seconds the controller will retrieve data from the sensor and will calculate magzero x, y and z values. Then the controller sends the stop pulse to the servo, it will stop spinning and calibration will be finished.
 
@@ -56,7 +56,7 @@ e.g set offset to 90 if the board/mag is rotated 90 degrees.
 
 ### External Mag Alignment
 
-When using external mag, you have to be sure that the magnetometer is aligned with the arrow of the board pointing to the front and it is not placed upside down. If it is rotated and/or flipped, then you have to configure the align_mag parameter with one of this values:
+When using external mag, you have to be sure that the magnetometer is aligned with the arrow of the board pointing to the front and it is not placed upside down. If it is rotated and/or flipped, then you have to configure the align_mag parameter with one of these values:
 
 DEFAULT
 CW0
@@ -71,7 +71,7 @@ CW270FLIP
 
 ### Magnetic Declination
 
-To change magnetic declination you have to set correct declination of your spesific location, which can be found [here](www.magnetic-declination.com).
+To change magnetic declination you have to set correct declination of your spesific location, which can be found [here](http://www.magnetic-declination.com).
 
 If your magnetic declination readings are e.g. +3° 34' , the value entered in the u360gts configurator is 334. For west declination, use a minus value, e.g. for 1° 32' W, the value entered in the u360gts configurator is -132. In all cases (both CLI and GUI), the least significant digits are minutes, not decimal degrees.
 
