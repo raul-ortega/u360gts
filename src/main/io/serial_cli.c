@@ -456,6 +456,7 @@ typedef enum {
     VAR_INT16 = (3 << VALUE_TYPE_OFFSET),
     VAR_UINT32 = (4 << VALUE_TYPE_OFFSET),
     VAR_FLOAT = (5 << VALUE_TYPE_OFFSET),
+    VAR_INT32 = (6 << VALUE_TYPE_OFFSET),
 
     // value section
     MASTER_VALUE = (0 << VALUE_SECTION_OFFSET),
@@ -538,7 +539,11 @@ const clivalue_t valueTable[] = {
     { "gps_auto_baud",              VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.gpsConfig.autoBaud, .config.lookup = { TABLE_OFF_ON } },
     { "gps_min_sats",               VAR_UINT8  | MASTER_VALUE, &masterConfig.gps_min_sats, .config.minmax = { 4,  20 } },
     { "gps_home_beeper",            VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP,  &masterConfig.gpsConfig.homeBeeper, .config.lookup = { TABLE_OFF_ON } },
-    { "update_home_by_local_gps",   VAR_UINT8 | MASTER_VALUE | MODE_LOOKUP, &masterConfig.update_home_by_local_gps, .config.lookup = { TABLE_OFF_ON } },
+    { "update_home_by_local_gps",   VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, &masterConfig.update_home_by_local_gps, .config.lookup = { TABLE_OFF_ON } },
+    { "restore_last_home",          VAR_UINT8  | MASTER_VALUE | MODE_LOOKUP, &masterConfig.restore_last_home, .config.lookup = { TABLE_OFF_ON } },
+    { "home_lat",                   VAR_INT32  | MASTER_VALUE, &masterConfig.home_lat, .config.minmax = { -90000000,  90000000 } },
+    { "home_lon",                   VAR_INT32  | MASTER_VALUE, &masterConfig.home_lon, .config.minmax = { -180000000,  180000000 } },
+    { "home_alt",                   VAR_INT16  | MASTER_VALUE, &masterConfig.home_alt, .config.minmax = { 0,  65535 } },
 	/*
     { "gps_pos_p",                  VAR_UINT8  | PROFILE_VALUE, &masterConfig.profile[0].pidProfile.P8[PIDPOS], .config.minmax = { 0,  200 } },
     { "gps_pos_i",                  VAR_UINT8  | PROFILE_VALUE, &masterConfig.profile[0].pidProfile.I8[PIDPOS], .config.minmax = { 0,  200 } },
@@ -733,7 +738,7 @@ const clivalue_t valueTable[] = {
 	{ "pan_pin",           		    VAR_UINT8  | MASTER_VALUE, &masterConfig.pan_pin, .config.minmax = { 0,  7 } },
 	{ "pan0",           			VAR_UINT16  | MASTER_VALUE, &masterConfig.pan0, .config.minmax = { 0,  3000 } },
 	{ "pan0_calibrated",          	VAR_UINT8  | MASTER_VALUE, &masterConfig.pan0_calibrated, .config.minmax = { 0,  1 } },
-	{ "pan_calibration_pulse",		VAR_UINT16  | MASTER_VALUE, &masterConfig.pan_calibration_pulse, .config.minmax = { 1,  1500 } },
+	{ "pan_calibration_pulse",		VAR_UINT16  | MASTER_VALUE, &masterConfig.pan_calibration_pulse, .config.minmax = { 0,  3000 } },
 	{ "pan_inverted",               VAR_UINT8 | MASTER_VALUE | MODE_LOOKUP, &masterConfig.pan_inverted, .config.lookup = { TABLE_OFF_ON } },
 	{ "min_pan_speed",     			VAR_UINT8   | MASTER_VALUE, &masterConfig.min_pan_speed, .config.minmax = { 0,  100 } },
 	{ "tilt_pin",           		VAR_UINT8  | MASTER_VALUE, &masterConfig.tilt_pin, .config.minmax = { 0,  7 } },
@@ -2227,6 +2232,10 @@ static void cliPrintVar(const clivalue_t *var, uint32_t full)
             value = *(uint32_t *)ptr;
             break;
 
+        case VAR_INT32:
+            value = *(int32_t *)ptr;
+            break;
+
         case VAR_FLOAT:
             printf("%s", ftoa(*(float *)ptr, buf));
             if (full && (var->type & VALUE_MODE_MASK) == MODE_DIRECT) {
@@ -2274,6 +2283,10 @@ static void cliSetVar(const clivalue_t *var, const int_float_value_t value)
 
         case VAR_UINT32:
             *(uint32_t *)ptr = value.int_value;
+            break;
+
+        case VAR_INT32:
+            *(int32_t *)ptr = value.int_value;
             break;
 
         case VAR_FLOAT:
@@ -2511,7 +2524,7 @@ static void cliMovePanServo(char *cmdline)
     } else {
     	degrees=atoi(cmdline);
     	if(degrees>=0 && degrees<=360 ) {
-			printf("Moving pan servo to %u º\r\n", degrees);
+			printf("Moving pan servo to %u deg.\r\n", degrees);
 			SERVOTEST_HEADING=degrees;
 			ENABLE_SERVO(SERVOPAN_MOVE);
     	}
@@ -2530,7 +2543,7 @@ static void cliMoveTiltServo(char *cmdline)
     } else {
     	degrees=atoi(cmdline);
     	if(degrees >=0 && degrees <= 90 ) {
-			printf("Moving tilt servo to %u º\r\n", degrees);
+			printf("Moving tilt servo to %u deg.\r\n", degrees);
 			SERVOTEST_TILT = degrees;
 			ENABLE_SERVO(SERVOTILT_MOVE);
     	}

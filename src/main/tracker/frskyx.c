@@ -2,7 +2,7 @@
  * This file is part of u360gts, aka amv-open360tracker 32bits:
  * https://github.com/raul-ortega/amv-open360tracker-32bits
  *
- * The code below is an adaptation by Raúl Ortega of the original code written by Samuel Brucksch:
+ * The code below is an adaptation by RaÃºl Ortega of the original code written by Samuel Brucksch:
  * https://github.com/SamuelBrucksch/open360tracker
  *
  * u360gts is free software: you can redistribute it and/or modify
@@ -157,7 +157,20 @@ void processHubPacket(uint8_t id, uint16_t value)
   }
 }
 
-bool checkSportPacket(uint8_t *packet)
+bool checkSportPacket_V1(uint8_t *packet)
+{
+    short crc = 0;
+      for (int i = 1; i < FRSKY_RX_PACKET_SIZE; i++) {
+        crc += packet[i]; //0-1FF
+        crc += crc >> 8; //0-100
+        crc &= 0x00ff;
+        crc += crc >> 8; //0-0FF
+        crc &= 0x00ff;
+      }
+      return (crc == 0x00ff);
+}
+
+static uint8_t checkSportPacket_V2(uint8_t * packet)
 {
   short crc = 0;
   for (int i = 1; i < FRSKY_RX_PACKET_SIZE; i++) {
@@ -180,10 +193,10 @@ void processSportPacket(uint8_t *packet)
   uint8_t  prim   = packet[1];
   uint16_t appId  = *((uint16_t *)(packet + 2));
 
-  if (!checkSportPacket(packet)){
-	  telemetry_failed_cs++;
-	  return;
-  }
+	if (!checkSportPacket_V1(packet) && !checkSportPacket_V2(packet)){
+		  	telemetry_failed_cs++;
+			return;
+  	}
 
   if(appId == GPS_STATUS) telemetry_provider = TELEMETRY_PROVIDER_APM10;
 
