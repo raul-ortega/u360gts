@@ -116,9 +116,8 @@ void forwardTelemetry(uint8_t c){
 }
 
 bool forwardEnabled(void){
-    return(forwardTelemetryEnabled);
+     return forwardTelemetryEnabled;
 }
-
 
 #endif
 
