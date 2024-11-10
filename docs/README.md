@@ -13,22 +13,22 @@
 - [Wiring schematics](install-wiring-schematics.md)
 
 ## Configuration
-
+- [Quick Start Guide](configuration-quick-start-guide.md)
 - [Loading the firmware](configuration-loading-firmware.md)
 - [Configurator](https://github.com/raul-ortega/u360gts-configurator)
 - [Magnetometer](configuration-compass.md)
-- Pan servo
-- Tilt servo
-- OFFSET setting
+- [Pan servo](configuration-pan-servo.md)
+- [Tilt servo](configuration-tilt-servo.md)
+- [OFFSET setting](configuration-offset.md)
 - [PID Control](configuration-pid-controller.md)
-- NOPID control system
+- [NOPID control system](configuration-nopid-system.md)
 - [GPS](configuration-gps.md)
 
 ## Incoming Telemetry
 
-- Supported protocols
-- Configuring serial 0 (UART1)
-- Protocol selection
+- [Supported protocols](incomming-telemetry-protocols.md)
+- [Configuring serial 0 (UART1)](configuration-serial0.md)
+- [Protocol selection](ncommint-telemetry-protocol-selection.md)
 
 ##  CLI mode
 
@@ -40,15 +40,16 @@
 - Full list of parameters
 
 ## Display
-
-- Description and operation
-- Enable/Disable display
+- [Supported hardware](display-supported-hardware.md)
+- [Description and operation](display-description-and-operation.md)
+- [GPS screen](display-gps.md)
+- [Telemetry screen](display-telemetry.md)
 
 ## Local GPS
 
 - Installation
 - Settings
-- Set HOME position
+- [Set HOME position](set-home.md)
 
 ## Outgoing Telemetry
 

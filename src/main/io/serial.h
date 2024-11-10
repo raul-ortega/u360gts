@@ -38,6 +38,7 @@ typedef enum {
 	FUNCTION_TELEMETRY_NMEA  	 = (1 << 10),  // 1024
 	FUNCTION_TELEMETRY_LTM		 = (1 << 11),  // 2048
 	FUNCTION_TELEMETRY_POSEST	 = (1 << 12),  // 4096
+	FUNCTION_TELEMETRY_FORWARD   = (1 << 13), // 8192
 } serialPortFunction_e;
 
 typedef enum {

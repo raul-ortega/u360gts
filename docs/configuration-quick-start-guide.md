@@ -1,6 +1,6 @@
 ## INITIAL CONFIGURATION
 
-Once you have assembled your antenna tracker you have to do a initial setup in order to get it working. Try to apply these steps in same order to do it with success:
+Once you have assembled your antenna tracker and [loaded the firmware](configuration-loading-firmware.md) you have to do a initial setup in order to get it working. Try to apply these steps in same order to do it with success:
 
 1.- **Enable OLED display** (Features --> Display).
 
@@ -10,17 +10,25 @@ You may use up/down arrows until pan servo stops. If it stops within a range, yo
 
 The above two steps may be performed in a single one by clicking on "Calibrate pan" button. This is also useful in order to set min_pan_speed parameter, which is the increment necesary to reach the limits of the stop pulse range, so the pan servo may start moving.
 
+[Read more...](configuration-pan-servo.md)
+
 3.- **Calibrate Compasss** by clicking "Calibrate mag".
 
 The antenna tracker will spin for 10 seconds in the same direction in order to perform the calibration. The direction of rotation depends on the value of calibration pulse parameter. This pulse is the same one used for servo pan calibration.
 
 After configuring pan0 and calibrating the magnetometer, we have to be sure that the corresponding "Calibrated" checkboxes are activated, otherwise the tracker will not move. These checkboxes are useful if we want to test the telemetry but we still do not want to move the servos.
 
+[Read more...](configuration-compass.md)
+
 4.- **Configure OFFSET** parameter.
 
 If when giving the command to point north the tracker remains some degrees out of phase, yo must set offset parameter with that value (whithin 0 to 360 degrees). You may adjust it with the up and down arrows as well.
 
+[Read more...](configuration-offset.md)
+
 5.- **Configure tilt parameters**, so that the servo tilt remains horizontal (tilt0) and vertical (tilt90).
+
+[Read more...](configuration-tilt-servo.md)
 
 6.- **Select protocol and baud rate** to which you want the tracker to work.
 
@@ -35,6 +43,8 @@ In case of not using Local GPS, and avoiding to use buttons to set home position
 Min Sats: 6 minimum, the higher, if your GPS takes many satellites, the better.
 Home: AUTO (From telemetry).
 
+[Read more...](set-home.md)
+
 8.- **Configure start traking** parameters.
 
 The default values for distance and altitude might be a bit high. Try 5 for distance and 2 for altitude. Remember that tracking will start when the aircraft has overcome that fence. Once it lands and returns within those limits, the tracking ends.
@@ -46,5 +56,9 @@ While the aircraft is within those limits, the menu and home buttons function as
 By default, the antenna tracker has feature NOPID enabled. It works out of the box, and it is more than probability that it is not necessary to configure any of its parameters. With NOPID control enabled the tracking will experience a slight lag with respect the aircraft, especially if it receives position packets at a low frequency.
 
 Yo can use NOPID control for simulations and first real flights. But if you want more precision you will have to properly configure the PID for pan servo. The will get into action once feature NOPID is disabled.
+
+Read more:
+- [Configure PID controller](configuration-pid-controller.md)
+- [Configure NoPID system](configuration-nopid.md)
 
 [<< Go back](README.md)

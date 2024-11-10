@@ -1,6 +1,6 @@
 # Oficial 3D printed frame
 
-<img src="https://github.com/raul-ortega/u360gts/blob/master/wiki/img/u360gts_frame_3d_view.png" width="640" />
+<img src="img/u360gts_frame_3d_view.png" width="640" />
 
 As a quick start point you can print the official u360gts [3D printed frame](https://www.thingiverse.com/thing:3203850) of the project.
 
@@ -22,6 +22,7 @@ Other alternatives are available for this project:
 - [u360gts, small frame by Ronald Pacheco](https://www.thingiverse.com/thing:3905502)
 - [u360gts, customized frame by Putimir Putkić Peternel](https://www.tinkercad.com/things/1oCpjHuYHRd)
 - [u360gts Mini Case, by Albert Kravcov](https://www.thingiverse.com/thing:4108944)
+- [Tracker U360GTgts Mini, by Roberto Caballero](https://www.thingiverse.com/thing:4747850)
 
 
 [<< Go back](README.md)

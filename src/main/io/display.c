@@ -76,6 +76,7 @@ extern bool gotFix;
 extern bool gotTelemetry;
 extern bool lostTelemetry;
 extern bool homeSet_BY_GPS;
+extern bool homeSet_BY_LAST;
 extern bool homeSet;
 extern bool homeReset;
 extern uint16_t pwmPan;
@@ -756,6 +757,7 @@ static void showTelemetryPage(void)
     OLED_set_line(rowIndex++);
     OLED_send_string(lineBuffer);
 
+<<<<<<< HEAD
     if (!PROTOCOL(TP_MFD))
     {
         if (homeSet_BY_GPS && homeSet)
@@ -767,6 +769,20 @@ static void showTelemetryPage(void)
         padLineBuffer();
         OLED_set_line(rowIndex++);
         OLED_send_string(lineBuffer);
+=======
+    if(!PROTOCOL(TP_MFD)) {
+    	if(homeSet_BY_GPS && homeSet)
+    		tfp_sprintf(lineBuffer, "HOME SET <GPS>");
+    	else if(homeSet_BY_LAST && homeSet)
+    	            tfp_sprintf(lineBuffer, "HOME SET <LAST>");
+    	else if(homeSet)
+    		tfp_sprintf(lineBuffer, "HOME SET <AIRCRAFT>");
+    	else if(!homeSet || homeReset)
+    		tfp_sprintf(lineBuffer, "HOME NOT SET");
+		padLineBuffer();
+		i2c_OLED_set_line(rowIndex++);
+		i2c_OLED_send_string(lineBuffer);
+>>>>>>> development
     }
 
     if (!feature(FEATURE_GPS) && !feature(FEATURE_VBAT) && !feature(FEATURE_RSSI_ADC) && !(rxConfig->rssi_channel > 0))

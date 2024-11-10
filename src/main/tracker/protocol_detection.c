@@ -23,38 +23,51 @@
 /*
 
 */
-#include "config.h"
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include "config/runtime_config.h"
 
-
-// machine states
-enum protocolDetectionStates {
-    DETECTION_STATE_IDLE,
-    DETECTION_STATE_START,
-	DETECTION_STATE_START_FRXKY,
-	DETECTION_STATE_START_MAVLINK,
-	DETECTION_STATE_START_MFD,
-	DETECTION_STATE_START_PITLAB,
-	DETECTION_STATE_START_CROSSFIRE0,
-	DETECTION_STATE_START_CROSSFIRE1,
-    DETECTION_STATE_DETECTED
-  };
-
-static uint8_t detectionState = DETECTION_STATE_IDLE;
-static uint8_t detectionPacketIdex=0;
 static uint16_t protocolDetected = 0;
-
+uint8_t current_protocol = 0;
+uint32_t protocolDetectionTimer = 0;
 bool detectionIsEnabled = false;
+uint8_t protocol_fixes = 0;
 
-void enableProtocolDetection(void){
+extern bool gotFix;
+
+static const uint16_t protocols[] = {
+    TP_MAVLINK,
+    TP_FRSKY_X,
+    TP_CROSSFIRE,
+    TP_MFD,
+    TP_LTM,
+    TP_GPS_TELEMETRY,
+    TP_FRSKY_D,
+    TP_PITLAB,
+    TP_RVOSD
+};
+
+void enableProtocolDetection(uint16_t default_protocol) {
 	protocolDetected = 0;
 	detectionIsEnabled = true;
+	protocol_fixes = 0;
+	current_protocol=0;
+
+	//set default protocol
+	for(uint8_t i=0; i < sizeof(protocols) / sizeof(uint8_t); i++){
+	    if(protocols[i] == default_protocol){
+	        current_protocol = i;
+	        break;
+	    }
+	}
+
+	protocolDetectionTimer = 0;
 }
 
 void disableProtocolDetection(void){
 	detectionIsEnabled = false;
+	protocolDetected = 0;
 }
 
 bool isProtocolDetectionEnabled(void){
@@ -65,112 +78,56 @@ uint16_t getProtocol(void){
 	return protocolDetected;
 }
 
-void protocolDetectionParser(uint8_t c){
-	if(!detectionIsEnabled)
-		return;
+void protocolDetectionParser(uint8_t c)
+{
 
-	switch(detectionState){
-		case DETECTION_STATE_IDLE:
-		    if (c == 0x08 ) {
-		        detectionState = DETECTION_STATE_START_CROSSFIRE0;
-		        detectionPacketIdex = 0;
-		        break;
-		    } else if (c =='#' || c == 'X') {
-				detectionState = DETECTION_STATE_START_MFD;
-				detectionPacketIdex = 0;
-			} else if (c == 0x7E)
-				detectionState = DETECTION_STATE_START_FRXKY;
-			else if (c == 254 && detectionPacketIdex > 10) {
-				protocolDetected = TP_MAVLINK;
-				detectionState = DETECTION_STATE_DETECTED;
-			} else if (c == '$'){
-				detectionState = DETECTION_STATE_START_PITLAB;
-				detectionPacketIdex = 0;
-				return;
-			}
-			detectionPacketIdex ++;
-			break;
-		case DETECTION_STATE_START_CROSSFIRE0:
-		    if (c == 0x00){
-		        detectionState = DETECTION_STATE_START_CROSSFIRE1;
-		        detectionPacketIdex++;
-		    }
-		    break;
-		case DETECTION_STATE_START_CROSSFIRE1:
-            if (c == 0xA7 && detectionPacketIdex == 1) {
-                protocolDetected = TP_CROSSFIRE;
-                detectionState = DETECTION_STATE_DETECTED;
-            }
+    if(protocolDetectionTimer == 0)
+        protocolDetectionTimer = millis();
+
+    if(millis() - protocolDetectionTimer >= 3000){
+      current_protocol ++;
+      if(current_protocol >= sizeof(protocols) / sizeof(uint16_t)) current_protocol = 0;
+      protocolDetectionTimer = millis();
+      gotFix = false;
+    }
+
+    switch(protocols[current_protocol]){
+        case TP_MFD:
+            mfd_encodeTargetData(c);
             break;
-		case DETECTION_STATE_START_MFD:
-			if ((c == '#' || c == 'X'))
-				detectionPacketIdex++;
-			else if (detectionPacketIdex > 5){
-				protocolDetected = TP_MFD;
-				detectionState = DETECTION_STATE_DETECTED;
-			} else
-				detectionState = DETECTION_STATE_IDLE;
-			break;
-		case DETECTION_STATE_START_FRXKY:
-			if (c == 0xFD) {
-				protocolDetected = TP_FRSKY_D;
-				detectionState = DETECTION_STATE_DETECTED;
-			} else if (detectionState == DETECTION_STATE_START_FRXKY && c ==0x10){
-				protocolDetected = TP_FRSKY_X;
-				detectionState = DETECTION_STATE_DETECTED;
-				detectionPacketIdex = 0;
-			} else if (detectionPacketIdex > 10)
-				detectionState = DETECTION_STATE_IDLE;
-			break;
-		case DETECTION_STATE_START_MAVLINK:
-			if (detectionPacketIdex < 5)
-				detectionPacketIdex++;
-			else if (c == 24 || c == 33){
-				protocolDetected = TP_MAVLINK;
-				detectionState = DETECTION_STATE_DETECTED;
-			} else
-				detectionState = DETECTION_STATE_IDLE;
-			break;
-		case DETECTION_STATE_START_PITLAB:
-			if(c == 'T' && detectionPacketIdex == 0 ){ //This is not PITLAB, it is LTM
-				protocolDetected = TP_LTM;
-				detectionState = DETECTION_STATE_DETECTED;
-				break;
-			} else if(c == '$' && detectionPacketIdex == 9 ){
-				protocolDetected = TP_PITLAB;
-				detectionState = DETECTION_STATE_DETECTED;
-				break;
-			} else if(c == '$' && detectionPacketIdex > 9){
-				detectionState = DETECTION_STATE_START;
-				break;
-			}
-			detectionPacketIdex++;
-			break;
-		case DETECTION_STATE_START:
-			switch(c){
-				case 'T':
-					protocolDetected = TP_LTM;
-					detectionState = DETECTION_STATE_DETECTED;
-					break;
-				case 'G':
-					protocolDetected = TP_GPS_TELEMETRY;
-					detectionState = DETECTION_STATE_DETECTED;
-					break;
-				case '1':
-				case 'R':
-				case 'V':
-					protocolDetected = TP_RVOSD;
-					detectionState = DETECTION_STATE_DETECTED;
-					break;
-				default:
-					detectionState = DETECTION_STATE_IDLE;
-					break;
-			}
-			break;
-		case DETECTION_STATE_DETECTED:
-			detectionState = DETECTION_STATE_IDLE;
-			detectionPacketIdex = 0;
-			disableProtocolDetection();
-			break;
-	}
+        case TP_GPS_TELEMETRY:
+            gps_encodeTargetData(c);
+            break;
+        case TP_MAVLINK:
+            mavlink_encodeTargetData(c);
+            break;
+        case TP_RVOSD:
+            rvosd_encodeTargetData(c);
+            break;
+        case TP_FRSKY_D:
+            frskyd_encodeTargetData(c);
+            break;
+        case TP_FRSKY_X:
+            frskyx_encodeTargetData(c);
+            break;
+        case TP_LTM:
+            ltm_encodeTargetData(c);
+            break;
+        case TP_PITLAB:
+            pitlab_encodeTargetData(c);
+            break;
+        case TP_CROSSFIRE:
+            crossfire_encodeTargetData(c);
+            break;
+    }
+
+    if(gotFix){
+        protocol_fixes ++;
+        if(protocol_fixes > 1) {
+            protocolDetected = protocols[current_protocol];
+            return;
+        }
+        gotFix = false;
+
+    }
 }

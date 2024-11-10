@@ -298,6 +298,7 @@ HIGHEND_SRC = \
 		   telemetry/nmea.c \
 		   telemetry/ltm.c \
 		   telemetry/position_estimation_log.c \
+		   telemetry/forward.c \
 		   sensors/sonar.c \
 		   sensors/barometer.c
 

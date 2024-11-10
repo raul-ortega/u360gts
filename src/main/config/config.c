@@ -784,6 +784,12 @@ static void resetConf(void)
    	//ALTITUDE
    	masterConfig.altitude_priority = 0;
 
+   	// LAST HOME POSITION
+   	masterConfig.restore_last_home = 0;
+    masterConfig.home_lat = 0;
+    masterConfig.home_lon = 0;
+    masterConfig.home_alt = 0;
+
 /////////////////////////////
 
     // copy first profile into remaining profile

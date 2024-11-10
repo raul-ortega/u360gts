@@ -155,6 +155,8 @@ void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int1
 void calcTelemetryFrequency(void);
 uint8_t filterTiltAngle(uint8_t target);
 void servosInit(void);
+void setTelemetryHome(int32_t lat, int32_t lon, int16_t alt, bool save);
+void setHomeByLastSaved(positionVector_t *tracker);
 
 //EASING
 int16_t _lastTilt;
@@ -227,6 +229,7 @@ bool previousState;
 bool homeButtonPreviousState;
 bool gotNewHeading;
 bool homeSet_BY_GPS = false;
+bool homeSet_BY_LAST = false;
 
 //TIMERS
 unsigned long servoPanTimer = 0;
@@ -318,7 +321,7 @@ void tracker_setup(void)
   protocolInit(masterConfig.telemetry_protocol);
 
   if(feature(FEATURE_AUTODETECT))
-	  enableProtocolDetection();
+	  enableProtocolDetection(masterConfig.telemetry_protocol);
 
   trackingInit();
 
@@ -374,6 +377,7 @@ void trackingInit(void){
 	gotFix = false;
 
 	homeSet = false;
+
 	homeReset = false;
 
 	trackingStarted = false;
@@ -687,11 +691,11 @@ void updateDigitalButtons(void) {
 }
 
 void setHomeByTelemetry(positionVector_t *tracker, positionVector_t *target) {
-  tracker->lat = target->lat;
-  tracker->lon = target->lon;
-  tracker->alt = target->alt;
+  tracker->lat = telemetry_lat;
+  tracker->lon = telemetry_lon;
+  tracker->alt = telemetry_alt;
 
-  setTelemetryHome(target->lat,target->lon,target->alt);
+  setTelemetryHome(telemetry_lat,telemetry_lon,telemetry_alt, true);
 
   if(feature(FEATURE_DEBUG)){
 	  tracker->lat = 47403583; tracker->lon = 8535850; tracker->alt = 474;
@@ -702,10 +706,45 @@ void setHomeByTelemetry(positionVector_t *tracker, positionVector_t *target) {
 
   homeSet = true;
   homeSet_BY_GPS = false;
+  homeSet_BY_LAST = false;
   homeReset = false;
   home_timer_reset = 0;
+
   epsVectorLoad(&targetLast,target->lat,target->lon,0,0,0);
   epsVectorLoad(&targetCurrent,target->lat,target->lon,0,0,millis());
+}
+
+bool shouldRestoreHome(void){
+    return(!homeSet  && !homeSet_BY_LAST && !homeReset && masterConfig.restore_last_home == true && masterConfig.home_lat != 0 &&  masterConfig.home_lon != 0);
+}
+
+void setTelemetryHome(int32_t lat, int32_t lon, int16_t alt, bool save){
+    telemetry_home_lat = lat;
+    telemetry_home_lon = lon;
+    telemetry_home_alt = alt;
+
+    if(save == true && lat!=0 && lon != 0){
+        masterConfig.home_lat = lat;
+        masterConfig.home_lon = lon;
+        masterConfig.home_alt = alt;
+        writeEEPROM();
+    }
+}
+
+void setHomeByLastSaved(positionVector_t *tracker) {
+
+  tracker->lat = masterConfig.home_lat;
+  tracker->lon = masterConfig.home_lon;
+  tracker->alt = masterConfig.home_alt;
+
+  homeSet = true;
+  homeSet_BY_GPS = false;
+  homeSet_BY_LAST = true;
+  homeReset = false;
+  home_timer_reset = 0;
+
+  setTelemetryHome(masterConfig.home_lat, masterConfig.home_lon, masterConfig.home_alt, false);
+
 }
 
 void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int16_t alt, bool home_updated, bool beep) {
@@ -713,7 +752,7 @@ void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int1
   tracker->lon = lon;
   tracker->alt = alt;
 
-  setTelemetryHome(lat,lon,alt);
+  setTelemetryHome(lat,lon,alt, true);
 
   if(feature(FEATURE_DEBUG)) {
 	  tracker->lat = 47403583; tracker->lon = 8535850; tracker->alt = 474;
@@ -731,8 +770,10 @@ void setHomeByLocalGps(positionVector_t *tracker, int32_t lat, int32_t lon, int1
 
   homeSet = true;
   homeSet_BY_GPS = true;
+  homeSet_BY_LAST = false;
   homeReset = false;
   home_timer_reset = 0;
+
   if(!home_updated) {
 	  epsVectorLoad(&targetLast,lat,lon,0,0,0);
 	  epsVectorLoad(&targetCurrent,lat,lon,0,0,millis());
@@ -827,9 +868,10 @@ void updateTelemetryLost(void){
 
 	if(!gotTelemetry && (millis() - lostTelemetry_timer > 3000)){
 		lostTelemetry = true;
-		if(feature(FEATURE_AUTODETECT)){
+		if(feature(FEATURE_AUTODETECT) && !isProtocolDetectionEnabled()){
 			showAutodetectingTitle(0);
-			enableProtocolDetection();
+			enableProtocolDetection(masterConfig.telemetry_protocol);
+			detection_title_updated = false;
 		}
 	}
 }
@@ -841,7 +883,7 @@ void updateTargetPosition(void){
 			if(telemetry_sats >= masterConfig.telemetry_min_sats && targetPosition.home_alt == -32768)
 				targetPosition.home_alt = getTargetAlt(0);
 
-			targetPosition.alt = getTargetAlt(targetPosition.home_alt);
+			targetPosition.alt = getTargetAlt(telemetry_home_alt);
 
 			if(PROTOCOL(TP_MFD)){
 				distance = getDistance();
@@ -1062,6 +1104,12 @@ void updateSetHomeButton(void){
 void updateSetHomeByGPS(void){
 	if(PROTOCOL(TP_SERVOTEST) || PROTOCOL(TP_MFD) || PROTOCOL(TP_CALIBRATING_MAG) || PROTOCOL(TP_CALIBRATING_PAN0) || PROTOCOL(TP_CALIBRATING_MAXPAN))
 		return;
+
+	if(shouldRestoreHome()){
+	    setHomeByLastSaved(&trackerPosition);
+	    return;
+	}
+
 	if(homeReset && lostTelemetry){
 			telemetry_lat = 0;
 			telemetry_lon = 0;
@@ -1098,7 +1146,7 @@ bool couldLolcalGpsSetHome(bool setByUser){
 }
 
 bool couldTelemetrySetHome(void){
-	return (!feature(FEATURE_GPS) && masterConfig.telemetry_home == 1 && telemetry_sats >= masterConfig.telemetry_min_sats);
+	return (!feature(FEATURE_GPS) && masterConfig.telemetry_home == 1 && telemetry_sats >= masterConfig.telemetry_min_sats && telemetry_lat != 0 && telemetry_lon != 0);
 }
 
 void updateMFD(void){
@@ -1556,28 +1604,27 @@ void updateEPSParams(){
 void updateProtocolDetection(void){
 	uint16_t detected_protocol;
 
-	if(!feature(FEATURE_AUTODETECT) || cliMode)
+	if(!feature(FEATURE_AUTODETECT) || cliMode || !isProtocolDetectionEnabled())
 		return;
 
 	detected_protocol = getProtocol();
 
-	if(detected_protocol == 0 && !detection_title_updated ){
-		detection_title_updated = true;
-		updateDisplayProtocolTitle(detected_protocol);
-		return;
-	}
-
-
-	if(detected_protocol > 0 && isProtocolDetectionEnabled()){
-	    updateDisplayProtocolTitle(detected_protocol);
-	    detection_title_updated = false;
-	    protocolInit(detected_protocol);
-	    if(!homeSet){
+    if(detected_protocol > 0 ) {
+        protocolInit(detected_protocol);
+        if(!homeSet){
             trackingInit();
             if(PROTOCOL(TP_MFD))
                 settingHome = true;
         }
-	}
+        disableProtocolDetection();
+        detection_title_updated = false;
+    }
+
+    if(detection_title_updated == false){
+        updateDisplayProtocolTitle(detected_protocol);
+        detection_title_updated = true;
+    }
+
 }
 
 void protocolInit(uint16_t protocol){
