@@ -286,6 +286,7 @@ HIGHEND_SRC = \
 		   common/colorconversion.c \
 		   io/gps.c \
 		   io/ledstrip.c \
+		   io/display_lib.c \
 		   io/display.c \
 		   telemetry/telemetry.c \
 		   telemetry/frsky.c \
@@ -330,7 +331,7 @@ NAZE_SRC = startup_stm32f10x_md_gcc.S \
 		   drivers/bus_i2c_stm32f10x.c \
 		   drivers/compass_hmc5883l.c \
 		   drivers/compass_qmc5883l.c \
-		   drivers/display_ug2864hsweg01.h \
+		   drivers/display_ug2864hsweg01.c \
 		   drivers/flash_m25p16.c \
 		   drivers/gpio_stm32f10x.c \
 		   drivers/inverter.c \
@@ -362,7 +363,7 @@ BLUEPILL_SRC = startup_stm32f10x_md_gcc.S \
 		   drivers/bus_i2c_stm32f10x.c \
 		   drivers/compass_hmc5883l.c \
 		   drivers/compass_qmc5883l.c \
-		   drivers/display_ug2864hsweg01.h \
+		   drivers/display_ug2864hsweg01.c \
 		   drivers/flash_m25p16.c \
 		   drivers/gpio_stm32f10x.c \
 		   drivers/inverter.c \
@@ -616,7 +617,7 @@ SPRACINGF3_SRC = \
 		   drivers/compass_ak8975.c \
 		   drivers/compass_hmc5883l.c \
 		   drivers/compass_qmc5883l.c \
-		   drivers/display_ug2864hsweg01.h \
+		   drivers/display_ug2864hsweg01.c \
 		   drivers/flash_m25p16.c \
 		   drivers/serial_softserial.c \
 		   drivers/sonar_hcsr04.c \
