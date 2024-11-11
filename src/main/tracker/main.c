@@ -906,7 +906,7 @@ void updateTargetPosition(void){
 				currentDistance = distance_between(targetLast.lat / TELEMETRY_LATLON_DIVIDER_F,targetLast.lon / TELEMETRY_LATLON_DIVIDER_F,targetPosition.lat / TELEMETRY_LATLON_DIVIDER_F,targetPosition.lon / TELEMETRY_LATLON_DIVIDER_F);
 				currentTimeMillis = millis();
 				currentSpeed = epsVectorSpeed(targetLast.time,currentTimeMillis,currentDistance);
-				if(masterConfig.max_speed_filter == 0 || targetCurrent.speed < masterConfig.max_speed_filter){
+				if(masterConfig.max_speed_filter == 0 || currentSpeed < masterConfig.max_speed_filter){
 					epsVectorLoad(&targetCurrent,targetPosition.lat,targetPosition.lon,currentDistance,targetLast.time,currentTimeMillis);//epsVectorSpeed(targetLast.time,currentTimeMillis,currentDistance);
 					if(homeSet) {
 						if(feature(FEATURE_EPS)) {
