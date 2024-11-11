@@ -23,6 +23,7 @@
 - [PID Control](configuration-pid-controller.md)
 - [NOPID control system](configuration-nopid-system.md)
 - [GPS](configuration-gps.md)
+- [OLED display](configuration-display.md)
 
 ## Incoming Telemetry
 
