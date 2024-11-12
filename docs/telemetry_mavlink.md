@@ -25,7 +25,7 @@ This message provides global positioning data:
 - Longitude
 - Altitude 
 
-**ATTITUDE **(optional):
+**ATTITUDE (MSG_ID = 30)**(optional):
 
 This message provides global positioning data:
 
