@@ -34,7 +34,7 @@ This message provides global positioning data:
 - Yaw
 - Course
 
-## SRx Parameter Configuration
+## SRx Parameter Configuration (Ardupilot)
 
 To set up MAVLink telemetry for the u360gts firmware, configure the following SRx parameters on the autopilot:
 
@@ -52,6 +52,20 @@ In this setup, the GPS_RAW_INT message is received once, and the GLOBAL_POSITION
 
 This rate is ideal for smooth tracking of an aircraft flying at a distance of 100 meters.
 
+**Note:** Read more about [SRx_ parameters](https://ardupilot.org/dev/docs/mavlink-requesting-data.html).
+
+## Mavlink Rates message (iNav)
+
+The iNav control firmware also allows adjustment of the MAVLink message rate using the following parameters:
+
+- mavlink_ext_status_rate
+- mavlink_extra1_rate
+- mavlink_extra2_rate
+- mavlink_extra3_rate
+- mavlink_pos_rate
+- mavlink_rc_chan_rate
+
+**Note:** For detailed information on configuring these parameters and managing MAVLink message outputs, please refer to the official [iNav documentation](https://github.com/iNavFlight/inav).
 
 ## Conclusion
 
