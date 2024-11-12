@@ -244,7 +244,7 @@ void configurePOSESTTelemetryPort(void)
         return;
     }
 
-    POSESTPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_POSEST, NULL, baudRates[portConfig->telemetry_baudrateIndex], POSEST_INITIAL_PORT_MODE, telemetryConfig->telemetry_inversion ? SERIAL_INVERTED : SERIAL_NOT_INVERTED);
+    POSESTPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_POSEST, NULL, baudRates[portConfig->telemetry_baudrateIndex], POSEST_INITIAL_PORT_MODE, telemetryConfig->telemetry_inversion_out ? SERIAL_INVERTED : SERIAL_NOT_INVERTED);
     if (!POSESTPort) {
         return;
     }

@@ -172,7 +172,7 @@ void configureMAVLINKTelemetryPort(void)
         return;
     }
 
-    mavlinkPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_MAVLINK, NULL, baudRates[portConfig->telemetry_baudrateIndex], MAVLINK_INITIAL_PORT_MODE, telemetryConfig->telemetry_inversion ? SERIAL_INVERTED : SERIAL_NOT_INVERTED);
+    mavlinkPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_MAVLINK, NULL, baudRates[portConfig->telemetry_baudrateIndex], MAVLINK_INITIAL_PORT_MODE, telemetryConfig->telemetry_inversion_out ? SERIAL_INVERTED : SERIAL_NOT_INVERTED);
     if (!mavlinkPort) {
         return;
     }

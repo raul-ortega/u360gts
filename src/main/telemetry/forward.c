@@ -75,7 +75,7 @@ void configureForwardTelemetryPort(void)
         return;
     }
 
-    forwardPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_FORWARD, NULL, FORWARD_BAUDRATE, FORWARD_INITIAL_PORT_MODE, telemetryConfig->telemetry_inversion ? SERIAL_INVERTED : SERIAL_NOT_INVERTED);
+    forwardPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_FORWARD, NULL, FORWARD_BAUDRATE, FORWARD_INITIAL_PORT_MODE, telemetryConfig->telemetry_inversion_out ? SERIAL_INVERTED : SERIAL_NOT_INVERTED);
     if (!forwardPort) {
         return;
     }

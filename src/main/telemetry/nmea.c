@@ -374,7 +374,7 @@ void configureNMEATelemetryPort(void)
         return;
     }
 
-    nmeaPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_NMEA, NULL, baudRates[portConfig->telemetry_baudrateIndex], NMEA_INITIAL_PORT_MODE, telemetryConfig->telemetry_inversion ? SERIAL_INVERTED : SERIAL_NOT_INVERTED);
+    nmeaPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_NMEA, NULL, baudRates[portConfig->telemetry_baudrateIndex], NMEA_INITIAL_PORT_MODE, telemetryConfig->telemetry_inversion_out ? SERIAL_INVERTED : SERIAL_NOT_INVERTED);
     if (!nmeaPort) {
         return;
     }

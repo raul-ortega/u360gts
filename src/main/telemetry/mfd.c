@@ -207,7 +207,7 @@ void configureMFDTelemetryPort(void)
         return;
     }
 
-    mfdPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_MFD, NULL, baudRates[portConfig->telemetry_baudrateIndex], MFD_INITIAL_PORT_MODE, telemetryConfig->telemetry_inversion ? SERIAL_INVERTED : SERIAL_NOT_INVERTED);
+    mfdPort = openSerialPort(portConfig->identifier, FUNCTION_TELEMETRY_MFD, NULL, baudRates[portConfig->telemetry_baudrateIndex], MFD_INITIAL_PORT_MODE, telemetryConfig->telemetry_inversion_out ? SERIAL_INVERTED : SERIAL_NOT_INVERTED);
     if (!mfdPort) {
         return;
     }

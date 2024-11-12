@@ -363,7 +363,7 @@ void tracker_setup(void)
  }
 
 void telemetryPortInit(void){
-	trackerSerial = openSerialPort(masterConfig.serialConfig.portConfigs[0].identifier, FUNCTION_NONE, NULL, baudRates[masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex], MODE_RXTX, SERIAL_NOT_INVERTED);
+	trackerSerial = openSerialPort(masterConfig.serialConfig.portConfigs[0].identifier, FUNCTION_NONE, NULL, baudRates[masterConfig.serialConfig.portConfigs[0].msp_baudrateIndex], MODE_RXTX, masterConfig.telemetry_inversion_out ? SERIAL_INVERTED : SERIAL_NOT_INVERTED);
 }
 
 void trackingInit(void){
