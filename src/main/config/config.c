@@ -746,6 +746,7 @@ static void resetConf(void)
     masterConfig.start_tracking_altitude = 4;
    	masterConfig.telemetry_min_sats = 6;
    	masterConfig.telemetry_provider = 0;
+   	masterConfig.telemetry_inversion_in = 0;
 
     //Display
    	//featureSet(FEATURE_DISPLAY);

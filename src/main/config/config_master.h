@@ -156,6 +156,7 @@ typedef struct master_t {
 	int32_t home_lat;
 	int32_t home_lon;
 	int16_t home_alt;
+	uint8_t telemetry_inversion_in;
 } master_t;
 
 extern master_t masterConfig;
