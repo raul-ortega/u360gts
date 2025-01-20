@@ -5,7 +5,7 @@ u360gts requires a compass sensor for tracking. When a compass is pressent, is c
 
 ## Supported Sensors
 
-In the moment of writing this document, u360gts supports HMC5883L and QMC5583L compass sensors. To be sure about what you are buying you must ask the seller, because he might be providing not supported chips while in the product description is specified the supported ones.
+In the moment of writing this document, u360gts supports HMC5883L, QMC5583L and AK8975 compass sensors. To be sure about what you are buying you must ask the seller, because he might be providing not supported chips while in the product description is specified the supported ones.
 
 <!-- img src="img/supported_mag.jpg" width="525" /-->
 
