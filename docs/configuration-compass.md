@@ -114,18 +114,17 @@ e.g set offset to 90 if the board/mag is rotated 90 degrees.
 
 ### External Mag Alignment
 
-When using external mag, you have to be sure that the magnetometer is aligned with the arrow of the board pointing to the front and it is not placed upside down. If it is rotated and/or flipped, then you have to configure the align_mag parameter with one of these values:
+When using external mag, you have to be sure that the magnetometer is aligned with the arrow of the board pointing to the front and it is not placed upside down. If it is rotated and/or flipped, then you have to configure the **align_mag** parameter with one of these values:
 
-DEFAULT
-CW0
-CW90
-CW180
-CW270
-CW0FLIP
-CW90FLIP
-CW180FLIP
-CW270FLIP
-
+- DEFAULT
+- CW0
+- CW90
+- CW180
+- CW270
+- CW0FLIP
+- CW90FLIP
+- CW180FLIP
+- CW270FLIP
 
 ### Magnetic Declination
 
