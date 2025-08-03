@@ -625,32 +625,32 @@ void showCalibratingMagSuccessPage(void)
     int decimalPart;
 	
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
-    tfp_sprintf(lineBuffer, "Mag Calib Success");
+    tfp_sprintf(lineBuffer, "Mag Calibration Success");
     i2c_OLED_set_line(rowIndex++);	
     i2c_OLED_send_string(lineBuffer);
 	i2c_OLED_set_line(rowIndex++);
 	
 	if ( signbit(phase) )
 	{		
-        // radius, aspect ratio, rotation 
+        // radius (integer), aspect ratio (2 decimal places), rotation degrees (2 decimal places) 
 		tfp_sprintf(lineBuffer, "R=%d,A=%d.%d,R=-%d.d",(int)roundf(radius*1000),
-										  (int)fabsf(eValScale),(int)fabsf(eValScale*N_DECIMAL_POINTS_PRECISION)%N_DECIMAL_POINTS_PRECISION,
-										  (int)fabsf(phase),(int)fabsf(phase*N_DECIMAL_POINTS_PRECISION)%N_DECIMAL_POINTS_PRECISION
+										  (int)fabsf(eValScale),(int)fabsf(eValScale*2)%2,
+										  (int)fabsf(phase),(int)fabsf(phase*2)%2
 										  );
 	}
 	else
 	{
 		tfp_sprintf(lineBuffer, "R=%d,A=%d.%d,R=%d.d",(int)roundf(radius*1000),
-										  (int)fabsf(eValScale),(int)fabsf(eValScale*N_DECIMAL_POINTS_PRECISION)%N_DECIMAL_POINTS_PRECISION,
-										  (int)fabsf(phase),(int)fabsf(phase*N_DECIMAL_POINTS_PRECISION)%N_DECIMAL_POINTS_PRECISION
+										  (int)fabsf(eValScale),(int)fabsf(eValScale*2)%2,
+										  (int)fabsf(phase),(int)fabsf(phase*2)%2
 										  );
 	}
 	i2c_OLED_send_string(lineBuffer);
 	i2c_OLED_set_line(rowIndex++);
-	// standard deviation
+	// standard deviation, raw data, after correction
 	tfp_sprintf(lineBuffer, "SD=%d,%d",(int)roundf(sd1*1000),(int)roundf(sd2*1000));
 	i2c_OLED_send_string(lineBuffer);
-	// 2x2 transformation matrix
+	// 2x2 transformation matrix elements
     integerPart = (int)fabsf(softIron[0][0]);
     decimalPart = ((int)fabsf(softIron[0][0]*N_DECIMAL_POINTS_PRECISION)%N_DECIMAL_POINTS_PRECISION);
     i2c_OLED_set_line(rowIndex++);	
