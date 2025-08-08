@@ -600,8 +600,8 @@ void updateCompass(flightDynamicsTrims_t *magZero)
 				  // log standard deviaton before and after
 				  printf("Raw STD=%d Corrected STD=%d\n",(int)roundf(sd1*1000),(int)roundf(sd2*1000));				  
 					  	  		  
-				  // 8 second hold time
-				  notifyUpdateAt = currentTime + 8000000;
+				  // 10 second hold time
+				  notifyUpdateAt = currentTime + 10000000;
 				  displayShowFixedPage(PAGE_CALIBRATING_MAG_SUCCESS);
 				  DISABLE_PROTOCOL(TP_CALIBRATING_MAG);
 				  // reset hardware
@@ -612,8 +612,8 @@ void updateCompass(flightDynamicsTrims_t *magZero)
 				// failed advance calibration step
 				else {
 					printf("Failed to rotated 340 degress within time period\n");
-					// 8 second hold time
-					notifyUpdateAt = currentTime + 8000000;
+					// 4 second hold time
+					notifyUpdateAt = currentTime + 4000000;
 					calib_rotation=(uint16_t)sum_vec_angle;
 					displayShowFixedPage(PAGE_CALIBRATING_MAG_FAILED);			
 					DISABLE_PROTOCOL(TP_CALIBRATING_MAG);

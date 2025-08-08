@@ -633,16 +633,16 @@ void showCalibratingMagSuccessPage(void)
 	if ( signbit(phase) )
 	{		
         // radius (integer), aspect ratio (2 decimal places), rotation degrees (2 decimal places) 
-		tfp_sprintf(lineBuffer, "R=%d,A=%d.%d,R=-%d.d",(int)roundf(radius*1000),
-										  (int)fabsf(eValScale),(int)fabsf(eValScale*2)%2,
-										  (int)fabsf(phase),(int)fabsf(phase*2)%2
+		tfp_sprintf(lineBuffer, "R=%d,A=%d.%d,R=-%d",(int)roundf(radius*1000),
+										  (int)fabsf(eValScale),(int)fabsf(eValScale*1000)%1000,
+										  (int)fabsf(phase)
 										  );
 	}
 	else
 	{
-		tfp_sprintf(lineBuffer, "R=%d,A=%d.%d,R=%d.d",(int)roundf(radius*1000),
-										  (int)fabsf(eValScale),(int)fabsf(eValScale*2)%2,
-										  (int)fabsf(phase),(int)fabsf(phase*2)%2
+		tfp_sprintf(lineBuffer, "R=%d,A=%d.%d,R=%d",(int)roundf(radius*1000),
+										  (int)fabsf(eValScale),(int)fabsf(eValScale*1000)%1000,
+										  (int)fabsf(phase)
 										  );
 	}
 	i2c_OLED_send_string(lineBuffer);
