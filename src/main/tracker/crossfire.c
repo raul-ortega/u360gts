@@ -28,7 +28,7 @@
 #define GPS_ID                         0x02
 #define BAT_ID                         0x08 
 #define TELEMETRY_RX_PACKET_SIZE       128
-
+#define ELRS_RADIO_ADDRESS             0xC8
 
 
 uint8_t crc8(const uint8_t * ptr, uint32_t len);
@@ -117,7 +117,7 @@ void processCrossfireTelemetryFrame()
 void crossfire_encodeTargetData(uint8_t data)
 {
 
-  if (telemetryRxBufferCount == 0 && data != RADIO_ADDRESS) {
+  if (telemetryRxBufferCount == 0 && data != RADIO_ADDRESS && data != ELRS_RADIO_ADDRESS) {
     //printf("address 0x%02X error\n", data);
     return;
   }
