@@ -299,18 +299,18 @@ void updateCompass(flightDynamicsTrims_t *magZero)
                 printf("ts=%u, p2x=%d, p2y=%d, p1x=%d, p1y=%d,", currentTime, point.x[2], point.y[2], point.x[1], point.y[1]);
                 //printf("Angle between p1 and p2=%f,", vec_angle_p12 );
                 npf_snprintf(buf, sizeof(buf), "%f",vec_angle_p12);
-				printf(" vap12=%s,",buf);
+				printf(" vap12=%s,",buf); // vector angle12
 				
 				dist = sqrtf( powf(point.x[2]-point.x[1],2) + powf(point.y[2]-point.y[1],2) );
                 npf_snprintf(buf, sizeof(buf), "%f",dist);
-				printf(" dist=%s,", buf);
+				printf(" dist=%s,", buf); // distance between p1 and p2
 				
 				//printf(" dist=%f\n", dist );
                 // could use - atan2(sin(x-y), cos(x-y))
                 delta_angle = 180.0f - fabsf(fmodf(fabsf(vec_angle_p01 - vec_angle_p12), 360.0f) - 180.0f);
 				//printf("Delta Angle=%f,", delta_angle );
                 npf_snprintf(buf, sizeof(buf),"%f",delta_angle);
-				printf(" da=%s\n", buf);
+				printf(" da=%s\n", buf); // delta angle
 				//printf(" using Vector Angle p01 =%f\n", vec_angle_p01);
               
                 // greater than threshold angle and greater than a threshold distance to avoid noise
