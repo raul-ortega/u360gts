@@ -22,22 +22,19 @@
 - [OFFSET setting](configuration-offset.md)
 - [PID Control](configuration-pid-controller.md)
 - [NOPID control system](configuration-nopid-system.md)
+- [EPS (Estimated Position System)](eps-system.md) (DEPRECATED)
 - [GPS](configuration-gps.md)
+- [RSSI monitoring](rssi-monitoring.md)
 
 ## Incoming Telemetry
 
 - [Supported protocols](incomming-telemetry-protocols.md)
 - [Configuring serial 0 (UART1)](configuration-serial0.md)
-- [Protocol selection](ncommint-telemetry-protocol-selection.md)
+- [Protocol selection](incommint-telemetry-protocol-selection.md)
 
 ##  CLI mode
 
-- Enter CLI mode
-- Save settings
-- Default settings
-- Enable/Disable features
-- Help
-- Full list of parameters
+- [CLI mode reference](cli-mode.md)
 
 ## Display
 - [Supported hardware](display-supported-hardware.md)
@@ -47,8 +44,7 @@
 
 ## Local GPS
 
-- Installation
-- Settings
+- [Installation and Settings](local-gps.md)
 - [Set HOME position](set-home.md)
 
 ## Outgoing Telemetry
@@ -57,18 +53,15 @@
 
 ## Virtual serial ports
 
-- Configuration and function selection
-- Connections
+- [Configuration and connections](virtual-serial-ports.md)
 
 ## Battery monitoring
 
-- Voltage level
-- Settings
+- [Battery monitoring reference](battery-monitoring.md)
 
 ## Buttons
 
-- MENU
-- HOME
+- [MENU and HOME buttons](buttons.md)
 
 ## Video tutorials
 
