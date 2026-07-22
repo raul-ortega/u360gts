@@ -31,7 +31,10 @@ typedef enum {
 #endif
 	PAGE_CLI_MODE,
 	PAGE_MENU,
-	PAGE_BOOT_MODE
+	PAGE_BOOT_MODE,
+	PAGE_CALIBRATING_MAG_FAILED,   // added new page for advanced calibration failure
+	PAGE_CALIBRATING_MAG_SUCCESS,  // added new page for success
+	PAGE_COUNT					   // number of elements
 } pageId_e;
 
 typedef enum {
@@ -51,6 +54,7 @@ typedef enum {
 	MENU_EPS_DISTANCEGAIN,
 	MENU_EPS_FREQUENCY,
 	MENU_EASING,
+	MENU_PAN,  // pan testing
 	MENU_EXIT
 } menuStates_e;
 
@@ -64,6 +68,7 @@ typedef enum {
 	/*OP_SERVOTEST,
 	OP_SET,
 	OP_SOFTSERIAL,*/
+	OP_PAN,
 	OP_EXIT
 } rootMenu_e;
 
@@ -132,6 +137,15 @@ typedef enum {
 	OP_INCREASEDECREASE_EXIT
 } increaseDecreaseMenu_e;
 
+// testing menu for pan
+typedef enum {
+    OP_PAN_0_DEGREE,
+	OP_PAN_90_DEGREE,
+	OP_PAN_180_DEGREE,
+	OP_PAN_270_DEGREE,
+	OP_PAN_EXIT
+} panDegreeMenu_e;
+
 void updateDisplay(void);
 
 void displayShowFixedPage(pageId_e pageId);
@@ -142,3 +156,5 @@ void displayResetPageCycling(void);
 void displaySetNextPageChangeAt(uint32_t futureMicros);
 void updateDisplayProtocolTitle(uint16_t protocol);
 void showAutodetectingTitle(uint16_t protocol);
+
+void displaySetPage(pageId_e pageId); // added for Pan menu
