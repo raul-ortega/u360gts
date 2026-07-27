@@ -12,6 +12,7 @@ u360gts is firmware for DIY 360° antenna trackers that control real servos and 
 - [2. Repository Structure](#2-repository-structure)
 - [3. Coding Style](#3-coding-style)
 - [4. Build System](#4-build-system)
+    - [Docker build](#docker-build)
 - [5. Testing](#5-testing)
 - [6. Documentation](#6-documentation)
 - [7. Commit Messages](#7-commit-messages)
@@ -316,6 +317,63 @@ SPARKY SPRACINGF3 STM32F3DISCOVERY
 ```
 
 **Important:** Never run `make` with `sudo`. Always call from the repository root.
+
+### Docker build
+
+The project provides a Docker image (`raulya/u360gts-stm32:latest`) with the ARM toolchain pre-installed. The default entrypoint clones from GitHub ``master`` and builds all targets, outputting to ``/output``. To build from **local source** (e.g., with uncommitted changes), override the entrypoint:
+
+```sh
+# Build all 4 supported targets from local source
+docker run --rm \
+  --entrypoint /bin/sh \
+  -v "$(pwd):/workspace" \
+  -w /workspace \
+  raulya/u360gts-stm32:latest \
+  -c '
+for target in BLUEPILL CC3D NAZE SPRACINGF3; do
+  make clean TARGET=$target
+  make TARGET=$target
+done
+'
+```
+
+The compiled hex files are placed in ``obj/`` owned by ``root``. After the build, fix ownership:
+
+```sh
+docker run --rm --entrypoint /bin/sh \
+  -v "$(pwd):/workspace" -w /workspace \
+  raulya/u360gts-stm32:latest \
+  -c "chown -R $(id -u):$(id -g) obj/*.hex"
+```
+
+To produce versioned hex filenames matching the release format (``amv-open360tracker_<VERSION>_<TARGET>.hex``):
+
+```sh
+# Build + rename in one pass
+docker run --rm \
+  --entrypoint /bin/sh \
+  -v "$(pwd):/workspace" \
+  -w /workspace \
+  raulya/u360gts-stm32:latest \
+  -c '
+VERSION=11.5.0
+for target in BLUEPILL CC3D NAZE SPRACINGF3; do
+  make clean TARGET=$target 2>&1 > /dev/null
+  make TARGET=$target 2>&1 > /dev/null
+  cp obj/amv-open360tracker_${target}.hex obj/amv-open360tracker_${VERSION}_${target}.hex
+done
+chown -R '"$(id -u):$(id -g)"' obj/*.hex
+'
+```
+
+Clean up the non-versioned originals (still owned by root inside Docker):
+
+```sh
+docker run --rm --entrypoint /bin/sh \
+  -v "$(pwd):/workspace" -w /workspace \
+  raulya/u360gts-stm32:latest \
+  -c 'rm obj/amv-open360tracker_BLUEPILL.hex obj/amv-open360tracker_CC3D.hex obj/amv-open360tracker_NAZE.hex obj/amv-open360tracker_SPRACINGF3.hex'
+```
 
 ---
 
