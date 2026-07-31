@@ -19,12 +19,14 @@
 #include <stdint.h>
 #include <stdarg.h>
 #include <string.h>
+#include <math.h>
 
 #include "platform.h"
 #include "version.h"
 
 #include "build_config.h"
 
+#include "drivers/serial.h"
 #include "drivers/serial.h"
 #include "drivers/system.h"
 #include "drivers/display_ug2864hsweg01.h"
@@ -96,13 +98,22 @@ extern uint8_t EPS_MODE;
 extern uint16_t EPS_DISTANCE_GAIN;
 extern uint16_t EPS_FREQUENCY;
 
+extern uint16_t calib_rotation;
+extern float radius;     // radius of circle
+extern float phase;      // +- rotation 
+extern float eValScale;  // aspect ratio
+extern float sd1;
+extern float sd2;
+extern float softIron[2][2];
+#define N_DECIMAL_POINTS_PRECISION (1000000)   // n = 3. Three decimal points.
+
 int16_t master_telemetry_protocol;
 
 controlRateConfig_t *getControlRateConfig(uint8_t profileIndex);
 
 #define MICROSECONDS_IN_A_SECOND (1000 * 1000)
 
-#define DISPLAY_UPDATE_FREQUENCY (MICROSECONDS_IN_A_SECOND / 5)
+#define DISPLAY_UPDATE_FREQUENCY (MICROSECONDS_IN_A_SECOND / 5)   // 5Htz
 #define PAGE_CYCLE_FREQUENCY (MICROSECONDS_IN_A_SECOND * 5)
 #define PAGE_TOGGLE_FREQUENCY (MICROSECONDS_IN_A_SECOND / 2)
 
@@ -160,12 +171,12 @@ static uint8_t u360gts_logo[] = { 128, 32,
     '\x01',
 };
 
-static const char* const pageTitles[] = {
-    "U360GTS",
-    "ARMED",
-    "BATTERY",
-    "TELEMETRY",
-	"PLEASE WAIT"
+static const char* const pageTitles[PAGE_COUNT] = {
+    "U360GTS"
+    ,"ARMED"
+    ,"BATTERY"
+    ,"TELEMETRY"
+	,"PLEASE WAIT"
 #ifdef GPS
     ,"GPS"
 #endif
@@ -174,9 +185,12 @@ static const char* const pageTitles[] = {
 #endif
 	,"CLI MODE"
 	,"MAIN MENU"
+	,"BOOT MODE"
+	,"CALIB ERROR"
+	,"CALIB SUCCESS"
 };
 
-#define PAGE_COUNT (PAGE_RX + 1)
+//#define PAGE_COUNT (PAGE_RX + 1)
 
 const pageId_e cyclePageIds[] = {
     PAGE_TELEMETRY,
@@ -185,11 +199,9 @@ const pageId_e cyclePageIds[] = {
 #endif
     PAGE_BATTERY
 #ifdef ENABLE_DEBUG_OLED_PAGE
-    ,PAGE_DEBUG,
+    ,PAGE_DEBUG
 #endif
 };
-
-
 
 #define CYCLE_PAGE_ID_COUNT (sizeof(cyclePageIds) / sizeof(cyclePageIds[0]))
 
@@ -242,9 +254,9 @@ const char* const rootMenu[] = {
 	/*"SERVOS       ",
 	"SET PARAMS   ",
 	"SOFTSERIAL   ",*/
+	"PAN          ",	// testing
     "SAVE         "
 };
-
 
 static const char * const telemetryMenu[] = {
 	"PROTOCOL     ",
@@ -322,6 +334,16 @@ static const char* const telemetryFixType[] = {
 	"stati",
 	"ppp  "
 };
+
+// pan testing menu
+static const char* const panDegreeMenu[] = {
+	"0 DEG        ",
+	"90 DEG       ",
+	"180 DEG      ",
+	"270 DEG      ",
+	"EXIT         "
+};
+
 
 uint8_t indexMenuOption = 0;
 uint8_t maxMenuOptions = 5;
@@ -440,9 +462,16 @@ void updateRxStatus(void)
 
 void showTitle()
 {
+	if ( !(pageState.pageId < PAGE_COUNT) )
+	{
+		printf("invalid pageState.pageId:%i\n",pageState.pageId );
+		return;
+	}
     i2c_OLED_set_line(0);
     //i2c_OLED_send_string(pageTitles[pageState.pageId]);
 	if(pageState.pageId==PAGE_TELEMETRY) {
+		if(!PROTOCOL(TP_SERVOTEST))
+		{
         int16_t i;
     	for(i=0;i < OP_CROSSFIRE + 3;i++) {
     		if(master_telemetry_protocol & (1<<i)) {
@@ -458,6 +487,10 @@ void showTitle()
     	}
     	if(master_telemetry_protocol == 0 && feature(FEATURE_AUTODETECT)){
 			tfp_sprintf(lineBuffer, "Auto detecting");
+		i2c_OLED_send_string(lineBuffer); }
+		}
+		else {
+			tfp_sprintf(lineBuffer, "Pan Servo Test");
 			i2c_OLED_send_string(lineBuffer);
 		}
     } else if(pageState.pageId==PAGE_MENU){
@@ -570,6 +603,79 @@ void showCalibratingMagPage(void)
 
 }
 
+void showCalibratingMagFailedPage(void)
+{
+    uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
+    tfp_sprintf(lineBuffer, "Mag Calib Failed");
+    i2c_OLED_set_line(rowIndex++);	
+    i2c_OLED_send_string(lineBuffer);
+	// print how far the tracker rotated
+    tfp_sprintf(lineBuffer, "Rotated: %03d", calib_rotation);
+    i2c_OLED_set_line(rowIndex++);
+    i2c_OLED_send_string(lineBuffer);
+	tfp_sprintf(lineBuffer, "Expected: 360-400");
+    i2c_OLED_set_line(rowIndex++);
+    i2c_OLED_send_string(lineBuffer);
+}
+
+void showCalibratingMagSuccessPage(void)
+{
+	// requires radius,sd1,sd2,softIron[][]
+	int integerPart; 
+    int decimalPart;
+	
+    uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
+    tfp_sprintf(lineBuffer, "Mag Calibration Success");
+    i2c_OLED_set_line(rowIndex++);	
+    i2c_OLED_send_string(lineBuffer);
+	i2c_OLED_set_line(rowIndex++);
+	
+	if ( signbit(phase) )
+	{		
+        // radius (integer), aspect ratio (2 decimal places), rotation degrees (2 decimal places) 
+		tfp_sprintf(lineBuffer, "R=%d,A=%d.%d,R=-%d",(int)roundf(radius*1000),
+										  (int)fabsf(eValScale),(int)fabsf(eValScale*1000)%1000,
+										  (int)fabsf(phase)
+										  );
+	}
+	else
+	{
+		tfp_sprintf(lineBuffer, "R=%d,A=%d.%d,R=%d",(int)roundf(radius*1000),
+										  (int)fabsf(eValScale),(int)fabsf(eValScale*1000)%1000,
+										  (int)fabsf(phase)
+										  );
+	}
+	i2c_OLED_send_string(lineBuffer);
+	i2c_OLED_set_line(rowIndex++);
+	// standard deviation, raw data, after correction
+	tfp_sprintf(lineBuffer, "SD=%d,%d",(int)roundf(sd1*1000),(int)roundf(sd2*1000));
+	i2c_OLED_send_string(lineBuffer);
+	// 2x2 transformation matrix elements
+    integerPart = (int)fabsf(softIron[0][0]);
+    decimalPart = ((int)fabsf(softIron[0][0]*N_DECIMAL_POINTS_PRECISION)%N_DECIMAL_POINTS_PRECISION);
+    i2c_OLED_set_line(rowIndex++);	
+	signbit(softIron[0][0]) ? tfp_sprintf(lineBuffer, "-%d.%d",integerPart,decimalPart) : tfp_sprintf(lineBuffer,"%d.%d",integerPart,decimalPart); 
+    i2c_OLED_send_string(lineBuffer);
+	
+	integerPart = (int)fabsf(softIron[0][1]);
+    decimalPart = ((int)fabsf(softIron[0][1]*N_DECIMAL_POINTS_PRECISION)%N_DECIMAL_POINTS_PRECISION);
+    i2c_OLED_set_line(rowIndex++);	
+	signbit(softIron[0][1]) ? tfp_sprintf(lineBuffer, "-%d.%d",integerPart,decimalPart) : tfp_sprintf(lineBuffer,"%d.%d",integerPart,decimalPart); 
+    i2c_OLED_send_string(lineBuffer);
+
+	integerPart = (int)fabsf(softIron[1][0]);
+    decimalPart = ((int)fabsf(softIron[1][0]*N_DECIMAL_POINTS_PRECISION)%N_DECIMAL_POINTS_PRECISION);
+    i2c_OLED_set_line(rowIndex++);	
+	signbit(softIron[1][0]) ? tfp_sprintf(lineBuffer, "-%d.%d",integerPart,decimalPart) : tfp_sprintf(lineBuffer,"%d.%d",integerPart,decimalPart); 
+    i2c_OLED_send_string(lineBuffer);
+	
+	integerPart = (int)fabsf(softIron[1][1]);
+    decimalPart = ((int)fabsf(softIron[1][1]*N_DECIMAL_POINTS_PRECISION)%N_DECIMAL_POINTS_PRECISION);
+    i2c_OLED_set_line(rowIndex++);	
+	signbit(softIron[1][1]) ? tfp_sprintf(lineBuffer, "-%d.%d",integerPart,decimalPart) : tfp_sprintf(lineBuffer,"%d.%d",integerPart,decimalPart); 
+    i2c_OLED_send_string(lineBuffer);
+}
+
 void showBootModePage(void)
 {
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
@@ -577,7 +683,6 @@ void showBootModePage(void)
     tfp_sprintf(lineBuffer, "Boot mode ...");
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
-
 }
 
 void showArmedPage(void)
@@ -646,10 +751,15 @@ void showMainMenuPage(){
 			menuItems = OP_ENABLEDISABLE_EXIT+1;
 			menuTitleIndex = MENU_EASING-1;
 			break;
+		// pan testing menu
+		case MENU_PAN:
+			currentMenu = panDegreeMenu;
+			menuItems = OP_PAN_EXIT+1;
+			menuTitleIndex = MENU_PAN-1;
+			break;
 		default:
 			return;
 	}
-
 
 	//Show Title
 	i2c_OLED_set_line(0);
@@ -692,10 +802,9 @@ void showMainMenuPage(){
 	}
 }
 
-
-
 void showCliModePage(void)
 {
+	//static const char *format = "%s %03d %03d %03d";
     uint8_t rowIndex = PAGE_TITLE_LINE_COUNT;
 
     i2c_OLED_set_line(rowIndex++);
@@ -716,7 +825,12 @@ void showCliModePage(void)
     tfp_sprintf(lineBuffer, "PWM TILT: %04d uS", pwmTilt);
     i2c_OLED_set_line(rowIndex++);
     i2c_OLED_send_string(lineBuffer);
-
+	
+	// added roll-pitch
+	//tfp_sprintf(lineBuffer, format, "I&H: ", inclination.values.rollDeciDegrees, inclination.values.pitchDeciDegrees, heading);
+    //padLineBuffer();
+    //i2c_OLED_set_line(rowIndex++);
+    //i2c_OLED_send_string(lineBuffer);
 }
 
 void showTelemetryPage(void){
@@ -944,9 +1058,10 @@ void showBatteryPage(void)
         drawHorizonalPercentageBar(SCREEN_CHARACTER_COLUMN_COUNT, capacityPercentage);
     }
 
-    if (feature(FEATURE_RSSI_ADC) || (rxConfig->rssi_channel > 0)) {
-    	if(feature(FEATURE_VBAT))
-    		i2c_OLED_set_line(rowIndex++);
+    if ( (feature(FEATURE_RSSI_ADC) || (rxConfig->rssi_channel > 0)) && !feature(FEATURE_CURRENT_METER) ) {
+    	/*  extra lines caused screen wrap around with VBAT
+		    if(feature(FEATURE_VBAT))
+    		i2c_OLED_set_line(rowIndex++);  */
 
 		tfp_sprintf(lineBuffer, "RSSI");
 		i2c_OLED_set_line(rowIndex++);
@@ -1072,7 +1187,6 @@ void updateDisplay(void)
     if (!updateNow) {
         return;
     }
-
     nextDisplayUpdateAt = now + DISPLAY_UPDATE_FREQUENCY;
 
     /*//////
@@ -1082,7 +1196,6 @@ void updateDisplay(void)
 	updateTicker();
 	return;
     //////*/
-
 
     bool armedState = ARMING_FLAG(ARMED) ? true : false;
     bool armedStateChanged = armedState != previousArmedState;
@@ -1172,14 +1285,25 @@ void updateDisplay(void)
                 pageState.pageFlags |= PAGE_STATE_FLAG_FORCE_PAGE_CHANGE;
             }
         	break;
-        case PAGE_CLI_MODE:
-        		showCliModePage();
+		
+		// advanced calibration failed
+		case PAGE_CALIBRATING_MAG_FAILED:
+			showCalibratingMagFailedPage();
+        	break;	
+			
+		// advanced calibration succeeded	
+		case PAGE_CALIBRATING_MAG_SUCCESS:
+			showCalibratingMagSuccessPage();
+			break;
+			
+		case PAGE_CLI_MODE:
+        	showCliModePage();
         	break;
         case PAGE_MENU:
-        		showMainMenuPage();
+        	showMainMenuPage();
         	break;
         case PAGE_BOOT_MODE:
-        		showBootModePage();
+        	showBootModePage();
         	break;
         default:
         	break;
@@ -1214,10 +1338,9 @@ void displayInit(rxConfig_t *rxConfigToUse,uint16_t telemetry_protocol)
     master_telemetry_protocol = telemetry_protocol;
 
     memset(&pageState, 0, sizeof(pageState));
-    displaySetPage(PAGE_WELCOME);
-
+    
+	displaySetPage(PAGE_WELCOME);
     updateDisplay();
-
     displaySetNextPageChangeAt(micros() + (1000 * 1000 * 5));
 }
 
@@ -1229,8 +1352,6 @@ void displayShowFixedPage(pageId_e pageId)
     	updateDisplay();
     }
 }
-
-
 
 void displaySetNextPageChangeAt(uint32_t futureMicros)
 {

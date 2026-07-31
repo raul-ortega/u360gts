@@ -27,6 +27,7 @@
 #include "debug.h"
 
 #include "common/axis.h"
+#include "common/printf.h"
 
 #include "drivers/system.h"
 #include "drivers/sensor.h"
@@ -64,9 +65,8 @@ float fc_acc;
 float magneticDeclination = 0.0f;       // calculated at startup from config
 float gyroScaleRad;
 
-
-rollAndPitchInclination_t inclination = { { 0, 0 } };     // absolute angle inclination in multiple of 0.1 degree    180 deg = 1800
-float anglerad[ANGLE_INDEX_COUNT] = { 0.0f, 0.0f };    // absolute angle inclination in radians
+rollAndPitchInclination_t inclination = { { 0, 0 } };     // absolute angle inclination in multiple of 0.1 degree, 180 deg = 1800
+float anglerad[ANGLE_INDEX_COUNT] = { 0.0f, 0.0f };       // absolute angle inclination in radians
 
 static imuRuntimeConfig_t *imuRuntimeConfig;
 static pidProfile_t *pidProfile;
@@ -74,6 +74,9 @@ static accDeadband_t *accDeadband;
 
 extern int16_t OFFSET;
 extern float DECLINATION;
+
+float Rollt;    // tilt X
+float Pitcht;   // tilt Y
 
 void imuConfigure(
     imuRuntimeConfig_t *initialImuRuntimeConfig,
@@ -133,14 +136,19 @@ void imuInit(void)
 
 int16_t imuCalculateHeading(t_fp_vector *vec)
 {
-    int16_t head;
+    //int16_t head;
 
+    // currently anglerad is not populated so tilt compensation (roll and pitch) is a placeholder
     float cosineRoll = cos_approx(anglerad[AI_ROLL]);
     float sineRoll = sin_approx(anglerad[AI_ROLL]);
     float cosinePitch = cos_approx(anglerad[AI_PITCH]);
     float sinePitch = sin_approx(anglerad[AI_PITCH]);
     float Xh = vec->A[X] * cosinePitch + vec->A[Y] * sineRoll * sinePitch + vec->A[Z] * sinePitch * cosineRoll;
     float Yh = vec->A[Y] * cosineRoll - vec->A[Z] * sineRoll;
+	
+	Rollt  = anglerad[AI_ROLL]  * (180.0f / M_PI);
+	Pitcht = anglerad[AI_PITCH] * (180.0f / M_PI);
+	
     //TODO: Replace this comment with an explanation of why Yh and Xh can never simultanoeusly be zero,
     // or handle the case in which they are and (atan2f(0, 0) is undefined.
     //float hd = (atan2f(Yh, Xh) * 1800.0f / M_PIf + magneticDeclination) / 1.0f; //10.0f;
@@ -150,8 +158,10 @@ int16_t imuCalculateHeading(t_fp_vector *vec)
     if (hd < 0)
     	hd += 2 * M_PIf;
 
+    // redundant code according to ChatGpt
     if (hd > 2 * M_PIf)
     	hd -= 2 * M_PIf;
 
-    return (int16_t) ((hd * 1800.0 / M_PIf) + magneticDeclination + OFFSET * 10.0f)%3600;
+    // add magnetic declination and tracker offset to the heading
+    return (int16_t) (((hd * 1800.0f / M_PIf) + magneticDeclination + OFFSET*10.0f) + 3600.0f) %3600;
 }
