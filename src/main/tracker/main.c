@@ -494,6 +494,7 @@ void calcTilt(void) {
 
   //this will fix an error where the tracker randomly points up when plane is lower than tracker
   if (targetPosition.alt < trackerPosition.alt){
+	// don't enjoy that we are resetting targetPosition.alt
     targetPosition.alt = trackerPosition.alt;
   }
 
@@ -914,10 +915,10 @@ void updateTargetPosition(void){
 	if(!PROTOCOL(TP_SERVOTEST)){
 		if (gotAlt) {
 
-			if(telemetry_sats >= masterConfig.telemetry_min_sats && targetPosition.home_alt == -32768)
-				targetPosition.home_alt = getTargetAlt(0);
+			if(telemetry_sats >= masterConfig.telemetry_min_sats && targetPosition.home_alt == -32768)	
+			targetPosition.home_alt = getTargetAlt(0);  // targetposition.alt
 
-			targetPosition.alt = getTargetAlt(telemetry_home_alt);
+			targetPosition.alt = getTargetAlt(telemetry_home_alt); // can be negative if launched from hill
 
 			if(PROTOCOL(TP_MFD)){
 				distance = getDistance();
@@ -1776,9 +1777,10 @@ void setPanInverted(bool invert)
 {
 	if (invert) {
 		masterConfig.pan_inverted = 1;
-		printf("Set pan_inverted\n");
+		printf("Set pan_inverted=1\n");
 	}
 	else {
 		masterConfig.pan_inverted = 0;
+		printf("Set pan_inverted=0\n");
 	}
 }

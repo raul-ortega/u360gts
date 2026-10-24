@@ -878,12 +878,13 @@ void showTelemetryPage(void){
     	//
     }
 	
-    //char altSgn = (targetPosition.alt < 0) ? '-' : '\0';
-    //targetPosition.alt = (targetPosition.alt < 0)? -1 * targetPosition.alt : targetPosition.alt;
-	// July 2026 fixed sprintf from %s to %c
+    // char altSgn = (targetPosition.alt < 0) ? '-' : '\0';
+    // targetPosition.alt = (targetPosition.alt < 0)? -1 * targetPosition.alt : targetPosition.alt;
+	// Correctly render targetposition.alt
+	// note in main.c void calcTilt(void) we constrain targetPositon.alt >= trackerposition.alt
     if (targetPosition.alt < 0)
 	{
-		tfp_sprintf(lineBuffer, "Alt:-%d Dis: %d  ",abs(targetPosition.alt),targetPosition.distance);	
+		tfp_sprintf(lineBuffer, "Alt:-%d Dis: %d  ",-1 * targetPosition.alt,targetPosition.distance);	
 	}
 	else
 	{
