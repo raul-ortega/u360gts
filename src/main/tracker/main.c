@@ -158,6 +158,8 @@ void servosInit(void);
 void setTelemetryHome(int32_t lat, int32_t lon, int16_t alt, bool save);
 void setHomeByLastSaved(positionVector_t *tracker);
 
+void setPanInverted(bool invert);
+
 //EASING
 int16_t _lastTilt;
 int16_t tilt;
@@ -492,6 +494,7 @@ void calcTilt(void) {
 
   //this will fix an error where the tracker randomly points up when plane is lower than tracker
   if (targetPosition.alt < trackerPosition.alt){
+	// don't enjoy that we are resetting targetPosition.alt
     targetPosition.alt = trackerPosition.alt;
   }
 
@@ -792,9 +795,9 @@ void updateBatteryStatus(void){
 void updateFixedPages(void){
 
 	displayPageIndex =
-			PAGE_GPS * (displayPageIndex == PAGE_TELEMETRY && feature(FEATURE_GPS) && !PROTOCOL(TP_MFD)) + \
-			PAGE_BATTERY * ((displayPageIndex == PAGE_TELEMETRY && !feature(FEATURE_GPS) && (feature(FEATURE_VBAT) || feature(FEATURE_RSSI_ADC) || (masterConfig.rxConfig.rssi_channel > 0))) || (displayPageIndex == PAGE_GPS && (feature(FEATURE_VBAT) || feature(FEATURE_RSSI_ADC) || (masterConfig.rxConfig.rssi_channel > 0)))) + \
-			PAGE_TELEMETRY * (displayPageIndex == 0);
+			PAGE_GPS       *  (displayPageIndex == PAGE_TELEMETRY && feature(FEATURE_GPS) && !PROTOCOL(TP_MFD)) + \
+			PAGE_BATTERY   * ((displayPageIndex == PAGE_TELEMETRY && !feature(FEATURE_GPS) && (feature(FEATURE_VBAT) || feature(FEATURE_RSSI_ADC) || (masterConfig.rxConfig.rssi_channel > 0))) || (displayPageIndex == PAGE_GPS && (feature(FEATURE_VBAT) || feature(FEATURE_RSSI_ADC) || (masterConfig.rxConfig.rssi_channel > 0)))) + \
+			PAGE_TELEMETRY *  (displayPageIndex == 0);
 	if(displayPageIndex !=0 ){
 		//Show fixed page
 		displayShowFixedPage(displayPageIndex);
@@ -829,6 +832,7 @@ void updateServoTest(void){
 }
 
 void updateReadTelemetry(void){
+	
 	if (serialRxBytesWaiting(trackerSerial)>1){
 		uint8_t c = serialRead(trackerSerial);
 
@@ -844,12 +848,43 @@ void updateReadTelemetry(void){
 			lostTelemetry = false;
 			lostTelemetry_timer = 0;
 		}
-
-
-	} else {
+	} 
+	else {
 		LED0_OFF;
 		gotTelemetry = false;
 	}
+	
+    // July 2026 - process all series communication bytes in one pass
+	// also will push bytes to serial-2 if telemetry out configured
+    /* bool receivedData = false;
+	uint8_t c;
+
+    while (serialRxBytesWaiting(trackerSerial))
+    {
+        c = serialRead(trackerSerial);
+		
+        evaluateOtherData(trackerSerial,c);
+
+        if (!PROTOCOL(TP_SERVOTEST) && !cliMode) {
+            encodeTargetData(c);
+        }
+		receivedData = true;
+    }
+
+    if (receivedData)
+    {
+        LED0_ON;
+        if (!PROTOCOL(TP_SERVOTEST)) {
+            gotTelemetry = true;
+            lostTelemetry = false;
+            lostTelemetry_timer = 0;
+        }
+    }
+    else
+    {
+        LED0_OFF;
+        gotTelemetry = false;
+    } */
 }
 
 void updateTelemetryLost(void){
@@ -880,10 +915,10 @@ void updateTargetPosition(void){
 	if(!PROTOCOL(TP_SERVOTEST)){
 		if (gotAlt) {
 
-			if(telemetry_sats >= masterConfig.telemetry_min_sats && targetPosition.home_alt == -32768)
-				targetPosition.home_alt = getTargetAlt(0);
+			if(telemetry_sats >= masterConfig.telemetry_min_sats && targetPosition.home_alt == -32768)	
+			targetPosition.home_alt = getTargetAlt(0);  // targetposition.alt
 
-			targetPosition.alt = getTargetAlt(telemetry_home_alt);
+			targetPosition.alt = getTargetAlt(telemetry_home_alt); // can be negative if launched from hill
 
 			if(PROTOCOL(TP_MFD)){
 				distance = getDistance();
@@ -951,6 +986,7 @@ void calcEstimatedPosition(){
 
 void updateHeading(void){
 	// we update the heading every 14ms to get as many samples into the smooth array as possible
+	// 71.4Htz which drives the PID loop
 	if (millis() > time) {
 		time = millis() + 14;
 		trackerPosition.heading = getHeading();
@@ -983,12 +1019,14 @@ void updateMenuButton(void){
 			/*
 			 * 	SI EL OFFSET EST� MODIFICADO, RESETEARLO
 			 */
-			if(menuState && !cliMode) {
+			//if(menuState && !cliMode) {
+			if(menuState) {
 				//MENU MODE
 				if (!currentState && calib_timer == 0) {
 					calib_timer = millis();
 				} else if (currentState && millis() - calib_timer < 1000) {
 					proccessMenu(MENU_BUTTON);
+					printf("proccessMenu(MENU_BUTTON)\n"); 
 					calib_timer = 0;
 				} else if (currentState && millis() - calib_timer < 1500) {
 					//button not pressed long enough
@@ -1013,6 +1051,7 @@ void updateMenuButton(void){
 					calib_timer = 0;
 					home_timer = 0;
 					enterMenuMode();
+					printf("enterMenuMode()\n"); 
 				}
 			}
 		// When trim offset is enabled, this button decrease the offset one unit
@@ -1027,7 +1066,6 @@ void updateMenuButton(void){
 				//FIX ME: RESET OFFSET TRIM
 			}
 		}
-
 		previousState = currentState;
 	}
 }
@@ -1055,6 +1093,7 @@ void updateSetHomeButton(void){
 					home_timer = millis();
 				} else if (homeButtonCurrentState && (millis() - home_timer < 1000)) {
 					proccessMenu(HOME_BUTTON);
+					printf("proccessMenu(HOME_BUTTON)\n"); 
 					home_timer = 0;
 				}
 			// Modo HOME
@@ -1188,7 +1227,8 @@ void updateTracking(void){
 		}
 
 		if(trackingStarted)  {
-			if(lostTelemetry == true && !cliMode){
+			// assime lostTelemetry true when using TP_SERVOTEST
+			if(lostTelemetry == true && !cliMode && !PROTOCOL(TP_SERVOTEST)){
 				pwmWriteServo(masterConfig.pan_pin,masterConfig.pan0);
 				return;
 			}
@@ -1201,8 +1241,9 @@ void updateTracking(void){
 				  pwmWriteServo(masterConfig.pan_pin,pwmPan);
 				  gotNewHeading = false;
 			}
-
-			if(!(OFFSET_TRIM_STATE == TRIM_STATE_DISABLED_BY_USER))
+			
+			// once tracking has started cannot enter menu mode, except for when using Pan TP_SERVOTEST
+			if(!(OFFSET_TRIM_STATE == TRIM_STATE_DISABLED_BY_USER) && !PROTOCOL(TP_SERVOTEST))
 				OFFSET_TRIM_STATE = TRIM_STATE_ENABLED;
 
 		} else {
@@ -1227,6 +1268,9 @@ void exitMenuMode(void) {
 
 void processMenuRoot(void){
 	menuOption = indexMenuOption % (OP_EXIT+1);
+	
+	printf("ProcessMenuRoot(%d)\n", menuOption);	
+	
 	if(menuOption == OP_EXIT) {
 		writeEEPROM();
 		systemReset();
@@ -1242,6 +1286,9 @@ void processMenuRoot(void){
 		menuState = MENU_EASING;
 	else if(menuOption == OP_TELEMETRY)
 		menuState = MENU_TELEMETRY;
+	// pan testing
+	else if(menuOption == OP_PAN)
+		menuState = MENU_PAN;
 	else
 		menuState = MENU_ROOT;
 }
@@ -1380,12 +1427,46 @@ void processMenuTelemetryBaudrate(void){
 	indexMenuOption = OP_TELMETRY_SAVE;
 }
 
+// pan testing
+void processMenuPan(void) {
+	
+	menuOption = indexMenuOption % (OP_PAN_EXIT+1);
+	if(menuOption == OP_PAN_EXIT)
+	{	
+		menuState = MENU_ROOT;
+		indexMenuOption = OP_EXIT;
+		return;
+	}
+	else {
+		if(menuOption == OP_PAN_0_DEGREE) {
+			//printf("Moving pan servo to 0 deg\n");
+			SERVOTEST_HEADING=0;
+		} else if(menuOption == OP_PAN_90_DEGREE) {
+			//printf("Moving pan servo to 90 deg\n");
+			SERVOTEST_HEADING=90;	
+		} else if(menuOption == OP_PAN_180_DEGREE) {
+			//printf("Moving pan servo to 180 deg\n");
+			SERVOTEST_HEADING=180;		
+		} else if(menuOption == OP_PAN_270_DEGREE) {
+			//printf("Moving pan servo to 270 deg\n");
+			SERVOTEST_HEADING=270;	
+		}
+		exitMenuMode();
+		// from serial_cli.c
+		DISABLE_PROTOCOL(masterConfig.telemetry_protocol);
+		ENABLE_PROTOCOL(TP_SERVOTEST);
+		ENABLE_SERVO(SERVOPAN_MOVE);
+	}
+}
+
 void proccessMenu(uint8_t menuButton) {
 
 	if(menuButton == MENU_BUTTON) {
 		indexMenuOption++;
-		showMainMenuPage();
+		//showMainMenuPage();
 	} else if(menuButton == HOME_BUTTON) {
+		
+		printf("Processing MenuState=%d\n", menuState);
 		// root
 		if(menuState == MENU_ROOT) {
 			processMenuRoot();
@@ -1412,12 +1493,16 @@ void proccessMenu(uint8_t menuButton) {
 		// Telemetry Baudrate
 		} else if (menuState == MENU_TELEMETRY_BAUDRATE) {
 			processMenuTelemetryBaudrate();
+		// For Testing Set Pan
+		} else if (menuState == MENU_PAN) {
+			processMenuPan();
 		}
 		if(menuState != MENU_EPS_DISTANCEGAIN && menuState != MENU_EPS_FREQUENCY)
 			indexMenuOption=0;
-		displayShowFixedPage(PAGE_MENU);
+		// detect if exitMenuMode() was called
+		//if (menuState != MENU_IDEL)
+		//	 displayShowFixedPage(PAGE_MENU);
 	}
-
 }
 
 float map(long x, long in_min, long in_max, long out_min, long out_max)
@@ -1432,10 +1517,12 @@ void saveLastTilt(bool writteEeprom){
 	}
 }
 
+// updated this procedure to improve calibration success
 void updateCalibratePan()
 {
 	uint16_t deltaHeading;
-	float slope;
+	//float slope;
+	
 	// ENABLE CALIBRATING PAN0 PROCCESS
     if (STATE(CALIBRATE_PAN)) {
     	servoPanTimer = millis();
@@ -1447,7 +1534,7 @@ void updateCalibratePan()
         masterConfig.pan0_calibrated = 0;
         minPwmPan = 1500;
         maxPwmPan = 1500;
-        maxDeltaHeading = 0;
+        maxDeltaHeading = 0;             // not used
         if(masterConfig.mag_calibrated == 0) {
                 	ENABLE_STATE(CALIBRATE_MAG);
         }
@@ -1458,19 +1545,19 @@ void updateCalibratePan()
     //CALIBRATING PWMPAN0
     if(PROTOCOL(TP_CALIBRATING_PAN0) && !PROTOCOL(TP_CALIBRATING_MAG)){
     	if(masterConfig.pan0_calibrated == 0){
-			// CALCULATING MIN AND MAX PAN0
+			// CALCULATING MIN AND MAX PAN0 at 10Htz = 100, 5Hz = 200
 			if(millis() - servoPanTimer > 100 && (pwmPanState == FINDING_OUT_MIN_PWMPAN0 || pwmPanState == FINDING_OUT_MAX_PWMPAN0)){
 				trackerPosition.heading = getHeading();
 				deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
-				if (deltaHeading > 2){
+				if (deltaHeading > 0){            // was previously 2
 					// SERVO IS STILL MOVING
 					targetPosition.heading = trackerPosition.heading;
 					if(pwmPanState == FINDING_OUT_MIN_PWMPAN0) {
-						pwmPan++;
+						pwmPan+=2;  // was ++
 						if(pwmPan > maxPwmPan + 100)
 							pwmPan = minPwmPan - 100;
 					} else if(pwmPanState == FINDING_OUT_MAX_PWMPAN0){
-						pwmPan--;
+						pwmPan-=2;  // was --
 						if(pwmPan < minPwmPan - 100)
 							pwmPan = maxPwmPan + 100;
 					}
@@ -1491,13 +1578,14 @@ void updateCalibratePan()
 				}
 				servoPanTimer = millis();
 			}
-			//CHECK IF MIN AND MAX PAN0 HAS BEEN WELL CALIBRATED 3 SECONDS LATER
+			//CHECK IF MIN AND MAX PAN0 HAS BEEN WELL CALIBRATED, 3 SECONDS LATER
 			if(pwmPanState == MIN_PWMPAN0_FOUND || pwmPanState == MAX_PWMPAN0_FOUND) {
 				if(millis() - servoPanTimer > 3000){
 					trackerPosition.heading = getHeading();
 					// due to interference the magnetometer could oscillate while the servo is stopped
 					deltaHeading = calculateDeltaHeading(trackerPosition.heading,targetPosition.heading);
-					if (deltaHeading > 50){
+					// reduced from >5 degrees to >=3degree
+					if (deltaHeading >= 30){
 						// SERVO IS STILL MOVING
 						targetPosition.heading = trackerPosition.heading;
 						if(pwmPanState == MIN_PWMPAN0_FOUND) {
@@ -1519,15 +1607,15 @@ void updateCalibratePan()
 						} else if(pwmPanState == MAX_PWMPAN0_FOUND) {
 							// CALIBRATION FIHISHED WITH SUCCESS
 							pwmPanState = PWMPAN0_CALCULATED_WITH_SUCCESS;
-							masterConfig.mag_calibrated = 1;
+							masterConfig.mag_calibrated = 1;  			// WHY ? 
 							masterConfig.pan0_calibrated = 1;
 							DISABLE_PROTOCOL(TP_CALIBRATING_PAN0);
 							masterConfig.min_pan_speed = (uint16_t)(maxPwmPan - minPwmPan)/2.0f;
 							masterConfig.pan0 = minPwmPan + masterConfig.min_pan_speed;
-							printf("Calibration has finished with success:\n");
+							printf("Pan calibration has finished successfully:\n");
 							printf("  set pan0=%d\n", masterConfig.pan0);
 							printf("  set min_pan_speed=%d\n", masterConfig.min_pan_speed);
-							printf("  set pan0_calibrated=%d\n", masterConfig.mag_calibrated);
+							printf("  set pan0_calibrated=%d\n", masterConfig.pan0_calibrated);
 							saveConfigAndNotify();
 							// ACTIVATE MAX PWMPAN CALCULATION
 							/*ENABLE_PROTOCOL(TP_CALIBRATING_MAXPAN);
@@ -1542,12 +1630,7 @@ void updateCalibratePan()
 
 			}
     	}
-
-
-
     }
-
-
     /*// CALIBRATE MAX PAN
 	if(PROTOCOL(TP_CALIBRATING_MAXPAN) && !PROTOCOL(TP_CALIBRATING_MAG)) {
 		trackerPosition.heading = getHeading();
@@ -1687,4 +1770,17 @@ void servosInit(void)
 {
 	pwmWriteServo(masterConfig.pan_pin, masterConfig.pan0);
 	pwmWriteServo(masterConfig.tilt_pin, masterConfig.tilt0);
+}
+
+// called by compass.c, keep masterConfig updates in main.c
+void setPanInverted(bool invert)
+{
+	if (invert) {
+		masterConfig.pan_inverted = 1;
+		printf("Set pan_inverted=1\n");
+	}
+	else {
+		masterConfig.pan_inverted = 0;
+		printf("Set pan_inverted=0\n");
+	}
 }
